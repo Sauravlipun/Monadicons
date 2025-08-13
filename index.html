@@ -23,7 +23,6 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;co
 .brand{display:flex;gap:12px;align-items:center}
 .logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:800;color:white;font-size:20px}
 h1{margin:0;font-size:20px}
-.lead{margin:2px 0 0;color:var(--muted);font-size:13px}
 .header-actions{display:flex;gap:8px}
 .btn, .ghost, .small { cursor:pointer; border-radius:10px; padding:8px 12px; font-weight:600; border:none }
 .btn{background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:white; box-shadow:0 8px 24px rgba(124,58,237,0.12)}
@@ -39,7 +38,11 @@ h1{margin:0;font-size:20px}
 .small-input{width:auto;padding:8px;border-radius:8px}
 .controls{margin-top:8px;display:flex;flex-wrap:wrap;gap:8px}
 .preview-box{width:100%;height:420px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
-.preview-box svg{width:100%;height:100%}
+.preview-box svg{width:100%;height:100%;display:block}
+/* Ensure the inline svg content fills and is centered */
+.preview-box svg > g, .preview-box svg > g > g { transform-origin: 50% 50%; }
+/* forced centering fallback for inner svg content */
+.preview-box svg [width],[height] { width:100% !important; height:100% !important; }
 .preview-meta{color:var(--muted);font-size:13px;margin-top:8px;text-align:center}
 .history{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .thumb{width:64px;height:64px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);overflow:hidden;cursor:pointer;background:white;display:flex;align-items:center;justify-content:center}
@@ -60,7 +63,7 @@ footer{color:var(--muted);font-size:13px;text-align:center;margin-top:18px}
       <div class="logo">M</div>
       <div>
         <h1>Monadicons</h1>
-        <div class="lead">Avatar studio — customize, preview, download, and share.</div>
+        <!-- subtitle removed per request -->
       </div>
     </div>
 
@@ -197,7 +200,7 @@ footer{color:var(--muted);font-size:13px;text-align:center;margin-top:18px}
     </div>
   </div>
 
-  <footer>Avatars • MIT • Fully client-side</footer>
+  <footer>Powered by Monadicons • ©2025</footer>
 </div>
 
 <script>
@@ -221,7 +224,6 @@ function mixWithWhite(hex, pct=0.6){
   const b = Math.round(c.b + (255-c.b)*pct);
   return `rgb(${r},${g},${b})`;
 }
-function escapeXml(s){ return s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
 
 /* ---------- Elements ---------- */
 const liveToggle = qs('#liveToggle');
@@ -313,7 +315,6 @@ async function buildFinalSvg(settings){
     innerSvg = jdenticon.toSvg(seed, size);
     innerSvg = innerSvg.replace(/^<\?xml[\s\S]*?\?>\s*/i,'').replace(/^<svg[^>]*>/i, '').replace(/<\/svg>$/i, '');
   } else {
-    // Try primary API endpoint first (v9.x)
     const tryUrls = [
       `${PRIMARY_DICEBEAR}/${style}/svg?seed=${encodeURIComponent(seed)}&size=${size}`,
       `${FALLBACK_DICEBEAR}/${style}/${encodeURIComponent(seed)}.svg?size=${size}`
@@ -327,18 +328,15 @@ async function buildFinalSvg(settings){
           continue;
         }
         let svgText = await res.text();
-        // remove xml prolog if present, then strip outer svg tags
         svgText = svgText.replace(/^<\?xml[\s\S]*?\?>\s*/i,'');
         innerSvg = svgText.replace(/^<svg[^>]*>/i, '').replace(/<\/svg>$/i, '');
         lastErr = null;
         break;
       } catch(err){
         lastErr = err;
-        // try next fallback
       }
     }
     if(lastErr) {
-      // bubble up a helpful message
       throw new Error('Failed to fetch SVG from remote endpoints. See console for details. Last error: ' + (lastErr.message || lastErr));
     }
   }
@@ -350,9 +348,9 @@ async function buildFinalSvg(settings){
   const cx = size / 2;
   const cy = size / 2;
 
-  // Compose final svg
+  // Compose final svg with preserveAspectRatio to ensure it covers center area
   const svg =
-`<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" role="img" aria-label="Monadicon">
+`<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Monadicon">
   <defs>
     ${defs}
   </defs>
@@ -383,7 +381,6 @@ async function renderPreview(settings, { addToHistory=false } = {}){
       confetti();
     }
   }catch(e){
-    // show a clear message and log the real error to console
     previewBox.innerHTML = `<div style="color:#ff6b6b;font-weight:700">Error rendering preview</div><div style="color:var(--muted);margin-top:8px">Check console for details.</div>`;
     console.error('Preview error:', e);
   }
@@ -460,7 +457,8 @@ function loadSettings(s){
   settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
 }
 
-generateBtn.addEventListener('click', async ()=>{
+const generateBtnEl = qs('#generateBtn');
+generateBtnEl.addEventListener('click', async ()=>{
   const s = readSettingsFromUI();
   await renderPreview(s, { addToHistory:true });
 });
