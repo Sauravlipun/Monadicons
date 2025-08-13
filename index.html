@@ -1,631 +1,170 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Monadicons — Create your personal icon</title>
-  <meta name="description" content="Create unique, eye-catching SVG/PNG icons for your profiles, websites, and socials. No design skills required." />
-  <meta name="theme-color" content="#7C3AED" />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%237C3AED'/><text x='50' y='58' font-size='50' text-anchor='middle' fill='white' font-family='Arial'>M</text></svg>">
-  <script src="https://cdn.jsdelivr.net/npm/jdenticon@3.2.0/dist/jdenticon.min.js" defer></script>
-
-  <style>
-    :root {
-      --accent: #7C3AED;
-      --accent-2: #5B21B6;
-      --muted: #9fb0c9;
-      --bg-1: #071124;
-      --bg-2: #071a2b;
-      --glass: rgba(255, 255, 255, 0.04);
-      --light-bg-1: #f0f4f8;
-      --light-bg-2: #e0e7ee;
-      --light-text: #333;
-      --light-muted: #666;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial;
-      -webkit-font-smoothing: antialiased;
-      padding: 28px;
-      transition: background 0.3s ease, color 0.3s ease;
-    }
-    body.dark {
-      background: radial-gradient(1200px 600px at 10% 10%, rgba(124, 58, 237, 0.12), transparent), linear-gradient(180deg, var(--bg-1), var(--bg-2));
-      color: #e6eef8;
-    }
-    body.light {
-      background: linear-gradient(180deg, var(--light-bg-1), var(--light-bg-2));
-      color: var(--light-text);
-    }
-    body.light .muted { color: var(--light-muted); }
-    body.light .hero-card, body.light .card { background: rgba(0, 0, 0, 0.015); border-color: rgba(0, 0, 0, 0.06); }
-    body.light input, body.light select { background: #fff; color: #333; border-color: rgba(0, 0, 0, 0.1); }
-    body.light .ghost { border-color: rgba(0, 0, 0, 0.1); color: var(--light-muted); }
-    .wrap { max-width: 1100px; margin: 0 auto; }
-    header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 22px; }
-    h1 { font-size: 22px; margin: 0; letter-spacing: -0.5px; }
-    p.lead { margin: 6px 0 0; color: var(--muted); font-size: 13px; }
-    .hero { display: flex; gap: 18px; align-items: center; margin-bottom: 18px; }
-    .hero-card {
-      flex: 1;
-      padding: 22px;
-      border-radius: 16px;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
-      box-shadow: 0 10px 30px rgba(2, 6, 23, 0.6);
-      backdrop-filter: blur(6px);
-      border: 1px solid rgba(255, 255, 255, 0.03);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .hero-card:hover { transform: scale(1.02); box-shadow: 0 15px 40px rgba(2, 6, 23, 0.7); }
-    .hero-cta { display: flex; gap: 12px; align-items: center; margin-top: 14px; }
-    .big-cta {
-      background: linear-gradient(90deg, var(--accent), var(--accent-2));
-      border: none;
-      color: #fff;
-      padding: 12px 18px;
-      border-radius: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 10px 30px rgba(124, 58, 237, 0.18);
-      transform: translateY(0);
-      transition: transform 0.18s ease;
-    }
-    .big-cta:hover { transform: translateY(-3px); }
-    .secondary {
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      color: var(--muted);
-      padding: 10px 14px;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-    .secondary:hover { background: rgba(255, 255, 255, 0.1); }
-    .card {
-      display: flex;
-      gap: 20px;
-      padding: 18px;
-      border-radius: 12px;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.015), transparent);
-      border: 1px solid rgba(255, 255, 255, 0.03);
-      align-items: flex-start;
-      transition: transform 0.3s ease, border-color 0.3s ease;
-    }
-    .card:hover { border-color: rgba(255, 255, 255, 0.1); transform: scale(1.01); }
-    .left { flex: 1; min-width: 280px; }
-    label { display: block; font-size: 13px; color: var(--muted); margin: 10px 0 6px; }
-    input[type="text"], select, input[type="number"], input[type="color"] {
-      width: 100%;
-      padding: 12px;
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      background: transparent;
-      color: inherit;
-      outline: none;
-      font-size: 14px;
-      transition: border-color 0.3s ease;
-    }
-    input:focus, select:focus { border-color: var(--accent); }
-    .controls { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
-    .btn {
-      padding: 10px 14px;
-      border-radius: 10px;
-      border: none;
-      background: var(--accent);
-      color: #fff;
-      cursor: pointer;
-      font-weight: 700;
-      transition: background 0.3s ease, transform 0.2s ease;
-    }
-    .btn:hover { background: var(--accent-2); transform: scale(1.05); }
-    .ghost {
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      color: var(--muted);
-      padding: 10px 12px;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background 0.3s ease, transform 0.2s ease;
-    }
-    .ghost:hover { background: rgba(255, 255, 255, 0.1); transform: scale(1.05); }
-    .preview { flex: 0 0 380px; min-width: 220px; }
-    .preview-box {
-      width: 320px;
-      height: 320px;
-      border-radius: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), transparent);
-      overflow: hidden;
-      position: relative;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .preview-box:hover { transform: scale(1.03); box-shadow: 0 10px 20px rgba(124, 58, 237, 0.2); }
-    .preview-glow {
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(60% 40% at 20% 10%, rgba(124, 58, 237, 0.12), transparent), radial-gradient(40% 30% at 80% 90%, rgba(91, 33, 182, 0.06), transparent);
-      pointer-events: none;
-      border-radius: 12px;
-    }
-    .meta { font-size: 13px; color: var(--muted); text-align: center; margin-top: 10px; }
-    .gallery {
-      margin-top: 18px;
-      display: flex;
-      overflow-x: auto;
-      gap: 10px;
-      scroll-snap-type: x mandatory;
-      scroll-behavior: smooth;
-      padding-bottom: 10px;
-    }
-    .gallery::-webkit-scrollbar { height: 6px; }
-    .gallery::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 10px; }
-    .chip {
-      background: var(--glass);
-      padding: 8px;
-      border-radius: 10px;
-      text-align: center;
-      font-size: 12px;
-      color: var(--muted);
-      cursor: pointer;
-      transition: transform 0.2s ease;
-    }
-    .chip:hover { transform: scale(1.1); }
-    @keyframes floaty { 0% { transform: translateY(0); } 50% { transform: translateY(-6px); } 100% { transform: translateY(0); } }
-    .big-illustration {
-      width: 120px;
-      height: 120px;
-      border-radius: 18px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-weight: 800;
-      font-size: 40px;
-      box-shadow: 0 18px 40px rgba(124, 58, 237, 0.18);
-      animation: floaty 4s ease-in-out infinite;
-    }
-    .spinner {
-      border: 4px solid rgba(255, 255, 255, 0.3);
-      border-top: 4px solid var(--accent);
-      border-radius: 50%;
-      width: 24px;
-      height: 24px;
-      animation: spin 1s linear infinite;
-      margin: auto;
-    }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    #particles {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: -1;
-    }
-    footer {
-      margin-top: 18px;
-      color: var(--muted);
-      font-size: 13px;
-      text-align: center;
-    }
-    @media(max-width: 980px) {
-      .hero { flex-direction: column; }
-      .card { flex-direction: column; }
-      .preview { width: 100%; }
-      .preview-box { width: 100%; height: 260px; }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Monadicons — Create your personal icon</title>
+<script src="https://cdn.jsdelivr.net/npm/jdenticon@3.1.1/dist/jdenticon.min.js"></script>
+<style>
+:root {
+--accent:#7C3AED;--accent-2:#5B21B6;--muted:#9fb0c9;--bg-1:#071124;--bg-2:#071a2b;--glass:rgba(255,255,255,0.04);
+--light-bg-1:#f0f4f8;--light-bg-2:#e0e7ee;--light-text:#333;--light-muted:#666;
+}
+body.dark{background:linear-gradient(180deg,var(--bg-1),var(--bg-2));color:#e6eef8;}
+body.light{background:linear-gradient(180deg,var(--light-bg-1),var(--light-bg-2));color:var(--light-text);}
+*{box-sizing:border-box;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial;margin:0;padding:0;}
+.wrap{max-width:1100px;margin:0 auto;padding:28px;}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;}
+h1{font-size:22px;}
+.lead{color:var(--muted);font-size:13px;}
+.card{display:flex;gap:20px;flex-wrap:wrap;padding:18px;border-radius:12px;background:rgba(255,255,255,0.02);}
+.left{flex:1;min-width:280px;}
+label{display:block;font-size:13px;color:var(--muted);margin:10px 0 6px;}
+input[type="text"],select,input[type="number"],input[type="color"]{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;font-size:14px;}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}
+.btn{padding:10px 14px;border-radius:10px;border:none;background:var(--accent);color:white;cursor:pointer;font-weight:700;transition:0.2s;}
+.btn:hover{background:var(--accent-2);}
+.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);}
+.ghost:hover{background:rgba(255,255,255,0.1);}
+.preview{flex:0 0 380px;min-width:220px;}
+.preview-box{width:320px;height:320px;border-radius:14px;border:1px solid rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;margin-bottom:6px;}
+.preview-box svg{width:100%;height:100%;}
+#particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:-1;}
+footer{margin-top:18px;color:var(--muted);font-size:13px;text-align:center;}
+@media(max-width:980px){.card{flex-direction:column;}.preview{width:100%;}.preview-box{width:100%;height:260px;}}
+</style>
 </head>
 <body class="dark">
-  <canvas id="particles"></canvas>
+<canvas id="particles"></canvas>
+<div class="wrap">
+<header>
+<div>
+<h1>Monadicons</h1>
+<p class="lead">Create unique icons instantly.</p>
+</div>
+<button class="ghost" onclick="toggleTheme()">Toggle Theme</button>
+</header>
 
-  <div class="wrap">
-    <header>
-      <div>
-        <h1>Monadicons</h1>
-        <p class="lead">Create unique, eye-catching icons in seconds — no design skills or installs.</p>
-      </div>
-      <div style="text-align: right">
-        <button class="secondary" id="toggleTheme">Toggle Theme</button>
-        <button class="secondary" onclick="document.getElementById('seed').focus()">Get started</button>
-      </div>
-    </header>
+<main class="card">
+<section class="left">
+<label for="seed">Seed / Name</label>
+<input id="seed" type="text" placeholder="e.g., aurora" value="anon">
+<label for="style">Style</label>
+<select id="style">
+<option value="adventurer">Adventurer</option>
+<option value="avataaars">Avataaars</option>
+<option value="big-ears">Big Ears</option>
+<option value="bottts">Bottts</option>
+<option value="croodles">Croodles</option>
+<option value="fun-emoji">Fun Emoji</option>
+<option value="icons">Icons</option>
+<option value="jdenticon">Jdenticon</option>
+</select>
+<label for="size">Size (px)</label>
+<input id="size" type="number" min="64" max="1024" value="512">
+<label for="bgType">Background type</label>
+<select id="bgType">
+<option value="transparent">Transparent</option>
+<option value="solid">Solid</option>
+<option value="gradient">Gradient</option>
+<option value="dots">Dots</option>
+<option value="stripes">Stripes</option>
+</select>
+<label for="bgColor">Background color</label>
+<input id="bgColor" type="color" value="#7C3AED">
+<div class="controls">
+<button class="btn" id="btnGenerate">Generate</button>
+<button class="btn" id="btnDownloadPNG">Download PNG</button>
+<button class="btn" id="btnDownloadSVG">Download SVG</button>
+<button class="ghost" id="btnCopyEmbed">Copy Embed</button>
+<button class="ghost" id="btnShareX">Share X</button>
+<button class="ghost" id="btnShareDiscord">Share Discord</button>
+</div>
+</section>
 
-    <section class="hero">
-      <div class="hero-card">
-        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
-          <div>
-            <h2 style="margin: 0 0 6px">Your brand, your icon — made instantly</h2>
-            <p style="margin: 0; color: var(--muted)">Pick a seed, choose a style (DiceBear or Jdenticon), download SVG or PNG.</p>
+<section class="preview">
+<div class="preview-box" id="previewBox"></div>
+<div class="meta" id="previewMeta"></div>
+</section>
+</main>
 
-            <div class="hero-cta">
-              <button class="big-cta" id="ctaGenerate">Create Your Monadicon</button>
-              <button class="secondary" id="ctaExamples">See examples</button>
-            </div>
-
-            <div class="features" style="margin-top: 12px; display: flex; gap: 12px">
-              <div class="feature">Fast & Free</div>
-              <div class="feature">SVG + PNG</div>
-              <div class="feature">No signup</div>
-            </div>
-          </div>
-
-          <div style="display: flex; flex-direction: column; align-items: center; gap: 12px">
-            <div class="big-illustration">M</div>
-            <div style="font-size: 12px; color: var(--muted)">Share your icon across platforms</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <main class="card" role="main">
-      <section class="left" aria-labelledby="generator-heading">
-        <h3 id="generator-heading" style="margin: 0 0 6px; font-size: 15px">Icon generator</h3>
-
-        <label for="seed">Seed / Name</label>
-        <input id="seed" type="text" placeholder="e.g., aurora" value="anon" autocomplete="off" />
-
-        <label for="style">Style</label>
-        <select id="style" aria-label="style">
-          <optgroup label="DiceBear">
-            <option value="adventurer">Adventurer</option>
-            <option value="avataaars">Avataaars</option>
-            <option value="big-ears">Big Ears</option>
-            <option value="bottts">Bottts</option>
-            <option value="croodles">Croodles</option>
-            <option value="fun-emoji">Fun Emoji</option>
-            <option value="icons">Icons</option>
-            <option value="identicon">Identicon</option>
-            <option value="lorelei">Lorelei</option>
-            <option value="micah">Micah (abstract)</option>
-            <option value="miniavs">Miniavs</option>
-            <option value="open-peeps">Open Peeps</option>
-            <option value="personas">Personas</option>
-            <option value="pixel-art-neutral">Pixel Art</option>
-            <option value="shapes">Shapes</option>
-            <option value="thumbs">Thumbs</option>
-          </optgroup>
-          <optgroup label="Local">
-            <option value="jdenticon">Jdenticon (local)</option>
-          </optgroup>
-        </select>
-
-        <label for="bgType">Background Type</label>
-        <select id="bgType">
-          <option value="transparent">transparent</option>
-          <option value="solid">solid</option>
-        </select>
-
-        <label for="bgColor">Background Color</label>
-        <input id="bgColor" type="color" value="#ffffff" />
-
-        <label for="size">Size (px)</label>
-        <input id="size" type="number" value="512" min="64" max="1024" />
-
-        <div class="controls" role="group" aria-label="actions">
-          <button id="gen" class="btn">Generate</button>
-          <button id="random" class="ghost">Random</button>
-          <button id="randomTheme" class="ghost">Random Theme</button>
-          <button id="downloadSvg" class="ghost">Download SVG</button>
-          <button id="downloadPng" class="ghost">Download PNG</button>
-          <button id="copyEmbed" class="ghost">Copy embed</button>
-          <button id="shareX" class="ghost">Share on X</button>
-          <button id="shareDiscord" class="ghost">Share on Discord</button>
-        </div>
-
-        <div class="gallery" id="examples" aria-hidden="true" style="margin-top: 12px"></div>
-      </section>
-
-      <aside class="preview" aria-labelledby="preview-heading">
-        <h4 id="preview-heading" style="margin: 0 0 8px; font-size: 14px">Preview</h4>
-        <div id="previewBox" class="preview-box" aria-live="polite">
-          <div class="spinner" id="previewSpinner" style="display: none;"></div>
-        </div>
-        <div class="preview-glow" aria-hidden="true"></div>
-        <div id="previewMeta" class="meta">Style: — • Seed: — • Size: —</div>
-      </aside>
-    </main>
-
-    <section style="margin-top: 12px">
-      <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
-        <div class="muted" style="font-size: 13px">Made for creators • Share your Monadicon</div>
-        <div style="display: flex; gap: 8px">
-          <a href="#" onclick="alert('Share feature coming soon')" class="ghost" style="text-decoration: none">Share</a>
-          <a href="#" onclick="alert('Discord coming soon')" class="ghost" style="text-decoration: none">Discord</a>
-        </div>
-      </div>
-    </section>
-
-    <footer id="foot" class="muted" style="margin-top: 16px; font-size: 12px">
-      Avatars by <a href="https://www.dicebear.com" target="_blank" rel="noopener" style="color: inherit">DiceBear</a> and
-      <a href="https://jdenticon.com" target="_blank" rel="noopener" style="color: inherit">Jdenticon</a> • MIT
-    </footer>
-  </div>
-
-  <audio id="clickSound" src="data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA" preload="auto"></audio>
+<footer>
+<p>Made with ❤️ by Monadicons • <a href="https://github.com/Monadicons" target="_blank">GitHub</a></p>
+</footer>
+</div>
 
 <script>
-  /* ====== Config ====== */
-  const API_BASE = 'https://api.dicebear.com/9.x';
+// Theme toggle
+function toggleTheme(){document.body.classList.toggle('dark');document.body.classList.toggle('light');}
 
-  /* ====== Elements ====== */
-  const seedEl = document.getElementById('seed');
-  const styleEl = document.getElementById('style');
-  const bgTypeEl = document.getElementById('bgType');
-  const bgColorEl = document.getElementById('bgColor');
-  const sizeEl = document.getElementById('size');
-  const previewBox = document.getElementById('previewBox');
-  const previewMeta = document.getElementById('previewMeta');
-  const examplesEl = document.getElementById('examples');
-  const previewSpinner = document.getElementById('previewSpinner');
+// Particle background
+const canvas=document.getElementById('particles');const ctx=canvas.getContext('2d');let particles=[];
+function resizeCanvas(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+window.addEventListener('resize',resizeCanvas);resizeCanvas();
+for(let i=0;i<80;i++){particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+1,dx:(Math.random()-0.5)*0.5,dy:(Math.random()-0.5)*0.5});}
+function animateParticles(){ctx.clearRect(0,0,canvas.width,canvas.height);particles.forEach(p=>{p.x+=p.dx;p.y+=p.dy;if(p.x>canvas.width||p.x<0)p.dx*=-1;if(p.y>canvas.height||p.y<0)p.dy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(124,58,237,0.08)';ctx.fill();});requestAnimationFrame(animateParticles);}
+animateParticles();
 
-  /* ====== Seeds ====== */
-  const sampleSeeds = ['aurora', 'lumen', 'nova', 'zephyr', 'sol', 'aero', 'pixel', 'nebula', 'miso', 'sora', 'echo', 'boreal'];
-
-  /* ====== Utilities ====== */
-  function playClickSound() { const a = document.getElementById('clickSound'); a && a.play().catch(() => {}); }
-  function debounce(fn, wait = 300) { let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), wait); }; }
-  function randomHex() { return '#' + Math.floor(Math.random() * 0xFFFFFF).toString(16).padStart(6, '0'); }
-
-  /* Build DiceBear API URL (N/A for Jdenticon) */
-  function buildUrl(seedOverride) {
-    const style = styleEl.value;
-    const seed = encodeURIComponent((seedOverride || seedEl.value) || 'anon');
-    const size = Math.max(64, Math.min(1024, parseInt(sizeEl.value) || 512));
-    const bg = bgTypeEl.value;
-    const color = bgColorEl.value.replace('#', '');
-    if (style === 'jdenticon') return null;
-    let url = `${API_BASE}/${style}/svg?seed=${seed}&size=${size}`;
-    if (bg === 'solid') url += `&backgroundType=solid&backgroundColor=${color}`;
-    return url;
+// Generator
+const previewBox=document.getElementById('previewBox');const previewMeta=document.getElementById('previewMeta');
+const seedEl=document.getElementById('seed');const styleEl=document.getElementById('style');const sizeEl=document.getElementById('size');
+const bgTypeEl=document.getElementById('bgType');const bgColorEl=document.getElementById('bgColor');
+function getBackgroundCSS(type,color){
+if(type==='solid')return color;
+if(type==='gradient')return `linear-gradient(135deg, ${color} 0%, #ffffff33 100%)`;
+if(type==='dots')return `radial-gradient(${color} 1px, transparent 1px)`; 
+if(type==='stripes')return `repeating-linear-gradient(45deg, ${color} 0, ${color} 5px, transparent 5px, transparent 10px)`; 
+return 'transparent';}
+async function renderPreview(){
+  previewBox.innerHTML=''; const style=styleEl.value; const seed=seedEl.value||'anon'; const size=parseInt(sizeEl.value)||512;
+  const bg=getBackgroundCSS(bgTypeEl.value,bgColorEl.value); previewBox.style.background=bg;
+  if(style==='jdenticon'){previewBox.innerHTML=`<svg width="${size}" height="${size}" data-jdenticon-hash="${seed}"></svg>`;jdenticon.update(previewBox.querySelector('svg'));}
+  else{
+    const url=`https://avatars.dicebear.com/api/${style}/${encodeURIComponent(seed)}.svg?size=${size}`;
+    const res=await fetch(url); const svg=await res.text();
+    previewBox.innerHTML=svg.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi,'');
   }
+  previewMeta.textContent=`Style: ${style} • Seed: ${seed} • Size: ${size}px`;
+}
+document.getElementById('btnGenerate').addEventListener('click',renderPreview);
+[seedEl,styleEl,sizeEl,bgTypeEl,bgColorEl].forEach(el=>el.addEventListener('change',renderPreview));
+window.addEventListener('load',renderPreview);
 
-  /* Fetch SVG text for current selection. If DiceBear fails, fall back to Jdenticon. */
-  async function getSvg(seedOverride) {
-    const style = styleEl.value;
-    const seed = (seedOverride || seedEl.value || 'anon').toString();
-    const size = Math.max(64, Math.min(1024, parseInt(sizeEl.value) || 512));
-    const bg = bgTypeEl.value;
-    const bgColor = bgColorEl.value;
+// Download PNG
+document.getElementById('btnDownloadPNG').addEventListener('click',()=>{
+  const svgEl=previewBox.querySelector('svg'); if(!svgEl){alert('Generate icon first');return;}
+  const svgData=new XMLSerializer().serializeToString(svgEl);
+  const canvas2=document.createElement('canvas'); canvas2.width=svgEl.width.baseVal.value; canvas2.height=svgEl.height.baseVal.value;
+  const ctx2=canvas2.getContext('2d');
+  const img=new Image();
+  img.onload=()=>{ctx2.drawImage(img,0,0);canvas2.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='monadicon.png';a.click();},'image/png');};
+  img.src='data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(svgData)));
+});
 
-    if (style === 'jdenticon' || typeof jdenticon === 'undefined') {
-      if (typeof jdenticon === 'undefined') console.warn('Jdenticon not loaded, using fallback');
-      const iconSvg = jdenticon.toSvg(seed, size, { padding: 0.08 });
-      const bgRect = (bg === 'solid') ? `<rect width="${size}" height="${size}" fill="${bgColor}"></rect>` : '';
-      return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" role="img" aria-label="Identicon">
-        ${bgRect}
-        <g>${iconSvg.replace(/^<svg[^>]*>|<\/svg>$/g, '')}</g>
-      </svg>`;
-    } else {
-      try {
-        const url = buildUrl(seedOverride);
-        if (!url) throw new Error('Invalid style or URL');
-        const res = await fetch(url, { mode: 'cors' });
-        if (!res.ok) throw new Error(`Failed to fetch SVG: ${res.status} ${res.statusText}`);
-        return await res.text();
-      } catch (err) {
-        console.error('DiceBear API failed:', err);
-        console.log('Falling back to Jdenticon');
-        const iconSvg = jdenticon.toSvg(seed, size, { padding: 0.08 });
-        const bgRect = (bg === 'solid') ? `<rect width="${size}" height="${size}" fill="${bgColor}"></rect>` : '';
-        return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" role="img" aria-label="Identicon (Fallback)">
-          ${bgRect}
-          <g>${iconSvg.replace(/^<svg[^>]*>|<\/svg>$/g, '')}</g>
-        </svg>`;
-      }
-    }
-  }
+// Download SVG with background
+document.getElementById('btnDownloadSVG').addEventListener('click',()=>{
+  const svgEl=previewBox.querySelector('svg'); if(!svgEl){alert('Generate icon first');return;}
+  const bg=previewBox.style.background||'transparent';
+  const svgData=new XMLSerializer().serializeToString(svgEl);
+  const svgWithBG=`<svg xmlns="http://www.w3.org/2000/svg" width="${svgEl.width.baseVal.value}" height="${svgEl.height.baseVal.value}">
+  <rect width="100%" height="100%" fill="${bg}"/>
+  ${svgData.replace(/<svg[^>]*>|<\/svg>/gi,'')}
+  </svg>`;
+  const a=document.createElement('a'); a.href='data:image/svg+xml;base64,'+btoa(svgWithBG); a.download='monadicon.svg'; a.click();
+});
 
-  /* Render preview */
-  async function renderPreview(seedOverride) {
-    previewSpinner.style.display = 'block';
-    try {
-      previewBox.innerHTML = '';
-      const svg = await getSvg(seedOverride);
-      const safe = svg.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '');
-      previewBox.innerHTML = safe;
-      previewMeta.textContent = `Style: ${styleEl.value} • Seed: ${seedOverride || seedEl.value} • Size: ${sizeEl.value}px`;
-      confettiExplosion();
-    } catch (err) {
-      console.error('Preview error:', err);
-      previewBox.textContent = 'Failed to generate icon. Check console for details or use Jdenticon.';
-      previewMeta.textContent = '';
-    } finally {
-      previewSpinner.style.display = 'none';
-    }
-  }
+// Copy embed
+document.getElementById('btnCopyEmbed').addEventListener('click',()=>{
+  const svgEl=previewBox.querySelector('svg'); if(!svgEl){alert('Generate icon first');return;}
+  const bg=previewBox.style.background||'transparent';
+  const svgData=new XMLSerializer().serializeToString(svgEl);
+  const embed=`<svg xmlns="http://www.w3.org/2000/svg" width="${svgEl.width.baseVal.value}" height="${svgEl.height.baseVal.value}"><rect width="100%" height="100%" fill="${bg}"/>${svgData.replace(/<svg[^>]*>|<\/svg>/gi,'')}</svg>`;
+  navigator.clipboard.writeText(embed); alert('Embed code copied!');
+});
 
-  /* Download helpers */
-  async function downloadSVG() {
-    try {
-      const svg = await getSvg();
-      const blob = new Blob([svg], { type: 'image/svg+xml' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = `${(seedEl.value || 'icon')}.svg`;
-      a.click();
-      URL.revokeObjectURL(a.href);
-    } catch (e) { alert('SVG download failed'); console.error(e); }
-  }
-
-  async function downloadPNG() {
-    try {
-      const svg = await getSvg();
-      const size = Math.max(64, Math.min(1024, parseInt(sizeEl.value) || 512));
-      const svgBlob = new Blob([svg], { type: 'image/svg+xml' });
-      const url = URL.createObjectURL(svgBlob);
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        canvas.width = size; canvas.height = size;
-        const ctx = canvas.getContext('2d');
-        if (bgTypeEl.value === 'solid') { ctx.fillStyle = bgColorEl.value; ctx.fillRect(0, 0, size, size); }
-        ctx.drawImage(img, 0, 0, size, size);
-        canvas.toBlob((b) => {
-          const a = document.createElement('a');
-          a.href = URL.createObjectURL(b);
-          a.download = `${(seedEl.value || 'icon')}.png`;
-          a.click();
-          URL.revokeObjectURL(a.href);
-        }, 'image/png');
-        URL.revokeObjectURL(url);
-      };
-      img.onerror = () => { alert('PNG conversion failed (try smaller size)'); URL.revokeObjectURL(url); };
-      img.src = url;
-    } catch (e) { alert('PNG creation failed'); console.error(e); }
-  }
-
-  /* Clipboard embed */
-  function copyEmbed() {
-    const style = styleEl.value;
-    const size = Math.max(64, Math.min(1024, parseInt(sizeEl.value) || 512));
-    if (style === 'jdenticon') {
-      const svg = previewBox.innerHTML.trim();
-      const msg = '<!-- Inline this SVG in your HTML -->\n' + svg;
-      navigator.clipboard.writeText(msg).then(() => alert('Inline SVG copied!')).catch(() => alert('Copy failed'));
-    } else {
-      const url = buildUrl();
-      const tag = `<img src="${url}" alt="${seedEl.value || 'icon'}" width="${size}" height="${size}" />`;
-      navigator.clipboard.writeText(tag).then(() => alert('Embed tag copied!')).catch(() => alert('Copy failed'));
-    }
-  }
-
-  /* UI wiring */
-  document.getElementById('gen').addEventListener('click', () => { playClickSound(); renderPreview(); });
-  document.getElementById('ctaGenerate').addEventListener('click', () => { playClickSound(); seedEl.focus(); renderPreview(); });
-  document.getElementById('random').addEventListener('click', () => {
-    playClickSound();
-    const pick = sampleSeeds[Math.floor(Math.random() * sampleSeeds.length)];
-    seedEl.value = pick + '-' + Math.floor(Math.random() * 9999);
-    renderPreview();
-  });
-  document.getElementById('randomTheme').addEventListener('click', () => {
-    playClickSound();
-    styleEl.value = styleEl.options[Math.floor(Math.random() * styleEl.options.length)].value;
-    bgColorEl.value = randomHex();
-    const pick = sampleSeeds[Math.floor(Math.random() * sampleSeeds.length)];
-    seedEl.value = pick + '-' + Math.floor(Math.random() * 9999);
-    renderPreview();
-  });
-  document.getElementById('downloadSvg').addEventListener('click', () => { playClickSound(); downloadSVG(); });
-  document.getElementById('downloadPng').addEventListener('click', () => { playClickSound(); downloadPNG(); });
-  document.getElementById('copyEmbed').addEventListener('click', () => { playClickSound(); copyEmbed(); });
-
-  document.getElementById('shareX').addEventListener('click', () => {
-    playClickSound();
-    const style = styleEl.value;
-    const base = (style === 'jdenticon') ? location.href : buildUrl();
-    const tweet = `Check out my custom Monadicon! ${base || ''}`;
-    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(tweet)}`, '_blank');
-  });
-  document.getElementById('shareDiscord').addEventListener('click', () => {
-    playClickSound();
-    const style = styleEl.value;
-    const url = (style === 'jdenticon') ? '[Inline SVG copied from preview]' : buildUrl();
-    navigator.clipboard.writeText(url || '').then(() => alert('Icon URL copied! Paste it in Discord.')).catch(() => alert('Copy failed'));
-  });
-
-  /* Live updates on inputs */
-  seedEl.addEventListener('input', debounce(() => renderPreview(), 500));
-  styleEl.addEventListener('change', () => renderPreview());
-  bgTypeEl.addEventListener('change', () => renderPreview());
-  bgColorEl.addEventListener('input', debounce(() => renderPreview(), 200));
-  sizeEl.addEventListener('input', debounce(() => renderPreview(), 300));
-
-  /* Examples slider */
-  function renderExamples() {
-    examplesEl.innerHTML = '';
-    for (let s of sampleSeeds) {
-      const chip = document.createElement('button');
-      chip.className = 'chip';
-      chip.textContent = s;
-      chip.onclick = () => { seedEl.value = s; renderPreview(); };
-      examplesEl.appendChild(chip);
-    }
-  }
-  document.getElementById('ctaExamples').addEventListener('click', () => {
-    playClickSound();
-    const area = examplesEl;
-    const hidden = area.getAttribute('aria-hidden') === 'true';
-    area.setAttribute('aria-hidden', hidden ? 'false' : 'true');
-    area.style.display = hidden ? 'flex' : 'none';
-    document.getElementById('ctaExamples').textContent = hidden ? 'Hide examples' : 'See examples';
-  });
-
-  /* Theme toggle (persist) */
-  const THEME_KEY = 'monadicons-theme';
-  function applyTheme(t) {
-    document.body.classList.remove('dark', 'light');
-    document.body.classList.add(t);
-    localStorage.setItem(THEME_KEY, t);
-  }
-  document.getElementById('toggleTheme').addEventListener('click', () => {
-    playClickSound();
-    const next = document.body.classList.contains('dark') ? 'light' : 'dark';
-    applyTheme(next);
-  });
-  (function initTheme() {
-    const saved = localStorage.getItem(THEME_KEY);
-    if (saved === 'light') applyTheme('light'); else applyTheme('dark');
-  })();
-
-  /* Confetti */
-  function confettiExplosion() {
-    const canvas = document.createElement('canvas');
-    canvas.style.position = 'fixed';
-    canvas.style.top = '0';
-    canvas.style.left = '0';
-    canvas.style.pointerEvents = 'none';
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
-    document.body.appendChild(canvas);
-    const ctx = canvas.getContext('2d');
-    const confetti = Array.from({ length: 100 }, () => ({
-      x: canvas.width / 2,
-      y: canvas.height / 2,
-      vx: (Math.random() * 10 - 5),
-      vy: (Math.random() * -10 - 5),
-      color: `hsl(${Math.random() * 360}, 100%, 50%)`,
-      size: Math.random() * 8 + 4,
-      rot: Math.random() * Math.PI
-    }));
-    (function animate() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      confetti.forEach((c, i) => {
-        c.x += c.vx;
-        c.y += c.vy;
-        c.vy += 0.2;
-        c.size *= 0.992;
-        c.rot += 0.2;
-        if (c.size < 0.7 || c.y > canvas.height) confetti.splice(i, 1);
-        ctx.save();
-        ctx.translate(c.x, c.y);
-        ctx.rotate(c.rot);
-        ctx.fillStyle = c.color;
-        ctx.fillRect(-c.size / 2, -c.size / 2, c.size, c.size);
-        ctx.restore();
-      });
-      if (confetti.length > 0) requestAnimationFrame(animate);
-      else document.body.removeChild(canvas);
-    })();
-  }
-
-  /* Particles background */
-  function initParticles() {
-    const canvas = document.getElementById('particles');
-    const ctx = canvas.getContext('2d');
-    function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
-    resize();
-    addEventListener('resize', resize);
-
-    const N = 90;
-    const parts = Array.from({ length: N }, () => ({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      vx
+// Share
+document.getElementById('btnShareX').addEventListener('click',()=>{window.open('https://twitter.com/intent/tweet?text=Check out my Monadicon!','_blank');});
+document.getElementById('btnShareDiscord').addEventListener('click',()=>{window.open('https://discord.com/channels/@me','_blank');});
+</script>
+</body>
+</html>
