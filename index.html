@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Monadicons — Create your personal icon</title>
-  <meta name="description" content="Create unique, eye-catching SVG/PNG icons for your profiles, websites, and socials. No design skills required." />
+  <meta name="description" content="Create unique, customizable SVG/PNG avatars using DiceBear or Jdenticon. No design skills required — works offline as a PWA." />
   <meta name="theme-color" content="#7C3AED" />
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.jsdelivr.net/npm/jdenticon@3.2.0/dist/jdenticon.min.js"></script>
@@ -12,18 +12,14 @@
 <body>
   <div class="wrap">
     <header>
-      <div>
-        <h1>Monadicons</h1>
-        <p class="lead">Create unique, eye-catching icons in seconds — no design skills or installs.</p>
-      </div>
+      <h1>Monadicons</h1>
+      <p>Create unique avatars instantly — DiceBear + Jdenticon, fully offline.</p>
     </header>
 
     <main class="card">
-      <section class="left">
-        <h3 style="margin:0 0 6px;font-size:15px">Icon Generator</h3>
-
+      <section class="controls">
         <label for="seed">Seed / Name</label>
-        <input id="seed" type="text" placeholder="e.g., aurora" value="" autocomplete="off" />
+        <input id="seed" type="text" placeholder="e.g., aurora" autocomplete="off" />
 
         <label for="style">Style</label>
         <select id="style">
@@ -47,17 +43,17 @@
         <label for="size">Size (px)</label>
         <input id="size" type="number" value="512" min="64" max="1024" />
 
-        <div class="controls">
-          <button id="generate" class="primary">Generate</button>
-          <button id="downloadSvg" class="ghost" disabled>Download SVG</button>
-          <button id="downloadPng" class="ghost" disabled>Download PNG</button>
-          <button id="copyEmbed" class="ghost" disabled>Copy Embed</button>
-          <button id="share" class="ghost" disabled>Share</button>
+        <button id="generate" class="primary">Generate</button>
+        <div class="action-buttons">
+          <button id="downloadSvg" disabled>Download SVG</button>
+          <button id="downloadPng" disabled>Download PNG</button>
+          <button id="copyEmbed" disabled>Copy Embed</button>
+          <button id="share" disabled>Share</button>
         </div>
       </section>
 
       <aside class="preview">
-        <h4 style="margin:0 0 8px;font-size:14px">Preview</h4>
+        <h4>Preview</h4>
         <div id="previewBox" class="preview-box">Select options and click Generate</div>
         <div id="previewMeta" class="meta">Style: — • Seed: — • Size: —</div>
       </aside>
@@ -112,8 +108,16 @@
       }
       currentSvg = svg;
 
+      // Apply background if solid
+      const bgType = bgTypeSelect.value;
+      const bgColor = bgColorInput.value;
+      let wrappedSvg = svg;
+      if (bgType === 'solid') {
+        wrappedSvg = svg.replace('<svg', `<svg style="background:${bgColor}"`);
+      }
+
       // Update preview
-      previewBox.innerHTML = svg;
+      previewBox.innerHTML = wrappedSvg;
       previewMeta.textContent = `Style: ${currentStyle} • Seed: ${currentSeed} • Size: ${currentSize}px`;
       enableActions();
     });
@@ -137,6 +141,8 @@
         canvas.width = currentSize;
         canvas.height = currentSize;
         const ctx = canvas.getContext('2d');
+        ctx.fillStyle = bgTypeSelect.value === 'solid' ? bgColorInput.value : 'transparent';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(img, 0, 0, currentSize, currentSize);
         canvas.toBlob((blob) => {
           const a = document.createElement('a');
@@ -159,20 +165,23 @@
       const params = new URLSearchParams({
         seed: currentSeed,
         style: currentStyle,
-        size: currentSize
+        size: currentSize,
+        bg: bgTypeSelect.value,
+        color: bgColorInput.value
       });
       const link = `${location.origin}${location.pathname}?${params.toString()}`;
       navigator.clipboard.writeText(link);
       alert('Link copied to clipboard!');
     });
 
-    // Optional: auto-load from URL if shared
     window.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.has('seed')) {
         seedInput.value = urlParams.get('seed');
         styleSelect.value = urlParams.get('style') || 'adventurer';
         sizeInput.value = urlParams.get('size') || '512';
+        bgTypeSelect.value = urlParams.get('bg') || 'transparent';
+        bgColorInput.value = urlParams.get('color') || '#ffffff';
         generateBtn.click();
       }
     });
