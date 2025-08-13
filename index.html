@@ -395,19 +395,22 @@
     const bgColor = bgColorEl.value;
 
     if (style === 'jdenticon') {
+      if (typeof jdenticon === 'undefined') {
+        console.error('Jdenticon library not loaded');
+        return `<svg><text x="50%" y="50%" font-size="20" text-anchor="middle">Jdenticon failed to load</text></svg>`;
+      }
       // Generate SVG locally
       const iconSvg = jdenticon.toSvg(seed, size, { padding: 0.08 });
-      // Wrap with optional background rect for parity with DiceBear
       const bgRect = (bg === 'solid') ? `<rect width="${size}" height="${size}" fill="${bgColor}"></rect>` : '';
-      // Inject identicon as <g> to preserve dimensions
       return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" role="img" aria-label="Identicon">
         ${bgRect}
         <g>${iconSvg.replace(/^<svg[^>]*>|<\/svg>$/g, '')}</g>
       </svg>`;
     } else {
       const url = buildUrl(seedOverride);
+      if (!url) throw new Error('Invalid style or URL');
       const res = await fetch(url);
-      if (!res.ok) throw new Error('Failed to fetch SVG');
+      if (!res.ok) throw new Error(`Failed to fetch SVG: ${res.status} ${res.statusText}`);
       return await res.text();
     }
   }
@@ -423,8 +426,8 @@
       previewMeta.textContent = `Style: ${styleEl.value} • Seed: ${seedOverride || seedEl.value} • Size: ${sizeEl.value}px`;
       confettiExplosion();
     } catch (err) {
-      console.error(err);
-      previewBox.textContent = 'Preview error';
+      console.error('Preview error:', err);
+      previewBox.textContent = 'Failed to generate icon. Check console for details.';
       previewMeta.textContent = '';
     } finally {
       previewSpinner.style.display = 'none';
@@ -455,7 +458,6 @@
         const canvas = document.createElement('canvas');
         canvas.width = size; canvas.height = size;
         const ctx = canvas.getContext('2d');
-        // If background is solid, it's already in SVG for Jdenticon case; still fill to be safe
         if (bgTypeEl.value === 'solid') { ctx.fillStyle = bgColorEl.value; ctx.fillRect(0, 0, size, size); }
         ctx.drawImage(img, 0, 0, size, size);
         canvas.toBlob((b) => {
@@ -477,7 +479,6 @@
     const style = styleEl.value;
     const size = Math.max(64, Math.min(1024, parseInt(sizeEl.value) || 512));
     if (style === 'jdenticon') {
-      // For local style, suggest using <svg> inline via current preview
       const svg = previewBox.innerHTML.trim();
       const msg = '<!-- Inline this SVG in your HTML -->\n' + svg;
       navigator.clipboard.writeText(msg).then(() => alert('Inline SVG copied!')).catch(() => alert('Copy failed'));
@@ -554,4 +555,8 @@
   const THEME_KEY = 'monadicons-theme';
   function applyTheme(t) {
     document.body.classList.remove('dark', 'light');
-    document.body.classList
+    document.body.classList.add(t);
+    localStorage.setItem(THEME_KEY, t);
+  }
+  document.getElementById('toggleTheme').addEventListener('click', () => {
+    playClickSound();
