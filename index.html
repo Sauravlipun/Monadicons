@@ -119,7 +119,7 @@ body.light .preview-box { background: linear-gradient(180deg, rgba(0,0,0,0.02), 
       <div style="display:flex;gap:8px;margin-top:10px">
         <div style="flex:1">
           <label for="size">Size (px)</label>
-          <input id="size" class="input" type="number" min="64" max="2048" value="512" />
+          <input id="size" class="input" type="number" min="64" max="4096" value="512" />
         </div>
         <div style="width:150px">
           <label for="scale">Scale (%)</label>
@@ -327,27 +327,18 @@ function buildDefsAndRect(bgType, color, size){
 
 /* ---------- Helper: extract inner dimensions and content ---------- */
 function extractInnerSvgInfo(svgText, defaultSize){
-  // returns { innerSvg, w, h }
   if(!svgText) return { innerSvg:'', w: defaultSize, h: defaultSize };
-
-  // remove xml prolog
   svgText = svgText.replace(/^<\?xml[\s\S]*?\?>\s*/i, '');
-
-  // get viewBox if present
   const vb = svgText.match(/viewBox=["']?([\d\.\-\s,]+)["']?/i);
   if(vb){
-    // viewBox: minX minY width height
     const parts = vb[1].trim().split(/[\s,]+/).map(Number);
     if(parts.length >= 4 && parts[2] && parts[3]){
       const innerW = Math.abs(parts[2]);
       const innerH = Math.abs(parts[3]);
-      // strip outer svg tags
       const inner = svgText.replace(/^<svg[^>]*>/i,'').replace(/<\/svg>$/i,'');
       return { innerSvg: inner, w: innerW, h: innerH };
     }
   }
-
-  // fallback: try width / height attributes
   const wAttr = svgText.match(/<svg[^>]*\bwidth=["']?(\d+(?:\.\d+)?)["']?/i);
   const hAttr = svgText.match(/<svg[^>]*\bheight=["']?(\d+(?:\.\d+)?)["']?/i);
   if(wAttr || hAttr){
@@ -356,8 +347,6 @@ function extractInnerSvgInfo(svgText, defaultSize){
     const inner = svgText.replace(/^<svg[^>]*>/i,'').replace(/<\/svg>$/i,'');
     return { innerSvg: inner, w: innerW, h: innerH };
   }
-
-  // last resort: assume square of defaultSize
   const inner = svgText.replace(/^<svg[^>]*>/i,'').replace(/<\/svg>$/i,'');
   return { innerSvg: inner, w: defaultSize, h: defaultSize };
 }
@@ -365,18 +354,16 @@ function extractInnerSvgInfo(svgText, defaultSize){
 /* ---------- Build final SVG (centered & scaled to fill) ---------- */
 async function buildFinalSvg(settings){
   const outSize = clamp(parseInt(settings.size)||512, 64, 4096);
-  const scalePercent = clamp(parseFloat(settings.scale)||100, 50, 200); // percent from UI
-  const userScale = scalePercent / 100; // multiplier
+  const scalePercent = clamp(parseFloat(settings.scale)||100, 50, 200);
+  const userScale = scalePercent / 100;
   const rotation = clamp(parseFloat(settings.rotation)||0, -360, 360);
   const bgType = settings.bgType;
   const bgColor = settings.bgColor || '#ffffff';
   const style = settings.style;
   const seed = (settings.seed || 'anon').toString();
 
-  // background defs
   const { defs, rectFill, noiseFilterId } = buildDefsAndRect(bgType, bgColor, outSize);
 
-  // obtain inner svg text and original dimensions
   let innerSvg = '';
   let innerW = outSize;
   let innerH = outSize;
@@ -388,7 +375,6 @@ async function buildFinalSvg(settings){
     innerW = info.w;
     innerH = info.h;
   } else {
-    // fetch from remote endpoints (try primary then fallback)
     const tryUrls = [
       `${PRIMARY_DICEBEAR}/${style}/svg?seed=${encodeURIComponent(seed)}&size=${outSize}`,
       `${FALLBACK_DICEBEAR}/${style}/${encodeURIComponent(seed)}.svg?size=${outSize}`
@@ -412,21 +398,13 @@ async function buildFinalSvg(settings){
     innerH = info.h;
   }
 
-  // compute fill scale: scale so the larger dimension of inner covers outSize (like slice)
   const maxInner = Math.max(innerW, innerH) || outSize;
   const fillScale = (outSize / maxInner);
-
-  // total scale = fillScale * userScale
   const totalScale = fillScale * userScale;
 
-  // transform sequence:
-  // 1) translate to outer center
-  // 2) rotate
-  // 3) scale totalScale
-  // 4) translate inner to center (-innerW/2, -innerH/2)
   const cx = outSize/2, cy = outSize/2;
+  // Scale about center, but inner coordinate origin might not be 0,0 so later we translate by innerW/2,innerH/2
   const transform = `translate(${cx},${cy}) rotate(${rotation}) scale(${totalScale}) translate(${-innerW/2},${-innerH/2})`;
-
   const rectFilterAttr = noiseFilterId ? ` filter="url(#${noiseFilterId})"` : '';
 
   const svg =
@@ -613,7 +591,37 @@ function applyUrlParams(){
 }
 applyUrlParams();
 
-/* Export settings */
+/* Export settings button: download JSON + copy to clipboard + notify */
+if(exportJSON){
+  exportJSON.addEventListener('click', ()=>{
+    try {
+      const settings = readSettingsFromUI();
+      const jsonText = JSON.stringify(settings, null, 2);
+      // Download
+      const filename = `monadicon-settings-${Date.now()}.json`;
+      const blob = new Blob([jsonText], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      // Copy to clipboard (best-effort)
+      navigator.clipboard?.writeText(jsonText).catch(()=>{/* ignore copy errors */});
+
+      // Notify user
+      alert(`Settings exported as ${filename} and copied to clipboard.`);
+    } catch (err) {
+      console.error('Export failed', err);
+      alert('Export failed — see console for details.');
+    }
+  });
+}
+
+/* Export other UI handlers */
 qs('#copyJSON').addEventListener('click', ()=>{ copyToClipboard(JSON.stringify(readSettingsFromUI(), null, 2)); alert('Settings JSON copied'); });
 qs('#downloadJSON').addEventListener('click', ()=>{ const txt = JSON.stringify(readSettingsFromUI(), null, 2); const blob = new Blob([txt], {type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='monadicon-settings.json'; a.click(); });
 
@@ -632,7 +640,7 @@ try{ const p = localStorage.getItem('monadicons:theme'); setTheme(p === 'light')
 
 /* Confetti & particles (unchanged) */
 function confetti(){ const canvas=document.createElement('canvas'); canvas.style.position='fixed'; canvas.style.left='0'; canvas.style.top='0'; canvas.style.pointerEvents='none'; canvas.width=innerWidth; canvas.height=innerHeight; document.body.appendChild(canvas); const ctx=canvas.getContext('2d'); const pieces=Array.from({length:80}, ()=>({x:innerWidth/2+(Math.random()-0.5)*200,y:innerHeight/2+(Math.random()-0.5)*60,vx:(Math.random()-0.5)*8,vy:Math.random()*-10-2,r:Math.random()*6+3,c:`hsl(${Math.random()*360},80%,60%)`,rot:Math.random()*Math.PI})); (function anim(){ ctx.clearRect(0,0,canvas.width,canvas.height); pieces.forEach((p,i)=>{ p.x+=p.vx; p.y+=p.vy; p.vy+=0.4; p.rot+=0.2; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.c; ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r); ctx.restore(); if(p.y>canvas.height+50) pieces.splice(i,1); }); if(pieces.length) requestAnimationFrame(anim); else canvas.remove(); })(); }
-(function initParticles(){ const can=document.createElement('canvas'); can.id='particles-canvas'; can.style.position='fixed'; can.style.top='0'; can.style.left='0'; can.style.width='100%'; can.style.height='100%'; can.style.pointerEvents='none'; can.style.zIndex='-1'; document.body.appendChild(can); const ctx = can.getContext('2d'); function resize(){ can.width=innerWidth; can.height=innerHeight; } window.addEventListener('resize', resize); resize(); const parts = Array.from({length:90}, ()=>({x:Math.random()*can.width,y:Math.random()*can.height,r:Math.random()*1.8+0.6,vx:(Math.random()-.5)*0.4,vy:(Math.random()-.5)*0.4})); (function draw(){ ctx.clearRect(0,0,can.width,can.height); parts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>can.width)p.vx*=-1; if(p.y<0||p.y>can.height)p.vy*=-1; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle='rgba(124,58,237,0.06)'; ctx.fill(); }); requestAnimationFrame(draw); })(); })();
+(function initParticles(){ const can=document.createElement('canvas'); can.id='particles-canvas'; can.style.position='fixed'; can.style.top='0'; can.style.left='0'; can.style.width='100%'; can.style.height='100%'; can.style.pointerEvents='none'; can.style.zIndex='-1'; document.body.appendChild(can); const ctx = can.getContext('2d'); function resize(){ can.width = innerWidth; can.height = innerHeight; } window.addEventListener('resize', resize); resize(); const parts = Array.from({length:90}, ()=>({x:Math.random()*can.width,y:Math.random()*can.height,r:Math.random()*1.8+0.6,vx:(Math.random()-.5)*0.4,vy:(Math.random()-.5)*0.4})); (function draw(){ ctx.clearRect(0,0,can.width,can.height); parts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>can.width)p.vx*=-1; if(p.y<0||p.y>can.height)p.vy*=-1; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle='rgba(124,58,237,0.06)'; ctx.fill(); }); requestAnimationFrame(draw); })(); })();
 
 /* init */
 settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
