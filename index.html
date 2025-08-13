@@ -6,6 +6,7 @@
 <title>Monadicons — Avatar studio</title>
 <meta name="description" content="Generate avatars. Customize settings, preview, and download SVG/PNG." />
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%237C3AED'/><text x='50' y='58' font-size='50' text-anchor='middle' fill='white' font-family='Arial'>M</text></svg>">
+
 <!-- jdenticon for local generation -->
 <script src="https://cdn.jsdelivr.net/npm/jdenticon@3.2.0/dist/jdenticon.min.js"></script>
 
@@ -14,44 +15,48 @@
   --accent:#7C3AED; --accent-2:#5B21B6; --muted:#9fb0c9; --bg-1:#071124; --bg-2:#071a2b;
   --card-bg: rgba(255,255,255,0.02);
   --glass: rgba(255,255,255,0.04);
+  --gap:18px;
+  --radius:12px;
 }
 *{box-sizing:border-box}
 html,body{height:100%}
-body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;color:#e6eef8;background:radial-gradient(1200px 600px at 10% 10%, rgba(124,58,237,0.12), transparent), linear-gradient(180deg,var(--bg-1),var(--bg-2));-webkit-font-smoothing:antialiased;padding:22px}
-.container{max-width:1150px;margin:0 auto}
-.header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+body{
+  margin:0;
+  font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial;
+  color:#e6eef8;
+  background:radial-gradient(1200px 600px at 10% 10%, rgba(124,58,237,0.12), transparent), linear-gradient(180deg,var(--bg-1),var(--bg-2));
+  -webkit-font-smoothing:antialiased;
+  padding:22px;
+}
+.container{max-width:1180px;margin:0 auto}
+.header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
 .brand{display:flex;gap:12px;align-items:center}
 .logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:800;color:white;font-size:20px}
 h1{margin:0;font-size:20px}
-.header-actions{display:flex;gap:8px}
-.btn, .ghost, .small { cursor:pointer; border-radius:10px; padding:8px 12px; font-weight:600; border:none }
+.header-actions{display:flex;gap:8px;align-items:center}
+.btn, .ghost, .small { cursor:pointer; border-radius:10px; padding:8px 12px; font-weight:600; border:none; outline:none }
 .btn{background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:white; box-shadow:0 8px 24px rgba(124,58,237,0.12)}
 .ghost{background:transparent;border:1px solid rgba(255,255,255,0.06); color:var(--muted)}
 .small{padding:6px 8px;background:var(--glass);color:var(--muted);font-weight:600}
-.grid{display:grid;grid-template-columns:1fr 420px;gap:18px}
-.card{background:var(--card-bg);padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+.grid{display:grid;grid-template-columns:1fr 440px;gap:var(--gap);align-items:start}
+.card{background:var(--card-bg);padding:16px;border-radius:var(--radius);border:1px solid rgba(255,255,255,0.03)}
 .controls label{display:block;font-size:13px;color:var(--muted);margin:10px 0 6px}
 .row{display:flex;gap:8px;align-items:center}
-.input, select, input[type="color"], input[type="number"]{
-  width:100%; padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;
+.input, select, input[type="color"], input[type="number"], input[type="text"]{
+  width:100%; padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;font-size:14px;
 }
-.small-input{width:auto;padding:8px;border-radius:8px}
 .controls{margin-top:8px;display:flex;flex-wrap:wrap;gap:8px}
-.preview-box{width:100%;height:420px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+.preview-box{width:100%;height:440px;border-radius:var(--radius);border:1px solid rgba(255,255,255,0.04);background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
 .preview-box svg{width:100%;height:100%;display:block}
-/* Ensure the inline svg content fills and is centered */
-.preview-box svg > g, .preview-box svg > g > g { transform-origin: 50% 50%; }
-/* forced centering fallback for inner svg content */
-.preview-box svg [width],[height] { width:100% !important; height:100% !important; }
 .preview-meta{color:var(--muted);font-size:13px;margin-top:8px;text-align:center}
 .history{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .thumb{width:64px;height:64px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);overflow:hidden;cursor:pointer;background:white;display:flex;align-items:center;justify-content:center}
 .switch{display:inline-flex;align-items:center;gap:8px;background:var(--glass);padding:6px;border-radius:999px}
 .switch input{display:none}
 footer{color:var(--muted);font-size:13px;text-align:center;margin-top:18px}
-@media(max-width:980px){
+@media(max-width:1000px){
   .grid{grid-template-columns:1fr; }
-  .preview-box{height:320px}
+  .preview-box{height:360px}
 }
 </style>
 </head>
@@ -63,7 +68,6 @@ footer{color:var(--muted);font-size:13px;text-align:center;margin-top:18px}
       <div class="logo">M</div>
       <div>
         <h1>Monadicons</h1>
-        <!-- subtitle removed per request -->
       </div>
     </div>
 
@@ -108,13 +112,6 @@ footer{color:var(--muted);font-size:13px;text-align:center;margin-top:18px}
           <input id="size" class="input" type="number" min="64" max="2048" value="512" />
         </div>
         <div style="width:150px">
-          <label for="padding">Padding (px)</label>
-          <input id="padding" class="input" type="number" min="0" max="200" value="16" />
-        </div>
-      </div>
-
-      <div style="display:flex;gap:8px;margin-top:8px">
-        <div style="flex:1">
           <label for="scale">Scale (%)</label>
           <input id="scale" class="input" type="number" min="50" max="200" value="100" />
         </div>
@@ -129,8 +126,11 @@ footer{color:var(--muted);font-size:13px;text-align:center;margin-top:18px}
         <option value="transparent">transparent</option>
         <option value="solid">solid</option>
         <option value="gradient">gradient</option>
+        <option value="radial">radial</option>
         <option value="dots">dots</option>
         <option value="stripes">stripes</option>
+        <option value="checker">checker</option>
+        <option value="noise">noise</option>
       </select>
 
       <label for="bgColor">Background color</label>
@@ -143,7 +143,7 @@ footer{color:var(--muted);font-size:13px;text-align:center;margin-top:18px}
         <button id="clearHistory" class="small">Clear History</button>
       </div>
 
-      <div class="toolbar" style="margin-top:12px">
+      <div class="toolbar" style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
         <button id="downloadSvg" class="ghost">Download SVG</button>
         <button id="downloadPng" class="ghost">Download PNG</button>
         <button id="copyEmbed" class="ghost">Copy Embed</button>
@@ -210,7 +210,7 @@ const qsa = (sel, root=document) => Array.from(root.querySelectorAll(sel));
 const clamp = (v,min,max)=>Math.max(min,Math.min(max,v));
 
 function hexToRgb(hex){
-  hex = hex.replace('#','');
+  hex = (hex||'#ffffff').replace('#','');
   if(hex.length===3) hex = hex.split('').map(c=>c+c).join('');
   const r = parseInt(hex.slice(0,2),16);
   const g = parseInt(hex.slice(2,4),16);
@@ -230,7 +230,6 @@ const liveToggle = qs('#liveToggle');
 const seedEl = qs('#seed');
 const styleEl = qs('#style');
 const sizeEl = qs('#size');
-const paddingEl = qs('#padding');
 const scaleEl = qs('#scale');
 const rotationEl = qs('#rotation');
 const bgTypeEl = qs('#bgType');
@@ -265,41 +264,63 @@ let history = [];
 const sampleSeeds = ['aurora','lumen','nova','zephyr','sol','aero','pixel','nebula','miso','sora','echo','boreal','octopus','waffle','tiger','meteor'];
 
 /* ---------- Endpoints ---------- */
-const PRIMARY_DICEBEAR = 'https://api.dicebear.com/9.x'; // preferred
-const FALLBACK_DICEBEAR = 'https://avatars.dicebear.com/api'; // backup
+const PRIMARY_DICEBEAR = 'https://api.dicebear.com/9.x';
+const FALLBACK_DICEBEAR = 'https://avatars.dicebear.com/api';
 
-/* ---------- Helpers to build background defs & rect ---------- */
+/* ---------- Build background defs ---------- */
 function buildDefsAndRect(bgType, color, size){
   const idPrefix = 'mb_' + Math.random().toString(36).slice(2,8);
   let defs = '';
   let rectFill = color || 'transparent';
 
-  if(bgType === 'transparent'){
-    rectFill = 'none';
-  } else if(bgType === 'solid'){
-    rectFill = color;
-  } else if(bgType === 'gradient'){
+  if(bgType === 'transparent'){ rectFill = 'none'; }
+  else if(bgType === 'solid'){ rectFill = color; }
+  else if(bgType === 'gradient'){
     const gradId = idPrefix + '_g';
     const lighter = mixWithWhite(color,0.55);
-    defs = `<linearGradient id="${gradId}" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${color}" /><stop offset="100%" stop-color="${lighter}" stop-opacity="0.85" /></linearGradient>`;
+    defs = `<linearGradient id="${gradId}" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${color}" /><stop offset="100%" stop-color="${lighter}" stop-opacity="0.9" /></linearGradient>`;
     rectFill = `url(#${gradId})`;
-  } else if(bgType === 'dots'){
+  }
+  else if(bgType === 'radial'){
+    const rid = idPrefix + '_r';
+    const lighter = mixWithWhite(color,0.6);
+    defs = `<radialGradient id="${rid}" cx="30%" cy="30%" r="80%"><stop offset="0%" stop-color="${lighter}" /><stop offset="100%" stop-color="${color}" /></radialGradient>`;
+    rectFill = `url(#${rid})`;
+  }
+  else if(bgType === 'dots'){
     const patId = idPrefix + '_p';
-    defs = `<pattern id="${patId}" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="${mixWithWhite(color,0.85)}" /><circle cx="6" cy="6" r="2" fill="${color}" /></pattern>`;
+    defs = `<pattern id="${patId}" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="${mixWithWhite(color,0.85)}"/><circle cx="6" cy="6" r="2" fill="${color}"/></pattern>`;
     rectFill = `url(#${patId})`;
-  } else if(bgType === 'stripes'){
+  }
+  else if(bgType === 'stripes'){
     const patId = idPrefix + '_s';
-    defs = `<pattern id="${patId}" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="12" fill="${color}" /><rect x="6" width="6" height="12" fill="transparent" /></pattern>`;
+    // simple stripes pattern (works across browsers)
+    defs = `<pattern id="${patId}" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="5" height="10" fill="${color}" /><rect x="5" width="5" height="10" fill="transparent" /></pattern>`;
     rectFill = `url(#${patId})`;
+  }
+  else if(bgType === 'checker'){
+    const patId = idPrefix + '_c';
+    const lighter = mixWithWhite(color,0.7);
+    defs = `<pattern id="${patId}" width="20" height="20" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="${color}"/><rect x="10" y="10" width="10" height="10" fill="${color}"/><rect x="0" y="0" width="10" height="10" fill="${lighter}" /><rect x="10" y="10" width="10" height="10" fill="${lighter}"/></pattern>`;
+    rectFill = `url(#${patId})`;
+  }
+  else if(bgType === 'noise'){
+    const filterId = idPrefix + '_f';
+    const bgRect = idPrefix + '_b';
+    // turbulence + color matrix to tint
+    defs = `<filter id="${filterId}"><feTurbulence baseFrequency="0.8" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0.2"/><feBlend mode="overlay" in2="SourceGraphic"/></filter>`;
+    // we'll use a solid color fill + overlay filter for noise look
+    rectFill = color;
+    // attach filter to rect by id later
+    return { defs, rectFill, noiseFilterId: filterId };
   }
 
   return { defs, rectFill };
 }
 
-/* ---------- Build final SVG that matches preview ---------- */
+/* ---------- Build final SVG (no padding) ---------- */
 async function buildFinalSvg(settings){
   const size = clamp(parseInt(settings.size)||512, 64, 2048);
-  const padding = clamp(parseInt(settings.padding)||0, 0, Math.floor(size/2)-1);
   const userScale = clamp((parseFloat(settings.scale)||100)/100, 0.5, 2.0);
   const rotation = clamp(parseFloat(settings.rotation)||0, -360, 360);
   const bgType = settings.bgType;
@@ -307,9 +328,12 @@ async function buildFinalSvg(settings){
   const style = settings.style;
   const seed = (settings.seed || 'anon').toString();
 
-  const {defs, rectFill} = buildDefsAndRect(bgType, bgColor, size);
+  const defsObj = buildDefsAndRect(bgType, bgColor, size);
+  const defs = defsObj.defs || '';
+  const rectFill = defsObj.rectFill || 'none';
+  const noiseFilterId = defsObj.noiseFilterId || null;
 
-  // Get inner SVG content. Try primary API then fallback if needed.
+  // Get inner SVG content
   let innerSvg = '';
   if(style === 'jdenticon'){
     innerSvg = jdenticon.toSvg(seed, size);
@@ -322,49 +346,39 @@ async function buildFinalSvg(settings){
     let lastErr = null;
     for(const url of tryUrls){
       try{
-        const res = await fetch(url, {cache: 'no-store'});
-        if(!res.ok){
-          lastErr = new Error('Fetch failed ' + res.status + ' from ' + url);
-          continue;
-        }
+        const res = await fetch(url, {cache:'no-store'});
+        if(!res.ok){ lastErr = new Error('Fetch failed ' + res.status + ' from ' + url); continue; }
         let svgText = await res.text();
         svgText = svgText.replace(/^<\?xml[\s\S]*?\?>\s*/i,'');
         innerSvg = svgText.replace(/^<svg[^>]*>/i, '').replace(/<\/svg>$/i, '');
-        lastErr = null;
-        break;
-      } catch(err){
-        lastErr = err;
-      }
+        lastErr = null; break;
+      } catch(e){ lastErr = e; }
     }
-    if(lastErr) {
-      throw new Error('Failed to fetch SVG from remote endpoints. See console for details. Last error: ' + (lastErr.message || lastErr));
-    }
+    if(lastErr) throw new Error('Failed to fetch SVG. See console for details. ' + (lastErr.message||lastErr));
   }
 
-  // compute scale and transform
-  const available = Math.max(1, size - padding*2);
-  const baseScale = available / size;
-  const combinedScale = baseScale * userScale;
-  const cx = size / 2;
-  const cy = size / 2;
+  // Compose final SVG with preserveAspectRatio slice so inner content covers & centers
+  // We apply rotation and scale around center (cx,cy).
+  const cx = size/2, cy = size/2;
+  const transform = `translate(${cx},${cy}) rotate(${rotation}) scale(${userScale}) translate(${-cx},${-cy})`;
 
-  // Compose final svg with preserveAspectRatio to ensure it covers center area
+  // If noise filter exists we attach it
+  const rectFilterAttr = noiseFilterId ? ` filter="url(#${noiseFilterId})"` : '';
+
   const svg =
 `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Monadicon">
   <defs>
     ${defs}
   </defs>
-  <rect width="${size}" height="${size}" fill="${rectFill}" />
-  <g transform="translate(${padding},${padding})">
-    <g transform="translate(${cx},${cy}) rotate(${rotation}) translate(${-cx},${-cy}) scale(${combinedScale})">
-      ${innerSvg}
-    </g>
+  <rect width="${size}" height="${size}" fill="${rectFill}" ${rectFilterAttr} />
+  <g transform="${transform}">
+    ${innerSvg}
   </g>
 </svg>`;
   return svg;
 }
 
-/* ---------- Preview rendering ---------- */
+/* ---------- Render preview ---------- */
 async function renderPreview(settings, { addToHistory=false } = {}){
   previewBox.innerHTML = `<div style="color:var(--muted);text-align:center">Rendering...</div>`;
   try{
@@ -376,7 +390,7 @@ async function renderPreview(settings, { addToHistory=false } = {}){
 
     if(addToHistory){
       history.unshift({settings, svg: finalSvg});
-      if(history.length>24) history.pop();
+      if(history.length>28) history.pop();
       renderHistory();
       confetti();
     }
@@ -386,9 +400,9 @@ async function renderPreview(settings, { addToHistory=false } = {}){
   }
 }
 
-/* ---------- Download & embed ---------- */
+/* ---------- Download / embed ---------- */
 function downloadSVGfromString(svgString, filename='monadicon.svg'){
-  const blob = new Blob([svgString], {type: 'image/svg+xml'});
+  const blob = new Blob([svgString], {type:'image/svg+xml'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a'); a.href = url; a.download = filename; a.click();
   URL.revokeObjectURL(url);
@@ -396,60 +410,47 @@ function downloadSVGfromString(svgString, filename='monadicon.svg'){
 function downloadPNGfromSvgString(svgString, filename='monadicon.png'){
   const img = new Image();
   img.onload = () => {
-    const w = img.width;
-    const h = img.height;
-    const canvas = document.createElement('canvas');
-    canvas.width = w; canvas.height = h;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(img, 0, 0);
-    canvas.toBlob((blob) => {
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href = url; a.download = filename; a.click();
-      URL.revokeObjectURL(url);
-    }, 'image/png');
+    const w = img.width, h = img.height;
+    const canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext('2d'); ctx.drawImage(img,0,0);
+    canvas.toBlob((blob)=>{ const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = filename; a.click(); URL.revokeObjectURL(url); }, 'image/png');
   };
-  img.onerror = (e)=>{ alert('PNG conversion failed; see console.'); console.error(e); };
+  img.onerror = e => { alert('PNG conversion failed; see console.'); console.error(e); };
   img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
 }
 
 /* ---------- History UI ---------- */
 function renderHistory(){
   historyEl.innerHTML = '';
-  for(let i=0;i<history.length;i++){
-    const item = history[i];
+  for(const item of history){
     const thumb = document.createElement('div'); thumb.className='thumb'; thumb.title = `${item.settings.seed} • ${item.settings.style}`;
-    const img = document.createElement('img');
-    img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover';
+    const img = document.createElement('img'); img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover';
     img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(item.svg)));
     thumb.appendChild(img);
-    thumb.onclick = ()=>{ loadSettings(item.settings); renderPreview(item.settings); };
+    thumb.onclick = ()=> { loadSettings(item.settings); renderPreview(item.settings); };
     historyEl.appendChild(thumb);
   }
 }
 
-/* ---------- Copy & Export ---------- */
-function copyToClipboard(text){
-  navigator.clipboard.writeText(text).then(()=>{}, (err)=>{ console.error('copy failed', err); alert('Copy failed')});
-}
+/* ---------- Copy / export ---------- */
+function copyToClipboard(text){ navigator.clipboard.writeText(text).catch(e=>{ console.error('copy failed', e); alert('Copy failed'); }); }
 
-/* ---------- Events & wiring ---------- */
+/* ---------- Wiring & events ---------- */
 function readSettingsFromUI(){
   return {
     seed: seedEl.value || 'anon',
     style: styleEl.value,
     size: parseInt(sizeEl.value) || 512,
-    padding: clamp(parseInt(paddingEl.value)||16, 0, 1000),
-    scale: clamp(parseFloat(scaleEl.value)||100, 50, 200),
-    rotation: clamp(parseFloat(rotationEl.value)||0, -360, 360),
+    scale: clamp((parseFloat(scaleEl.value)||100)/1, 50, 200), // keep percent numeric but used as percentage in code
+    rotation: clamp(parseFloat(rotationEl.value)||0, -360,360),
     bgType: bgTypeEl.value,
-    bgColor: bgColorEl.value || '#ffffff'
+    bgColor: bgColorEl.value || '#7C3AED'
   };
 }
 function loadSettings(s){
   seedEl.value = s.seed || 'anon';
   styleEl.value = s.style || 'adventurer';
   sizeEl.value = s.size || 512;
-  paddingEl.value = s.padding || 16;
   scaleEl.value = s.scale || 100;
   rotationEl.value = s.rotation || 0;
   bgTypeEl.value = s.bgType || 'transparent';
@@ -457,31 +458,32 @@ function loadSettings(s){
   settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
 }
 
-const generateBtnEl = qs('#generateBtn');
-generateBtnEl.addEventListener('click', async ()=>{
+generateBtn.addEventListener('click', async ()=>{
   const s = readSettingsFromUI();
+  // convert scale to factor (100 => 1.0)
+  s.scale = parseFloat(s.scale) / 100;
   await renderPreview(s, { addToHistory:true });
 });
 
 applyPreviewBtn.addEventListener('click', async ()=>{
-  const s = readSettingsFromUI();
+  const s = readSettingsFromUI(); s.scale = parseFloat(s.scale) / 100;
   await renderPreview(s, { addToHistory:false });
 });
 
 downloadSvgBtn.addEventListener('click', async ()=>{
-  const s = readSettingsFromUI();
+  const s = readSettingsFromUI(); s.scale = parseFloat(s.scale)/100;
   const svg = await buildFinalSvg(s);
   downloadSVGfromString(svg, `${(s.seed||'monadicon')}.svg`);
 });
 
 downloadPngBtn.addEventListener('click', async ()=>{
-  const s = readSettingsFromUI();
+  const s = readSettingsFromUI(); s.scale = parseFloat(s.scale)/100;
   const svg = await buildFinalSvg(s);
   downloadPNGfromSvgString(svg, `${(s.seed||'monadicon')}.png`);
 });
 
 copyEmbedBtn.addEventListener('click', async ()=>{
-  const s = readSettingsFromUI();
+  const s = readSettingsFromUI(); s.scale = parseFloat(s.scale)/100;
   const svg = await buildFinalSvg(s);
   copyToClipboard(svg);
   alert('SVG embed copied to clipboard (full SVG markup)');
@@ -498,20 +500,18 @@ shareDiscordBtn.addEventListener('click', ()=>{
   const s = readSettingsFromUI();
   const params = new URLSearchParams(s);
   const url = location.origin + location.pathname + '?' + params.toString();
-  copyToClipboard(url);
-  alert('Share link copied to clipboard — paste into Discord');
+  copyToClipboard(url); alert('Share link copied to clipboard — paste into Discord');
 });
 
 randomBtn.addEventListener('click', ()=>{
   seedEl.value = sampleSeeds[Math.floor(Math.random()*sampleSeeds.length)] + '-' + Math.floor(Math.random()*9999);
   const styles = qsa('#style option').map(o=>o.value);
   styleEl.value = styles[Math.floor(Math.random()*styles.length)];
-  bgTypeEl.value = ['transparent','solid','gradient','dots','stripes'][Math.floor(Math.random()*5)];
+  bgTypeEl.value = ['transparent','solid','gradient','radial','dots','stripes','checker','noise'][Math.floor(Math.random()*8)];
   bgColorEl.value = '#'+Math.floor(Math.random()*0xFFFFFF).toString(16).padStart(6,'0');
   sizeEl.value = [128,256,512,768,1024][Math.floor(Math.random()*5)];
   scaleEl.value = 80 + Math.floor(Math.random()*60);
   rotationEl.value = Math.floor(Math.random()*360)-180;
-  paddingEl.value = Math.floor((parseInt(sizeEl.value)||512) * (Math.random()*0.12));
   if(liveToggle.checked) applyPreviewBtn.click();
 });
 
@@ -527,9 +527,9 @@ qsa('.preset').forEach(btn=>{
   });
 });
 
-/* Live preview on inputs if toggle enabled */
+/* Live preview */
 function setupLivePreview(){
-  const inputs = [seedEl, styleEl, sizeEl, paddingEl, scaleEl, rotationEl, bgTypeEl, bgColorEl];
+  const inputs = [seedEl, styleEl, sizeEl, scaleEl, rotationEl, bgTypeEl, bgColorEl];
   inputs.forEach(inp => {
     inp.addEventListener('input', () => {
       settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
@@ -542,88 +542,57 @@ function setupLivePreview(){
 }
 setupLivePreview();
 
-/* Persist / Load settings via URL */
+/* URL params */
 function applyUrlParams(){
   const params = new URLSearchParams(window.location.search);
   if([...params.keys()].length === 0) return;
   const s = {};
-  for(const key of ['seed','style','size','padding','scale','rotation','bgType','bgColor']){
+  for(const key of ['seed','style','size','scale','rotation','bgType','bgColor']){
     if(params.get(key)!==null) s[key] = params.get(key);
   }
   if(Object.keys(s).length) { loadSettings(s); applyPreviewBtn.click(); }
 }
 applyUrlParams();
 
-/* Export settings JSON */
-qs('#copyJSON').addEventListener('click', ()=>{
-  copyToClipboard(JSON.stringify(readSettingsFromUI(), null, 2));
-  alert('Settings JSON copied');
-});
-qs('#downloadJSON').addEventListener('click', ()=>{
-  const txt = JSON.stringify(readSettingsFromUI(), null, 2);
-  const blob = new Blob([txt], {type:'application/json'});
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'monadicon-settings.json'; a.click();
-});
+/* Export settings */
+qs('#copyJSON').addEventListener('click', ()=>{ copyToClipboard(JSON.stringify(readSettingsFromUI(), null, 2)); alert('Settings JSON copied'); });
+qs('#downloadJSON').addEventListener('click', ()=>{ const txt = JSON.stringify(readSettingsFromUI(), null, 2); const blob = new Blob([txt], {type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='monadicon-settings.json'; a.click(); });
 
-/* History control */
+/* History clear */
 qs('#clearHistory').addEventListener('click', ()=>{ history=[]; renderHistory(); });
 
-/* Theme */
+/* Theme toggle */
 toggleThemeBtn.addEventListener('click', ()=>{
   isLight = !isLight;
   if(isLight){ document.body.classList.add('light'); document.body.classList.remove('dark'); toggleThemeBtn.textContent = 'Dark'; }
   else { document.body.classList.remove('light'); document.body.classList.add('dark'); toggleThemeBtn.textContent = 'Light'; }
 });
 
-/* Confetti (simple) */
+/* Confetti */
 function confetti(){
   const canvas = document.createElement('canvas');
   canvas.style.position='fixed'; canvas.style.left='0'; canvas.style.top='0'; canvas.style.pointerEvents='none';
   canvas.width = innerWidth; canvas.height = innerHeight; document.body.appendChild(canvas);
   const ctx = canvas.getContext('2d');
-  const pieces = Array.from({length:80}, ()=>({
-    x: innerWidth/2 + (Math.random()-0.5)*200,
-    y: innerHeight/2 + (Math.random()-0.5)*60,
-    vx: (Math.random()-0.5)*8,
-    vy: Math.random()*-10-2,
-    r: Math.random()*6+3,
-    c: `hsl(${Math.random()*360},80%,60%)`,
-    rot: Math.random()*Math.PI
-  }));
-  (function anim(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    pieces.forEach((p,i)=>{ p.x+=p.vx; p.y+=p.vy; p.vy+=0.4; p.rot+=0.2; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.c; ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r); ctx.restore(); if(p.y>canvas.height+50) pieces.splice(i,1); });
-    if(pieces.length) requestAnimationFrame(anim); else canvas.remove();
-  })();
+  const pieces = Array.from({length:80}, ()=>({ x: innerWidth/2 + (Math.random()-0.5)*200, y: innerHeight/2 + (Math.random()-0.5)*60, vx:(Math.random()-0.5)*8, vy: Math.random()*-10-2, r: Math.random()*6+3, c: `hsl(${Math.random()*360},80%,60%)`, rot: Math.random()*Math.PI }));
+  (function anim(){ ctx.clearRect(0,0,canvas.width,canvas.height); pieces.forEach((p,i)=>{ p.x+=p.vx; p.y+=p.vy; p.vy+=0.4; p.rot+=0.2; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.c; ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r); ctx.restore(); if(p.y>canvas.height+50) pieces.splice(i,1); }); if(pieces.length) requestAnimationFrame(anim); else canvas.remove(); })();
 }
 
-/* Particles background (subtle) */
+/* Particles */
 (function initParticles(){
   const can = document.createElement('canvas');
   can.id = 'particles-canvas';
-  can.style.position = 'fixed';
-  can.style.top = '0';
-  can.style.left = '0';
-  can.style.width = '100%';
-  can.style.height = '100%';
-  can.style.pointerEvents = 'none';
-  can.style.zIndex = '-1';
+  can.style.position = 'fixed'; can.style.top='0'; can.style.left='0'; can.style.width='100%'; can.style.height='100%'; can.style.pointerEvents='none'; can.style.zIndex='-1';
   document.body.appendChild(can);
   const ctx = can.getContext('2d');
   function resize(){ can.width = innerWidth; can.height = innerHeight; }
   window.addEventListener('resize', resize); resize();
-  const parts = Array.from({length:80}, ()=>({x:Math.random()*can.width,y:Math.random()*can.height,r:Math.random()*1.8+0.6,vx:(Math.random()-.5)*0.4,vy:(Math.random()-.5)*0.4}));
-  (function draw(){
-    ctx.clearRect(0,0,can.width,can.height);
-    parts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>can.width)p.vx*=-1; if(p.y<0||p.y>can.height)p.vy*=-1; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle='rgba(124,58,237,0.06)'; ctx.fill(); });
-    requestAnimationFrame(draw);
-  })();
+  const parts = Array.from({length:90}, ()=>({x:Math.random()*can.width,y:Math.random()*can.height,r:Math.random()*1.8+0.6,vx:(Math.random()-.5)*0.4,vy:(Math.random()-.5)*0.4}));
+  (function draw(){ ctx.clearRect(0,0,can.width,can.height); parts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>can.width)p.vx*=-1; if(p.y<0||p.y>can.height)p.vy*=-1; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle='rgba(124,58,237,0.06)'; ctx.fill(); }); requestAnimationFrame(draw); })();
 })();
 
-/* initialize UI state string */
+/* initialize UI */
 settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
-
-/* Auto-render a small preview on load (do not add to history) */
 applyPreviewBtn.click();
 
 </script>
