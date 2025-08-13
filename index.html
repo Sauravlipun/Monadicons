@@ -18,6 +18,7 @@
   --gap:18px;
   --radius:12px;
 }
+/* Basic layout */
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
@@ -27,6 +28,7 @@ body{
   background:radial-gradient(1200px 600px at 10% 10%, rgba(124,58,237,0.12), transparent), linear-gradient(180deg,var(--bg-1),var(--bg-2));
   -webkit-font-smoothing:antialiased;
   padding:22px;
+  transition: background .25s ease, color .2s ease;
 }
 .container{max-width:1180px;margin:0 auto}
 .header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
@@ -54,6 +56,18 @@ h1{margin:0;font-size:20px}
 .switch{display:inline-flex;align-items:center;gap:8px;background:var(--glass);padding:6px;border-radius:999px}
 .switch input{display:none}
 footer{color:var(--muted);font-size:13px;text-align:center;margin-top:18px}
+
+/* LIGHT THEME OVERRIDES */
+body.light{
+  color: #1f2937;
+  background: linear-gradient(180deg,#f0f4f8,#e6eef5);
+}
+body.light .card{ background: white; border-color: rgba(0,0,0,0.06); color: #1f2937 }
+body.light .input, body.light select { background: white; color: #111; border-color: rgba(0,0,0,0.12) }
+body.light .ghost { border-color: rgba(0,0,0,0.08); color: #475569 }
+body.light .preview-box { background: linear-gradient(180deg, rgba(0,0,0,0.02), transparent) }
+
+/* Responsive */
 @media(max-width:1000px){
   .grid{grid-template-columns:1fr; }
   .preview-box{height:360px}
@@ -66,9 +80,7 @@ footer{color:var(--muted);font-size:13px;text-align:center;margin-top:18px}
   <div class="header">
     <div class="brand">
       <div class="logo">M</div>
-      <div>
-        <h1>Monadicons</h1>
-      </div>
+      <div><h1>Monadicons</h1></div>
     </div>
 
     <div class="header-actions">
@@ -230,7 +242,7 @@ const liveToggle = qs('#liveToggle');
 const seedEl = qs('#seed');
 const styleEl = qs('#style');
 const sizeEl = qs('#size');
-const scaleEl = qs('#scale');
+const scaleEl = qs('#scale');       // percent (100)
 const rotationEl = qs('#rotation');
 const bgTypeEl = qs('#bgType');
 const bgColorEl = qs('#bgColor');
@@ -257,6 +269,7 @@ const exportJSON = qs('#exportJSON');
 const settingsOut = qs('#settingsOut');
 
 const toggleThemeBtn = qs('#toggleTheme');
+
 let isLight = false;
 
 /* ---------- State ---------- */
@@ -267,11 +280,12 @@ const sampleSeeds = ['aurora','lumen','nova','zephyr','sol','aero','pixel','nebu
 const PRIMARY_DICEBEAR = 'https://api.dicebear.com/9.x';
 const FALLBACK_DICEBEAR = 'https://avatars.dicebear.com/api';
 
-/* ---------- Build background defs ---------- */
+/* ---------- Background defs ---------- */
 function buildDefsAndRect(bgType, color, size){
   const idPrefix = 'mb_' + Math.random().toString(36).slice(2,8);
   let defs = '';
   let rectFill = color || 'transparent';
+  let noiseFilterId = null;
 
   if(bgType === 'transparent'){ rectFill = 'none'; }
   else if(bgType === 'solid'){ rectFill = color; }
@@ -294,33 +308,29 @@ function buildDefsAndRect(bgType, color, size){
   }
   else if(bgType === 'stripes'){
     const patId = idPrefix + '_s';
-    // simple stripes pattern (works across browsers)
     defs = `<pattern id="${patId}" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="5" height="10" fill="${color}" /><rect x="5" width="5" height="10" fill="transparent" /></pattern>`;
     rectFill = `url(#${patId})`;
   }
   else if(bgType === 'checker'){
     const patId = idPrefix + '_c';
     const lighter = mixWithWhite(color,0.7);
-    defs = `<pattern id="${patId}" width="20" height="20" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="${color}"/><rect x="10" y="10" width="10" height="10" fill="${color}"/><rect x="0" y="0" width="10" height="10" fill="${lighter}" /><rect x="10" y="10" width="10" height="10" fill="${lighter}"/></pattern>`;
+    defs = `<pattern id="${patId}" width="20" height="20" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="${color}"/><rect x="10" y="10" width="10" height="10" fill="${color}"/><rect width="10" height="10" fill="${lighter}"/><rect x="10" y="10" width="10" height="10" fill="${lighter}"/></pattern>`;
     rectFill = `url(#${patId})`;
   }
   else if(bgType === 'noise'){
     const filterId = idPrefix + '_f';
-    const bgRect = idPrefix + '_b';
-    // turbulence + color matrix to tint
     defs = `<filter id="${filterId}"><feTurbulence baseFrequency="0.8" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0.2"/><feBlend mode="overlay" in2="SourceGraphic"/></filter>`;
-    // we'll use a solid color fill + overlay filter for noise look
     rectFill = color;
-    // attach filter to rect by id later
-    return { defs, rectFill, noiseFilterId: filterId };
+    noiseFilterId = filterId;
   }
 
-  return { defs, rectFill };
+  return { defs, rectFill, noiseFilterId };
 }
 
-/* ---------- Build final SVG (no padding) ---------- */
+/* ---------- Build final SVG ---------- */
 async function buildFinalSvg(settings){
   const size = clamp(parseInt(settings.size)||512, 64, 2048);
+  // settings.scale is a percent (e.g., 100)
   const userScale = clamp((parseFloat(settings.scale)||100)/100, 0.5, 2.0);
   const rotation = clamp(parseFloat(settings.rotation)||0, -360, 360);
   const bgType = settings.bgType;
@@ -328,12 +338,8 @@ async function buildFinalSvg(settings){
   const style = settings.style;
   const seed = (settings.seed || 'anon').toString();
 
-  const defsObj = buildDefsAndRect(bgType, bgColor, size);
-  const defs = defsObj.defs || '';
-  const rectFill = defsObj.rectFill || 'none';
-  const noiseFilterId = defsObj.noiseFilterId || null;
+  const { defs, rectFill, noiseFilterId } = buildDefsAndRect(bgType, bgColor, size);
 
-  // Get inner SVG content
   let innerSvg = '';
   if(style === 'jdenticon'){
     innerSvg = jdenticon.toSvg(seed, size);
@@ -357,12 +363,9 @@ async function buildFinalSvg(settings){
     if(lastErr) throw new Error('Failed to fetch SVG. See console for details. ' + (lastErr.message||lastErr));
   }
 
-  // Compose final SVG with preserveAspectRatio slice so inner content covers & centers
-  // We apply rotation and scale around center (cx,cy).
+  // Build transform around center; preserveAspectRatio xMidYMid slice ensures content covers area
   const cx = size/2, cy = size/2;
   const transform = `translate(${cx},${cy}) rotate(${rotation}) scale(${userScale}) translate(${-cx},${-cy})`;
-
-  // If noise filter exists we attach it
   const rectFilterAttr = noiseFilterId ? ` filter="url(#${noiseFilterId})"` : '';
 
   const svg =
@@ -400,7 +403,7 @@ async function renderPreview(settings, { addToHistory=false } = {}){
   }
 }
 
-/* ---------- Download / embed ---------- */
+/* ---------- Downloads / embed ---------- */
 function downloadSVGfromString(svgString, filename='monadicon.svg'){
   const blob = new Blob([svgString], {type:'image/svg+xml'});
   const url = URL.createObjectURL(blob);
@@ -432,7 +435,7 @@ function renderHistory(){
   }
 }
 
-/* ---------- Copy / export ---------- */
+/* ---------- Copy/Export ---------- */
 function copyToClipboard(text){ navigator.clipboard.writeText(text).catch(e=>{ console.error('copy failed', e); alert('Copy failed'); }); }
 
 /* ---------- Wiring & events ---------- */
@@ -441,8 +444,8 @@ function readSettingsFromUI(){
     seed: seedEl.value || 'anon',
     style: styleEl.value,
     size: parseInt(sizeEl.value) || 512,
-    scale: clamp((parseFloat(scaleEl.value)||100)/1, 50, 200), // keep percent numeric but used as percentage in code
-    rotation: clamp(parseFloat(rotationEl.value)||0, -360,360),
+    scale: parseFloat(scaleEl.value) || 100,     // percent
+    rotation: parseFloat(rotationEl.value) || 0,
     bgType: bgTypeEl.value,
     bgColor: bgColorEl.value || '#7C3AED'
   };
@@ -458,51 +461,50 @@ function loadSettings(s){
   settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
 }
 
+/* Generate / preview handlers */
 generateBtn.addEventListener('click', async ()=>{
   const s = readSettingsFromUI();
-  // convert scale to factor (100 => 1.0)
-  s.scale = parseFloat(s.scale) / 100;
   await renderPreview(s, { addToHistory:true });
 });
-
 applyPreviewBtn.addEventListener('click', async ()=>{
-  const s = readSettingsFromUI(); s.scale = parseFloat(s.scale) / 100;
+  const s = readSettingsFromUI();
   await renderPreview(s, { addToHistory:false });
 });
 
+/* Downloads */
 downloadSvgBtn.addEventListener('click', async ()=>{
-  const s = readSettingsFromUI(); s.scale = parseFloat(s.scale)/100;
+  const s = readSettingsFromUI();
   const svg = await buildFinalSvg(s);
   downloadSVGfromString(svg, `${(s.seed||'monadicon')}.svg`);
 });
-
 downloadPngBtn.addEventListener('click', async ()=>{
-  const s = readSettingsFromUI(); s.scale = parseFloat(s.scale)/100;
+  const s = readSettingsFromUI();
   const svg = await buildFinalSvg(s);
   downloadPNGfromSvgString(svg, `${(s.seed||'monadicon')}.png`);
 });
-
 copyEmbedBtn.addEventListener('click', async ()=>{
-  const s = readSettingsFromUI(); s.scale = parseFloat(s.scale)/100;
+  const s = readSettingsFromUI();
   const svg = await buildFinalSvg(s);
   copyToClipboard(svg);
   alert('SVG embed copied to clipboard (full SVG markup)');
 });
 
-shareXBtn.addEventListener('click', ()=>{
+/* Share */
+qs('#shareX').addEventListener('click', ()=>{
   const s = readSettingsFromUI();
   const params = new URLSearchParams(s);
   const url = location.origin + location.pathname + '?' + params.toString();
   const tweet = `I made a Monadicon — ${url}`;
   window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(tweet)}`, '_blank');
 });
-shareDiscordBtn.addEventListener('click', ()=>{
+qs('#shareDiscord').addEventListener('click', ()=>{
   const s = readSettingsFromUI();
   const params = new URLSearchParams(s);
   const url = location.origin + location.pathname + '?' + params.toString();
   copyToClipboard(url); alert('Share link copied to clipboard — paste into Discord');
 });
 
+/* Random / presets */
 randomBtn.addEventListener('click', ()=>{
   seedEl.value = sampleSeeds[Math.floor(Math.random()*sampleSeeds.length)] + '-' + Math.floor(Math.random()*9999);
   const styles = qsa('#style option').map(o=>o.value);
@@ -514,9 +516,7 @@ randomBtn.addEventListener('click', ()=>{
   rotationEl.value = Math.floor(Math.random()*360)-180;
   if(liveToggle.checked) applyPreviewBtn.click();
 });
-
 qs('#randomPreset').addEventListener('click', ()=> randomBtn.click());
-
 qsa('.preset').forEach(btn=>{
   btn.addEventListener('click', ()=>{
     const seed = btn.dataset.seed;
@@ -561,12 +561,21 @@ qs('#downloadJSON').addEventListener('click', ()=>{ const txt = JSON.stringify(r
 /* History clear */
 qs('#clearHistory').addEventListener('click', ()=>{ history=[]; renderHistory(); });
 
-/* Theme toggle */
-toggleThemeBtn.addEventListener('click', ()=>{
-  isLight = !isLight;
+/* Theme toggle + persistence */
+function setTheme(light){
+  isLight = !!light;
   if(isLight){ document.body.classList.add('light'); document.body.classList.remove('dark'); toggleThemeBtn.textContent = 'Dark'; }
   else { document.body.classList.remove('light'); document.body.classList.add('dark'); toggleThemeBtn.textContent = 'Light'; }
+  try{ localStorage.setItem('monadicons:theme', isLight ? 'light' : 'dark'); }catch(e){}
+}
+toggleThemeBtn.addEventListener('click', ()=>{
+  setTheme(!isLight);
 });
+// initialize theme from localStorage (or default dark)
+try{
+  const p = localStorage.getItem('monadicons:theme');
+  setTheme(p === 'light');
+}catch(e){ setTheme(false); }
 
 /* Confetti */
 function confetti(){
@@ -578,7 +587,7 @@ function confetti(){
   (function anim(){ ctx.clearRect(0,0,canvas.width,canvas.height); pieces.forEach((p,i)=>{ p.x+=p.vx; p.y+=p.vy; p.vy+=0.4; p.rot+=0.2; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.c; ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r); ctx.restore(); if(p.y>canvas.height+50) pieces.splice(i,1); }); if(pieces.length) requestAnimationFrame(anim); else canvas.remove(); })();
 }
 
-/* Particles */
+/* Subtle particles */
 (function initParticles(){
   const can = document.createElement('canvas');
   can.id = 'particles-canvas';
@@ -591,7 +600,7 @@ function confetti(){
   (function draw(){ ctx.clearRect(0,0,can.width,can.height); parts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>can.width)p.vx*=-1; if(p.y<0||p.y>can.height)p.vy*=-1; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle='rgba(124,58,237,0.06)'; ctx.fill(); }); requestAnimationFrame(draw); })();
 })();
 
-/* initialize UI */
+/* initialize UI and preview */
 settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
 applyPreviewBtn.click();
 
