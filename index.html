@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Monadicons — Create your personal icon</title>
+  <meta name="description" content="Create unique, eye-catching SVG/PNG icons for your profiles, websites, and socials. No design skills required." />
+  <meta name="theme-color" content="#7C3AED" />
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/jdenticon@3.2.0/dist/jdenticon.min.js"></script>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Monadicons</h1>
+        <p class="lead">Create unique, eye-catching icons in seconds — no design skills or installs.</p>
+      </div>
+      <div style="text-align:right">
+        <button class="secondary" onclick="document.getElementById('seed').focus()">Get started</button>
+      </div>
+    </header>
+
+    <main class="card">
+      <section class="left">
+        <h3 style="margin:0 0 6px;font-size:15px">Icon Generator</h3>
+        <label for="seed">Seed / Name</label>
+        <input id="seed" type="text" placeholder="e.g., aurora" value="anon" autocomplete="off" />
+
+        <label for="style">Style</label>
+        <select id="style">
+          <option value="adventurer">Adventurer (DiceBear)</option>
+          <option value="avataaars">Avataaars (DiceBear)</option>
+          <option value="pixel-art-neutral">Pixel (DiceBear)</option>
+          <option value="identicon">Identicon (DiceBear)</option>
+          <option value="micah">Micah (DiceBear)</option>
+          <option value="jdenticon">Jdenticon (local)</option>
+        </select>
+
+        <label for="bgType">Background Type</label>
+        <select id="bgType">
+          <option value="transparent">Transparent</option>
+          <option value="solid">Solid</option>
+        </select>
+
+        <label for="bgColor">Background Color</label>
+        <input id="bgColor" type="color" value="#ffffff" />
+
+        <label for="size">Size (px)</label>
+        <input id="size" type="number" value="512" min="64" max="1024" />
+
+        <div class="controls">
+          <button id="random" class="ghost">Random Seed</button>
+          <button id="downloadSvg" class="ghost">Download SVG</button>
+          <button id="downloadPng" class="ghost">Download PNG</button>
+          <button id="copyEmbed" class="ghost">Copy Embed Code</button>
+        </div>
+
+        <div class="gallery" id="examples"></div>
+      </section>
+
+      <aside class="preview">
+        <h4 style="margin:0 0 8px;font-size:14px">Preview</h4>
+        <div id="previewBox" class="preview-box">Loading...</div>
+        <div class="preview-glow"></div>
+        <div id="previewMeta" class="meta">Style: — • Seed: — • Size: —</div>
+      </aside>
+    </main>
+
+    <footer>
+      Avatars powered by 
+      <a href="https://www.dicebear.com" target="_blank">DiceBear</a> and 
+      <a href="https://jdenticon.com" target="_blank">Jdenticon</a> — MIT licensed
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
