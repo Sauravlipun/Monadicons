@@ -1,0 +1,9 @@
+{
+  "name": "Monadicons",
+  "short_name": "Monadicons",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#071124",
+  "description": "Create unique avatars using DiceBear or Jdenticon.",
+  "icons": []
+}
