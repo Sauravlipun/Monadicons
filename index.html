@@ -18,7 +18,6 @@
   --gap:18px;
   --radius:12px;
 }
-/* Basic layout */
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
@@ -67,7 +66,6 @@ body.light .input, body.light select { background: white; color: #111; border-co
 body.light .ghost { border-color: rgba(0,0,0,0.08); color: #475569 }
 body.light .preview-box { background: linear-gradient(180deg, rgba(0,0,0,0.02), transparent) }
 
-/* Responsive */
 @media(max-width:1000px){
   .grid{grid-template-columns:1fr; }
   .preview-box{height:360px}
@@ -327,53 +325,116 @@ function buildDefsAndRect(bgType, color, size){
   return { defs, rectFill, noiseFilterId };
 }
 
-/* ---------- Build final SVG ---------- */
+/* ---------- Helper: extract inner dimensions and content ---------- */
+function extractInnerSvgInfo(svgText, defaultSize){
+  // returns { innerSvg, w, h }
+  if(!svgText) return { innerSvg:'', w: defaultSize, h: defaultSize };
+
+  // remove xml prolog
+  svgText = svgText.replace(/^<\?xml[\s\S]*?\?>\s*/i, '');
+
+  // get viewBox if present
+  const vb = svgText.match(/viewBox=["']?([\d\.\-\s,]+)["']?/i);
+  if(vb){
+    // viewBox: minX minY width height
+    const parts = vb[1].trim().split(/[\s,]+/).map(Number);
+    if(parts.length >= 4 && parts[2] && parts[3]){
+      const innerW = Math.abs(parts[2]);
+      const innerH = Math.abs(parts[3]);
+      // strip outer svg tags
+      const inner = svgText.replace(/^<svg[^>]*>/i,'').replace(/<\/svg>$/i,'');
+      return { innerSvg: inner, w: innerW, h: innerH };
+    }
+  }
+
+  // fallback: try width / height attributes
+  const wAttr = svgText.match(/<svg[^>]*\bwidth=["']?(\d+(?:\.\d+)?)["']?/i);
+  const hAttr = svgText.match(/<svg[^>]*\bheight=["']?(\d+(?:\.\d+)?)["']?/i);
+  if(wAttr || hAttr){
+    const innerW = wAttr ? Math.round(Number(wAttr[1])) : defaultSize;
+    const innerH = hAttr ? Math.round(Number(hAttr[1])) : defaultSize;
+    const inner = svgText.replace(/^<svg[^>]*>/i,'').replace(/<\/svg>$/i,'');
+    return { innerSvg: inner, w: innerW, h: innerH };
+  }
+
+  // last resort: assume square of defaultSize
+  const inner = svgText.replace(/^<svg[^>]*>/i,'').replace(/<\/svg>$/i,'');
+  return { innerSvg: inner, w: defaultSize, h: defaultSize };
+}
+
+/* ---------- Build final SVG (centered & scaled to fill) ---------- */
 async function buildFinalSvg(settings){
-  const size = clamp(parseInt(settings.size)||512, 64, 2048);
-  // settings.scale is a percent (e.g., 100)
-  const userScale = clamp((parseFloat(settings.scale)||100)/100, 0.5, 2.0);
+  const outSize = clamp(parseInt(settings.size)||512, 64, 4096);
+  const scalePercent = clamp(parseFloat(settings.scale)||100, 50, 200); // percent from UI
+  const userScale = scalePercent / 100; // multiplier
   const rotation = clamp(parseFloat(settings.rotation)||0, -360, 360);
   const bgType = settings.bgType;
   const bgColor = settings.bgColor || '#ffffff';
   const style = settings.style;
   const seed = (settings.seed || 'anon').toString();
 
-  const { defs, rectFill, noiseFilterId } = buildDefsAndRect(bgType, bgColor, size);
+  // background defs
+  const { defs, rectFill, noiseFilterId } = buildDefsAndRect(bgType, bgColor, outSize);
 
+  // obtain inner svg text and original dimensions
   let innerSvg = '';
+  let innerW = outSize;
+  let innerH = outSize;
+
   if(style === 'jdenticon'){
-    innerSvg = jdenticon.toSvg(seed, size);
-    innerSvg = innerSvg.replace(/^<\?xml[\s\S]*?\?>\s*/i,'').replace(/^<svg[^>]*>/i, '').replace(/<\/svg>$/i, '');
+    const svgText = jdenticon.toSvg(seed, outSize);
+    const info = extractInnerSvgInfo(svgText, outSize);
+    innerSvg = info.innerSvg;
+    innerW = info.w;
+    innerH = info.h;
   } else {
+    // fetch from remote endpoints (try primary then fallback)
     const tryUrls = [
-      `${PRIMARY_DICEBEAR}/${style}/svg?seed=${encodeURIComponent(seed)}&size=${size}`,
-      `${FALLBACK_DICEBEAR}/${style}/${encodeURIComponent(seed)}.svg?size=${size}`
+      `${PRIMARY_DICEBEAR}/${style}/svg?seed=${encodeURIComponent(seed)}&size=${outSize}`,
+      `${FALLBACK_DICEBEAR}/${style}/${encodeURIComponent(seed)}.svg?size=${outSize}`
     ];
     let lastErr = null;
+    let fetchedText = null;
     for(const url of tryUrls){
       try{
         const res = await fetch(url, {cache:'no-store'});
         if(!res.ok){ lastErr = new Error('Fetch failed ' + res.status + ' from ' + url); continue; }
-        let svgText = await res.text();
-        svgText = svgText.replace(/^<\?xml[\s\S]*?\?>\s*/i,'');
-        innerSvg = svgText.replace(/^<svg[^>]*>/i, '').replace(/<\/svg>$/i, '');
-        lastErr = null; break;
+        fetchedText = await res.text();
+        break;
       } catch(e){ lastErr = e; }
     }
-    if(lastErr) throw new Error('Failed to fetch SVG. See console for details. ' + (lastErr.message||lastErr));
+    if(!fetchedText){
+      throw new Error('Failed to fetch SVG from remote endpoints. See console for details. ' + (lastErr && lastErr.message));
+    }
+    const info = extractInnerSvgInfo(fetchedText, outSize);
+    innerSvg = info.innerSvg;
+    innerW = info.w;
+    innerH = info.h;
   }
 
-  // Build transform around center; preserveAspectRatio xMidYMid slice ensures content covers area
-  const cx = size/2, cy = size/2;
-  const transform = `translate(${cx},${cy}) rotate(${rotation}) scale(${userScale}) translate(${-cx},${-cy})`;
+  // compute fill scale: scale so the larger dimension of inner covers outSize (like slice)
+  const maxInner = Math.max(innerW, innerH) || outSize;
+  const fillScale = (outSize / maxInner);
+
+  // total scale = fillScale * userScale
+  const totalScale = fillScale * userScale;
+
+  // transform sequence:
+  // 1) translate to outer center
+  // 2) rotate
+  // 3) scale totalScale
+  // 4) translate inner to center (-innerW/2, -innerH/2)
+  const cx = outSize/2, cy = outSize/2;
+  const transform = `translate(${cx},${cy}) rotate(${rotation}) scale(${totalScale}) translate(${-innerW/2},${-innerH/2})`;
+
   const rectFilterAttr = noiseFilterId ? ` filter="url(#${noiseFilterId})"` : '';
 
   const svg =
-`<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Monadicon">
+`<svg xmlns="http://www.w3.org/2000/svg" width="${outSize}" height="${outSize}" viewBox="0 0 ${outSize} ${outSize}" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Monadicon">
   <defs>
     ${defs}
   </defs>
-  <rect width="${size}" height="${size}" fill="${rectFill}" ${rectFilterAttr} />
+  <rect width="${outSize}" height="${outSize}" fill="${rectFill}" ${rectFilterAttr} />
   <g transform="${transform}">
     ${innerSvg}
   </g>
@@ -403,7 +464,7 @@ async function renderPreview(settings, { addToHistory=false } = {}){
   }
 }
 
-/* ---------- Downloads / embed ---------- */
+/* ---------- Download helpers ---------- */
 function downloadSVGfromString(svgString, filename='monadicon.svg'){
   const blob = new Blob([svgString], {type:'image/svg+xml'});
   const url = URL.createObjectURL(blob);
@@ -444,7 +505,7 @@ function readSettingsFromUI(){
     seed: seedEl.value || 'anon',
     style: styleEl.value,
     size: parseInt(sizeEl.value) || 512,
-    scale: parseFloat(scaleEl.value) || 100,     // percent
+    scale: parseFloat(scaleEl.value) || 100,
     rotation: parseFloat(rotationEl.value) || 0,
     bgType: bgTypeEl.value,
     bgColor: bgColorEl.value || '#7C3AED'
@@ -471,7 +532,7 @@ applyPreviewBtn.addEventListener('click', async ()=>{
   await renderPreview(s, { addToHistory:false });
 });
 
-/* Downloads */
+/* Downloads & shares */
 downloadSvgBtn.addEventListener('click', async ()=>{
   const s = readSettingsFromUI();
   const svg = await buildFinalSvg(s);
@@ -488,8 +549,6 @@ copyEmbedBtn.addEventListener('click', async ()=>{
   copyToClipboard(svg);
   alert('SVG embed copied to clipboard (full SVG markup)');
 });
-
-/* Share */
 qs('#shareX').addEventListener('click', ()=>{
   const s = readSettingsFromUI();
   const params = new URLSearchParams(s);
@@ -568,39 +627,14 @@ function setTheme(light){
   else { document.body.classList.remove('light'); document.body.classList.add('dark'); toggleThemeBtn.textContent = 'Light'; }
   try{ localStorage.setItem('monadicons:theme', isLight ? 'light' : 'dark'); }catch(e){}
 }
-toggleThemeBtn.addEventListener('click', ()=>{
-  setTheme(!isLight);
-});
-// initialize theme from localStorage (or default dark)
-try{
-  const p = localStorage.getItem('monadicons:theme');
-  setTheme(p === 'light');
-}catch(e){ setTheme(false); }
+toggleThemeBtn.addEventListener('click', ()=> setTheme(!isLight));
+try{ const p = localStorage.getItem('monadicons:theme'); setTheme(p === 'light'); }catch(e){ setTheme(false); }
 
-/* Confetti */
-function confetti(){
-  const canvas = document.createElement('canvas');
-  canvas.style.position='fixed'; canvas.style.left='0'; canvas.style.top='0'; canvas.style.pointerEvents='none';
-  canvas.width = innerWidth; canvas.height = innerHeight; document.body.appendChild(canvas);
-  const ctx = canvas.getContext('2d');
-  const pieces = Array.from({length:80}, ()=>({ x: innerWidth/2 + (Math.random()-0.5)*200, y: innerHeight/2 + (Math.random()-0.5)*60, vx:(Math.random()-0.5)*8, vy: Math.random()*-10-2, r: Math.random()*6+3, c: `hsl(${Math.random()*360},80%,60%)`, rot: Math.random()*Math.PI }));
-  (function anim(){ ctx.clearRect(0,0,canvas.width,canvas.height); pieces.forEach((p,i)=>{ p.x+=p.vx; p.y+=p.vy; p.vy+=0.4; p.rot+=0.2; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.c; ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r); ctx.restore(); if(p.y>canvas.height+50) pieces.splice(i,1); }); if(pieces.length) requestAnimationFrame(anim); else canvas.remove(); })();
-}
+/* Confetti & particles (unchanged) */
+function confetti(){ const canvas=document.createElement('canvas'); canvas.style.position='fixed'; canvas.style.left='0'; canvas.style.top='0'; canvas.style.pointerEvents='none'; canvas.width=innerWidth; canvas.height=innerHeight; document.body.appendChild(canvas); const ctx=canvas.getContext('2d'); const pieces=Array.from({length:80}, ()=>({x:innerWidth/2+(Math.random()-0.5)*200,y:innerHeight/2+(Math.random()-0.5)*60,vx:(Math.random()-0.5)*8,vy:Math.random()*-10-2,r:Math.random()*6+3,c:`hsl(${Math.random()*360},80%,60%)`,rot:Math.random()*Math.PI})); (function anim(){ ctx.clearRect(0,0,canvas.width,canvas.height); pieces.forEach((p,i)=>{ p.x+=p.vx; p.y+=p.vy; p.vy+=0.4; p.rot+=0.2; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.c; ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r); ctx.restore(); if(p.y>canvas.height+50) pieces.splice(i,1); }); if(pieces.length) requestAnimationFrame(anim); else canvas.remove(); })(); }
+(function initParticles(){ const can=document.createElement('canvas'); can.id='particles-canvas'; can.style.position='fixed'; can.style.top='0'; can.style.left='0'; can.style.width='100%'; can.style.height='100%'; can.style.pointerEvents='none'; can.style.zIndex='-1'; document.body.appendChild(can); const ctx = can.getContext('2d'); function resize(){ can.width=innerWidth; can.height=innerHeight; } window.addEventListener('resize', resize); resize(); const parts = Array.from({length:90}, ()=>({x:Math.random()*can.width,y:Math.random()*can.height,r:Math.random()*1.8+0.6,vx:(Math.random()-.5)*0.4,vy:(Math.random()-.5)*0.4})); (function draw(){ ctx.clearRect(0,0,can.width,can.height); parts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>can.width)p.vx*=-1; if(p.y<0||p.y>can.height)p.vy*=-1; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle='rgba(124,58,237,0.06)'; ctx.fill(); }); requestAnimationFrame(draw); })(); })();
 
-/* Subtle particles */
-(function initParticles(){
-  const can = document.createElement('canvas');
-  can.id = 'particles-canvas';
-  can.style.position = 'fixed'; can.style.top='0'; can.style.left='0'; can.style.width='100%'; can.style.height='100%'; can.style.pointerEvents='none'; can.style.zIndex='-1';
-  document.body.appendChild(can);
-  const ctx = can.getContext('2d');
-  function resize(){ can.width = innerWidth; can.height = innerHeight; }
-  window.addEventListener('resize', resize); resize();
-  const parts = Array.from({length:90}, ()=>({x:Math.random()*can.width,y:Math.random()*can.height,r:Math.random()*1.8+0.6,vx:(Math.random()-.5)*0.4,vy:(Math.random()-.5)*0.4}));
-  (function draw(){ ctx.clearRect(0,0,can.width,can.height); parts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>can.width)p.vx*=-1; if(p.y<0||p.y>can.height)p.vy*=-1; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle='rgba(124,58,237,0.06)'; ctx.fill(); }); requestAnimationFrame(draw); })();
-})();
-
-/* initialize UI and preview */
+/* init */
 settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
 applyPreviewBtn.click();
 
