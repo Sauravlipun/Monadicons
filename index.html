@@ -1,170 +1,652 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Monadicons — Create your personal icon</title>
-<script src="https://cdn.jsdelivr.net/npm/jdenticon@3.1.1/dist/jdenticon.min.js"></script>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Monadicons — Full Generator (DiceBear + Jdenticon)</title>
+<meta name="description" content="Generate avatars using DiceBear or Jdenticon. Fully client-side. Download SVG/PNG, copy embed, share, save presets." />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%237C3AED'/><text x='50' y='58' font-size='50' text-anchor='middle' fill='white' font-family='Arial'>M</text></svg>">
+<!-- jdenticon for local generation -->
+<script src="https://cdn.jsdelivr.net/npm/jdenticon@3.2.0/dist/jdenticon.min.js"></script>
+
 <style>
-:root {
---accent:#7C3AED;--accent-2:#5B21B6;--muted:#9fb0c9;--bg-1:#071124;--bg-2:#071a2b;--glass:rgba(255,255,255,0.04);
---light-bg-1:#f0f4f8;--light-bg-2:#e0e7ee;--light-text:#333;--light-muted:#666;
+:root{
+  --accent:#7C3AED; --accent-2:#5B21B6; --muted:#9fb0c9; --bg-1:#071124; --bg-2:#071a2b;
+  --card-bg: rgba(255,255,255,0.02);
+  --glass: rgba(255,255,255,0.04);
 }
-body.dark{background:linear-gradient(180deg,var(--bg-1),var(--bg-2));color:#e6eef8;}
-body.light{background:linear-gradient(180deg,var(--light-bg-1),var(--light-bg-2));color:var(--light-text);}
-*{box-sizing:border-box;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial;margin:0;padding:0;}
-.wrap{max-width:1100px;margin:0 auto;padding:28px;}
-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;}
-h1{font-size:22px;}
-.lead{color:var(--muted);font-size:13px;}
-.card{display:flex;gap:20px;flex-wrap:wrap;padding:18px;border-radius:12px;background:rgba(255,255,255,0.02);}
-.left{flex:1;min-width:280px;}
-label{display:block;font-size:13px;color:var(--muted);margin:10px 0 6px;}
-input[type="text"],select,input[type="number"],input[type="color"]{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;font-size:14px;}
-.controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}
-.btn{padding:10px 14px;border-radius:10px;border:none;background:var(--accent);color:white;cursor:pointer;font-weight:700;transition:0.2s;}
-.btn:hover{background:var(--accent-2);}
-.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);}
-.ghost:hover{background:rgba(255,255,255,0.1);}
-.preview{flex:0 0 380px;min-width:220px;}
-.preview-box{width:320px;height:320px;border-radius:14px;border:1px solid rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;margin-bottom:6px;}
-.preview-box svg{width:100%;height:100%;}
-#particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:-1;}
-footer{margin-top:18px;color:var(--muted);font-size:13px;text-align:center;}
-@media(max-width:980px){.card{flex-direction:column;}.preview{width:100%;}.preview-box{width:100%;height:260px;}}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;color:#e6eef8;background:radial-gradient(1200px 600px at 10% 10%, rgba(124,58,237,0.12), transparent), linear-gradient(180deg,var(--bg-1),var(--bg-2));-webkit-font-smoothing:antialiased;padding:22px}
+.container{max-width:1150px;margin:0 auto}
+.header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.brand{display:flex;gap:12px;align-items:center}
+.logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:800;color:white;font-size:20px}
+h1{margin:0;font-size:20px}
+.lead{margin:2px 0 0;color:var(--muted);font-size:13px}
+.header-actions{display:flex;gap:8px}
+.btn, .ghost, .small { cursor:pointer; border-radius:10px; padding:8px 12px; font-weight:600; border:none }
+.btn{background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:white; box-shadow:0 8px 24px rgba(124,58,237,0.12)}
+.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06); color:var(--muted)}
+.small{padding:6px 8px;background:var(--glass);color:var(--muted);font-weight:600}
+
+.grid{display:grid;grid-template-columns:1fr 420px;gap:18px}
+.card{background:var(--card-bg);padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+.controls label{display:block;font-size:13px;color:var(--muted);margin:10px 0 6px}
+.row{display:flex;gap:8px;align-items:center}
+.input, select, input[type="color"], input[type="number"]{
+  width:100%; padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;
+}
+.small-input{width:auto;padding:8px;border-radius:8px}
+.controls{margin-top:8px;display:flex;flex-wrap:wrap;gap:8px}
+.preview-box{width:100%;height:420px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+.preview-box svg{width:100%;height:100%}
+.preview-meta{color:var(--muted);font-size:13px;margin-top:8px;text-align:center}
+.slider{width:100%}
+.patternToggle{display:flex;gap:8px;flex-wrap:wrap}
+
+.bottom-row{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:12px}
+.history{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.thumb{width:64px;height:64px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);overflow:hidden;cursor:pointer;background:white;display:flex;align-items:center;justify-content:center}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+.footer{color:var(--muted);font-size:13px;text-align:center;margin-top:18px}
+
+.switch{display:inline-flex;align-items:center;gap:8px;background:var(--glass);padding:6px;border-radius:999px}
+.switch input{display:none}
+@media(max-width:980px){
+  .grid{grid-template-columns:1fr; }
+  .preview-box{height:320px}
+}
 </style>
 </head>
-<body class="dark">
-<canvas id="particles"></canvas>
-<div class="wrap">
-<header>
-<div>
-<h1>Monadicons</h1>
-<p class="lead">Create unique icons instantly.</p>
-</div>
-<button class="ghost" onclick="toggleTheme()">Toggle Theme</button>
-</header>
+<body>
+<div class="container">
 
-<main class="card">
-<section class="left">
-<label for="seed">Seed / Name</label>
-<input id="seed" type="text" placeholder="e.g., aurora" value="anon">
-<label for="style">Style</label>
-<select id="style">
-<option value="adventurer">Adventurer</option>
-<option value="avataaars">Avataaars</option>
-<option value="big-ears">Big Ears</option>
-<option value="bottts">Bottts</option>
-<option value="croodles">Croodles</option>
-<option value="fun-emoji">Fun Emoji</option>
-<option value="icons">Icons</option>
-<option value="jdenticon">Jdenticon</option>
-</select>
-<label for="size">Size (px)</label>
-<input id="size" type="number" min="64" max="1024" value="512">
-<label for="bgType">Background type</label>
-<select id="bgType">
-<option value="transparent">Transparent</option>
-<option value="solid">Solid</option>
-<option value="gradient">Gradient</option>
-<option value="dots">Dots</option>
-<option value="stripes">Stripes</option>
-</select>
-<label for="bgColor">Background color</label>
-<input id="bgColor" type="color" value="#7C3AED">
-<div class="controls">
-<button class="btn" id="btnGenerate">Generate</button>
-<button class="btn" id="btnDownloadPNG">Download PNG</button>
-<button class="btn" id="btnDownloadSVG">Download SVG</button>
-<button class="ghost" id="btnCopyEmbed">Copy Embed</button>
-<button class="ghost" id="btnShareX">Share X</button>
-<button class="ghost" id="btnShareDiscord">Share Discord</button>
-</div>
-</section>
+  <div class="header">
+    <div class="brand">
+      <div class="logo">M</div>
+      <div>
+        <h1>Monadicons</h1>
+        <div class="lead">DiceBear + Jdenticon avatar studio — customize everything, download, share.</div>
+      </div>
+    </div>
 
-<section class="preview">
-<div class="preview-box" id="previewBox"></div>
-<div class="meta" id="previewMeta"></div>
-</section>
-</main>
+    <div class="header-actions">
+      <div class="switch" title="Live preview (updates as you change inputs)">
+        <input id="liveToggle" type="checkbox"><label for="liveToggle" style="color:var(--muted);font-weight:600">Live</label>
+      </div>
+      <button id="randomBtn" class="ghost">Random</button>
+      <button id="exportJSON" class="small">Export Settings</button>
+      <button id="toggleTheme" class="small">Light</button>
+    </div>
+  </div>
 
-<footer>
-<p>Made with ❤️ by Monadicons • <a href="https://github.com/Monadicons" target="_blank">GitHub</a></p>
-</footer>
+  <div class="grid">
+    <!-- LEFT: controls -->
+    <div class="card controls">
+      <label for="seed">Seed / Name</label>
+      <input id="seed" class="input" type="text" placeholder="e.g., aurora" value="anon" />
+
+      <label for="style">Style</label>
+      <select id="style" class="input">
+        <optgroup label="DiceBear">
+          <option value="adventurer">adventurer</option>
+          <option value="avataaars">avataaars</option>
+          <option value="big-ears">big-ears</option>
+          <option value="bottts">bottts</option>
+          <option value="croodles">croodles</option>
+          <option value="fun-emoji">fun-emoji</option>
+          <option value="icons">icons</option>
+          <option value="identicon">identicon</option>
+          <option value="micah">micah</option>
+          <option value="pixel-art-neutral">pixel-art-neutral</option>
+        </optgroup>
+        <optgroup label="Local">
+          <option value="jdenticon">jdenticon (local)</option>
+        </optgroup>
+      </select>
+
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <div style="flex:1">
+          <label for="size">Size (px)</label>
+          <input id="size" class="input" type="number" min="64" max="2048" value="512" />
+        </div>
+        <div style="width:150px">
+          <label for="padding">Padding (px)</label>
+          <input id="padding" class="input" type="number" min="0" max="200" value="16" />
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <div style="flex:1">
+          <label for="scale">Scale (%)</label>
+          <input id="scale" class="input" type="number" min="50" max="200" value="100" />
+        </div>
+        <div style="width:150px">
+          <label for="rotation">Rotation (°)</label>
+          <input id="rotation" class="input" type="number" min="-180" max="180" value="0" />
+        </div>
+      </div>
+
+      <label for="bgType">Background type</label>
+      <select id="bgType" class="input">
+        <option value="transparent">transparent</option>
+        <option value="solid">solid</option>
+        <option value="gradient">gradient</option>
+        <option value="dots">dots</option>
+        <option value="stripes">stripes</option>
+      </select>
+
+      <label for="bgColor">Background color</label>
+      <input id="bgColor" type="color" value="#7C3AED" class="input" />
+
+      <div style="display:flex;gap:8px;margin-top:12px;align-items:center">
+        <button id="generateBtn" class="btn">Generate (Add to history)</button>
+        <button id="applyPreviewBtn" class="ghost">Apply Preview</button>
+        <div style="flex:1"></div>
+        <button id="clearHistory" class="small">Clear History</button>
+      </div>
+
+      <div class="toolbar" style="margin-top:12px">
+        <button id="downloadSvg" class="ghost">Download SVG</button>
+        <button id="downloadPng" class="ghost">Download PNG</button>
+        <button id="copyEmbed" class="ghost">Copy Embed</button>
+        <button id="shareX" class="ghost">Share X</button>
+        <button id="shareDiscord" class="ghost">Share Discord</button>
+      </div>
+
+      <div style="margin-top:12px">
+        <label>Presets</label>
+        <div class="patternToggle">
+          <button class="small" data-seed="aurora" data-style="adventurer">Aurora</button>
+          <button class="small" data-seed="nebula" data-style="pixel-art-neutral">Nebula</button>
+          <button class="small" data-seed="octopus" data-style="fun-emoji">Octopus</button>
+          <button class="small" data-seed="miso" data-style="jdenticon">Miso (jd)</button>
+          <button class="small" id="randomPreset">Surprise me</button>
+        </div>
+      </div>
+
+      <div style="margin-top:12px">
+        <label>History</label>
+        <div class="history" id="history"></div>
+      </div>
+
+      <div style="margin-top:12px">
+        <label>Export/Save</label>
+        <div class="row" style="gap:8px;margin-top:8px">
+          <button id="copyJSON" class="small">Copy JSON</button>
+          <button id="downloadJSON" class="small">Download JSON</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: preview -->
+    <div>
+      <div class="card">
+        <div class="preview-box" id="previewBox">
+          <div id="placeholder" style="text-align:center;color:var(--muted)">
+            <div style="font-size:18px;margin-bottom:6px">Preview</div>
+            <div style="font-size:13px">Configure settings on the left, then click Generate (or toggle Live)</div>
+          </div>
+        </div>
+        <div class="preview-meta" id="previewMeta">—</div>
+      </div>
+
+      <div style="height:12px"></div>
+
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-weight:700">Options snapshot</div>
+          <div style="color:var(--muted);font-size:13px">Copy / Share below</div>
+        </div>
+        <pre id="settingsOut" style="white-space:pre-wrap;word-break:break-word;background:transparent;border:none;color:var(--muted);margin-top:8px"></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">Avatars by DiceBear &amp; Jdenticon • MIT • Fully client-side</div>
 </div>
 
 <script>
-// Theme toggle
-function toggleTheme(){document.body.classList.toggle('dark');document.body.classList.toggle('light');}
+/* ---------- Utilities ---------- */
+const qs = (sel, root=document) => root.querySelector(sel);
+const qsa = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+const clamp = (v,min,max)=>Math.max(min,Math.min(max,v));
 
-// Particle background
-const canvas=document.getElementById('particles');const ctx=canvas.getContext('2d');let particles=[];
-function resizeCanvas(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
-window.addEventListener('resize',resizeCanvas);resizeCanvas();
-for(let i=0;i<80;i++){particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+1,dx:(Math.random()-0.5)*0.5,dy:(Math.random()-0.5)*0.5});}
-function animateParticles(){ctx.clearRect(0,0,canvas.width,canvas.height);particles.forEach(p=>{p.x+=p.dx;p.y+=p.dy;if(p.x>canvas.width||p.x<0)p.dx*=-1;if(p.y>canvas.height||p.y<0)p.dy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(124,58,237,0.08)';ctx.fill();});requestAnimationFrame(animateParticles);}
-animateParticles();
-
-// Generator
-const previewBox=document.getElementById('previewBox');const previewMeta=document.getElementById('previewMeta');
-const seedEl=document.getElementById('seed');const styleEl=document.getElementById('style');const sizeEl=document.getElementById('size');
-const bgTypeEl=document.getElementById('bgType');const bgColorEl=document.getElementById('bgColor');
-function getBackgroundCSS(type,color){
-if(type==='solid')return color;
-if(type==='gradient')return `linear-gradient(135deg, ${color} 0%, #ffffff33 100%)`;
-if(type==='dots')return `radial-gradient(${color} 1px, transparent 1px)`; 
-if(type==='stripes')return `repeating-linear-gradient(45deg, ${color} 0, ${color} 5px, transparent 5px, transparent 10px)`; 
-return 'transparent';}
-async function renderPreview(){
-  previewBox.innerHTML=''; const style=styleEl.value; const seed=seedEl.value||'anon'; const size=parseInt(sizeEl.value)||512;
-  const bg=getBackgroundCSS(bgTypeEl.value,bgColorEl.value); previewBox.style.background=bg;
-  if(style==='jdenticon'){previewBox.innerHTML=`<svg width="${size}" height="${size}" data-jdenticon-hash="${seed}"></svg>`;jdenticon.update(previewBox.querySelector('svg'));}
-  else{
-    const url=`https://avatars.dicebear.com/api/${style}/${encodeURIComponent(seed)}.svg?size=${size}`;
-    const res=await fetch(url); const svg=await res.text();
-    previewBox.innerHTML=svg.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi,'');
-  }
-  previewMeta.textContent=`Style: ${style} • Seed: ${seed} • Size: ${size}px`;
+function hexToRgb(hex){
+  hex = hex.replace('#','');
+  if(hex.length===3) hex = hex.split('').map(c=>c+c).join('');
+  const r = parseInt(hex.slice(0,2),16);
+  const g = parseInt(hex.slice(2,4),16);
+  const b = parseInt(hex.slice(4,6),16);
+  return {r,g,b};
 }
-document.getElementById('btnGenerate').addEventListener('click',renderPreview);
-[seedEl,styleEl,sizeEl,bgTypeEl,bgColorEl].forEach(el=>el.addEventListener('change',renderPreview));
-window.addEventListener('load',renderPreview);
+function mixWithWhite(hex, pct=0.6){
+  const c = hexToRgb(hex);
+  const r = Math.round(c.r + (255-c.r)*pct);
+  const g = Math.round(c.g + (255-c.g)*pct);
+  const b = Math.round(c.b + (255-c.b)*pct);
+  return `rgb(${r},${g},${b})`;
+}
+function escapeXml(s){ return s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
 
-// Download PNG
-document.getElementById('btnDownloadPNG').addEventListener('click',()=>{
-  const svgEl=previewBox.querySelector('svg'); if(!svgEl){alert('Generate icon first');return;}
-  const svgData=new XMLSerializer().serializeToString(svgEl);
-  const canvas2=document.createElement('canvas'); canvas2.width=svgEl.width.baseVal.value; canvas2.height=svgEl.height.baseVal.value;
-  const ctx2=canvas2.getContext('2d');
-  const img=new Image();
-  img.onload=()=>{ctx2.drawImage(img,0,0);canvas2.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='monadicon.png';a.click();},'image/png');};
-  img.src='data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(svgData)));
+/* ---------- Elements ---------- */
+const liveToggle = qs('#liveToggle');
+const seedEl = qs('#seed');
+const styleEl = qs('#style');
+const sizeEl = qs('#size');
+const paddingEl = qs('#padding');
+const scaleEl = qs('#scale');
+const rotationEl = qs('#rotation');
+const bgTypeEl = qs('#bgType');
+const bgColorEl = qs('#bgColor');
+
+const generateBtn = qs('#generateBtn');
+const applyPreviewBtn = qs('#applyPreviewBtn');
+const randomBtn = qs('#randomBtn');
+const randomPreset = qs('#randomPreset');
+
+const previewBox = qs('#previewBox');
+const previewMeta = qs('#previewMeta');
+const placeholder = qs('#placeholder');
+
+const downloadSvgBtn = qs('#downloadSvg');
+const downloadPngBtn = qs('#downloadPng');
+const copyEmbedBtn = qs('#copyEmbed');
+const shareXBtn = qs('#shareX');
+const shareDiscordBtn = qs('#shareDiscord');
+
+const historyEl = qs('#history');
+const copyJSON = qs('#copyJSON');
+const downloadJSON = qs('#downloadJSON');
+const exportJSON = qs('#exportJSON');
+const settingsOut = qs('#settingsOut');
+
+const toggleThemeBtn = qs('#toggleTheme');
+let isLight = false;
+
+/* ---------- State ---------- */
+let history = []; // {settings, svg}
+const sampleSeeds = ['aurora','lumen','nova','zephyr','sol','aero','pixel','nebula','miso','sora','echo','boreal','octopus','waffle','tiger','meteor'];
+
+/* ---------- Helpers to build background defs & rect ---------- */
+function buildDefsAndRect(bgType, color, size){
+  // returns {defs, rectFill}
+  const idPrefix = 'mb_' + Math.random().toString(36).slice(2,8);
+  let defs = '';
+  let rectFill = color || 'transparent';
+
+  if(bgType === 'transparent'){
+    rectFill = 'none';
+  } else if(bgType === 'solid'){
+    rectFill = color;
+  } else if(bgType === 'gradient'){
+    const gradId = idPrefix + '_g';
+    const lighter = mixWithWhite(color,0.55);
+    defs = `<linearGradient id="${gradId}" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="${color}" />
+      <stop offset="100%" stop-color="${lighter}" stop-opacity="0.85" />
+    </linearGradient>`;
+    rectFill = `url(#${gradId})`;
+  } else if(bgType === 'dots'){
+    const patId = idPrefix + '_p';
+    defs = `<pattern id="${patId}" width="12" height="12" patternUnits="userSpaceOnUse">
+      <rect width="12" height="12" fill="${mixWithWhite(color,0.85)}" />
+      <circle cx="6" cy="6" r="2" fill="${color}" />
+    </pattern>`;
+    rectFill = `url(#${patId})`;
+  } else if(bgType === 'stripes'){
+    const patId = idPrefix + '_s';
+    defs = `<pattern id="${patId}" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="6" height="12" fill="${color}" />
+      <rect x="6" width="6" height="12" fill="transparent" />
+    </pattern>`;
+    rectFill = `url(#${patId})`;
+  }
+
+  return { defs, rectFill };
+}
+
+/* ---------- Build final SVG that matches preview ---------- */
+async function buildFinalSvg(settings){
+  // Settings: {seed, style, size, padding, scale, rotation, bgType, bgColor}
+  const size = clamp(parseInt(settings.size)||512, 64, 2048);
+  const padding = clamp(parseInt(settings.padding)||0, 0, Math.floor(size/2)-1);
+  const userScale = clamp((parseFloat(settings.scale)||100)/100, 0.5, 2.0);
+  const rotation = clamp(parseFloat(settings.rotation)||0, -360, 360);
+  const bgType = settings.bgType;
+  const bgColor = settings.bgColor || '#ffffff';
+  const style = settings.style;
+  const seed = (settings.seed || 'anon').toString();
+
+  // Prepare defs and rect fill
+  const {defs, rectFill} = buildDefsAndRect(bgType, bgColor, size);
+
+  // Fetch or generate inner SVG
+  let innerSvg = '';
+  if(style === 'jdenticon'){
+    // jdenticon generates square svg sized to 'size'
+    innerSvg = jdenticon.toSvg(seed, size);
+    // remove outer svg wrapper
+    innerSvg = innerSvg.replace(/^<svg[^>]*>/i, '').replace(/<\/svg>$/i, '');
+  } else {
+    // DiceBear endpoint (avatars.dicebear.com) - use size parameter
+    // Some DiceBear styles require different base path; using /api/{style}/{seed}.svg
+    const apiUrl = `https://avatars.dicebear.com/api/${style}/${encodeURIComponent(seed)}.svg?size=${size}&background=%23ffffff00`;
+    // background param here set to transparent (if API supports)
+    const res = await fetch(apiUrl);
+    if(!res.ok) throw new Error('DiceBear fetch failed: '+res.status);
+    const svgText = await res.text();
+    innerSvg = svgText.replace(/^<svg[^>]*>/i, '').replace(/<\/svg>$/i, '');
+  }
+
+  // Compute scaling: baseScale = (available / size)
+  const available = Math.max(1, size - padding*2);
+  const baseScale = available / size; // shrink to create padding
+  const combinedScale = baseScale * userScale;
+
+  // center for rotation (use half of original size)
+  const cx = size / 2;
+  const cy = size / 2;
+
+  // Compose final svg
+  const svg =
+`<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" role="img" aria-label="Monadicon">
+  <defs>
+    ${defs}
+  </defs>
+  <rect width="${size}" height="${size}" fill="${rectFill}" />
+  <g transform="translate(${padding},${padding})">
+    <g transform="translate(${cx},${cy}) rotate(${rotation}) translate(${-cx},${-cy}) scale(${combinedScale})">
+      ${innerSvg}
+    </g>
+  </g>
+</svg>`;
+  return svg;
+}
+
+/* ---------- Preview rendering ---------- */
+async function renderPreview(settings, { addToHistory=false } = {}){
+  // show spinner
+  previewBox.innerHTML = `<div style="color:var(--muted);text-align:center">Rendering...</div>`;
+  try{
+    const finalSvg = await buildFinalSvg(settings);
+    // Set preview background to match background type (we already embed background into svg)
+    previewBox.innerHTML = finalSvg;
+    // remove placeholder if present
+    if(placeholder) placeholder.style.display = 'none';
+    previewMeta.textContent = `${settings.style} • ${settings.seed} • ${settings.size}px`;
+    settingsOut.textContent = JSON.stringify(settings, null, 2);
+
+    if(addToHistory){
+      // push to history
+      history.unshift({settings, svg: finalSvg});
+      if(history.length>24) history.pop();
+      renderHistory();
+      // confetti
+      confetti();
+    }
+  }catch(e){
+    previewBox.innerHTML = `<div style="color:tomato">Error rendering preview</div>`;
+    console.error(e);
+  }
+}
+
+/* ---------- Download & embed ---------- */
+function downloadSVGfromString(svgString, filename='monadicon.svg'){
+  const blob = new Blob([svgString], {type: 'image/svg+xml'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
+function downloadPNGfromSvgString(svgString, filename='monadicon.png', callback){
+  const img = new Image();
+  img.onload = () => {
+    const w = img.width;
+    const h = img.height;
+    const canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0);
+    canvas.toBlob((blob) => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = filename; a.click();
+      URL.revokeObjectURL(url);
+      if(callback) callback();
+    }, 'image/png');
+  };
+  img.onerror = (e)=>{ alert('PNG conversion failed'); console.error(e); };
+  img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
+}
+
+/* ---------- History UI ---------- */
+function renderHistory(){
+  historyEl.innerHTML = '';
+  for(let i=0;i<history.length;i++){
+    const item = history[i];
+    const thumb = document.createElement('div');
+    thumb.className = 'thumb';
+    thumb.title = `${item.settings.seed} • ${item.settings.style}`;
+    const img = document.createElement('img');
+    img.style.width = '100%'; img.style.height='100%'; img.style.objectFit='cover';
+    img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(item.svg)));
+    thumb.appendChild(img);
+    thumb.onclick = ()=>{ // restore
+      loadSettings(item.settings);
+      renderPreview(item.settings);
+    };
+    historyEl.appendChild(thumb);
+  }
+}
+
+/* ---------- Copy & Export ---------- */
+function copyToClipboard(text){
+  navigator.clipboard.writeText(text).then(()=>{}, (err)=>{ console.error('copy failed', err); alert('Copy failed')});
+}
+
+/* ---------- Events ---------- */
+function readSettingsFromUI(){
+  return {
+    seed: seedEl.value || 'anon',
+    style: styleEl.value,
+    size: parseInt(sizeEl.value) || 512,
+    padding: clamp(parseInt(paddingEl.value)||16, 0, 1000),
+    scale: clamp(parseFloat(scaleEl.value)||100, 50, 200),
+    rotation: clamp(parseFloat(rotationEl.value)||0, -360, 360),
+    bgType: bgTypeEl.value,
+    bgColor: bgColorEl.value || '#ffffff'
+  };
+}
+function loadSettings(s){
+  seedEl.value = s.seed || 'anon';
+  styleEl.value = s.style || 'adventurer';
+  sizeEl.value = s.size || 512;
+  paddingEl.value = s.padding || 16;
+  scaleEl.value = s.scale || 100;
+  rotationEl.value = s.rotation || 0;
+  bgTypeEl.value = s.bgType || 'transparent';
+  bgColorEl.value = s.bgColor || '#7C3AED';
+  settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
+}
+
+generateBtn.addEventListener('click', async ()=>{
+  const s = readSettingsFromUI();
+  await renderPreview(s, { addToHistory:true });
 });
 
-// Download SVG with background
-document.getElementById('btnDownloadSVG').addEventListener('click',()=>{
-  const svgEl=previewBox.querySelector('svg'); if(!svgEl){alert('Generate icon first');return;}
-  const bg=previewBox.style.background||'transparent';
-  const svgData=new XMLSerializer().serializeToString(svgEl);
-  const svgWithBG=`<svg xmlns="http://www.w3.org/2000/svg" width="${svgEl.width.baseVal.value}" height="${svgEl.height.baseVal.value}">
-  <rect width="100%" height="100%" fill="${bg}"/>
-  ${svgData.replace(/<svg[^>]*>|<\/svg>/gi,'')}
-  </svg>`;
-  const a=document.createElement('a'); a.href='data:image/svg+xml;base64,'+btoa(svgWithBG); a.download='monadicon.svg'; a.click();
+applyPreviewBtn.addEventListener('click', async ()=>{
+  const s = readSettingsFromUI();
+  await renderPreview(s, { addToHistory:false });
 });
 
-// Copy embed
-document.getElementById('btnCopyEmbed').addEventListener('click',()=>{
-  const svgEl=previewBox.querySelector('svg'); if(!svgEl){alert('Generate icon first');return;}
-  const bg=previewBox.style.background||'transparent';
-  const svgData=new XMLSerializer().serializeToString(svgEl);
-  const embed=`<svg xmlns="http://www.w3.org/2000/svg" width="${svgEl.width.baseVal.value}" height="${svgEl.height.baseVal.value}"><rect width="100%" height="100%" fill="${bg}"/>${svgData.replace(/<svg[^>]*>|<\/svg>/gi,'')}</svg>`;
-  navigator.clipboard.writeText(embed); alert('Embed code copied!');
+downloadSvgBtn.addEventListener('click', async ()=>{
+  const s = readSettingsFromUI();
+  const svg = await buildFinalSvg(s);
+  downloadSVGfromString(svg, `${s.seed || 'monadicon'}.svg`);
 });
 
-// Share
-document.getElementById('btnShareX').addEventListener('click',()=>{window.open('https://twitter.com/intent/tweet?text=Check out my Monadicon!','_blank');});
-document.getElementById('btnShareDiscord').addEventListener('click',()=>{window.open('https://discord.com/channels/@me','_blank');});
+downloadPngBtn.addEventListener('click', async ()=>{
+  const s = readSettingsFromUI();
+  const svg = await buildFinalSvg(s);
+  downloadPNGfromSvgString(svg, `${s.seed || 'monadicon'}.png`);
+});
+
+copyEmbedBtn.addEventListener('click', async ()=>{
+  const s = readSettingsFromUI();
+  const svg = await buildFinalSvg(s);
+  copyToClipboard(svg);
+  alert('SVG embed copied to clipboard (full SVG markup)');
+});
+
+shareXBtn.addEventListener('click', ()=>{
+  const s = readSettingsFromUI();
+  const params = new URLSearchParams(s);
+  const url = location.origin + location.pathname + '?' + params.toString();
+  const tweet = `I made a Monadicon — ${url}`;
+  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(tweet)}`, '_blank');
+});
+shareDiscordBtn.addEventListener('click', ()=>{
+  const s = readSettingsFromUI();
+  const params = new URLSearchParams(s);
+  const url = location.origin + location.pathname + '?' + params.toString();
+  copyToClipboard(url);
+  alert('Share link copied to clipboard — paste into Discord');
+});
+
+randomBtn.addEventListener('click', ()=>{
+  // randomize seed, style, bg
+  seedEl.value = sampleSeeds[Math.floor(Math.random()*sampleSeeds.length)] + '-' + Math.floor(Math.random()*9999);
+  const styles = qsa('#style option').map(o=>o.value);
+  styleEl.value = styles[Math.floor(Math.random()*styles.length)];
+  bgTypeEl.value = ['transparent','solid','gradient','dots','stripes'][Math.floor(Math.random()*5)];
+  bgColorEl.value = '#'+Math.floor(Math.random()*0xFFFFFF).toString(16).padStart(6,'0');
+  sizeEl.value = [128,256,512,768,1024][Math.floor(Math.random()*5)];
+  scaleEl.value = 80 + Math.floor(Math.random()*60);
+  rotationEl.value = Math.floor(Math.random()*360)-180;
+  paddingEl.value = Math.floor((parseInt(sizeEl.value)||512) * (Math.random()*0.12));
+  if(liveToggle.checked) applyPreviewBtn.click();
+});
+
+randomPreset.addEventListener('click', ()=> randomBtn.click());
+
+/* Live preview on inputs if toggle enabled */
+function setupLivePreview(){
+  const inputs = [seedEl, styleEl, sizeEl, paddingEl, scaleEl, rotationEl, bgTypeEl, bgColorEl];
+  inputs.forEach(inp => {
+    inp.addEventListener('input', () => {
+      settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
+      if(liveToggle.checked){
+        // debounce a bit
+        if(window._liveTimeout) clearTimeout(window._liveTimeout);
+        window._liveTimeout = setTimeout(()=>{ applyPreviewBtn.click(); }, 300);
+      }
+    });
+  });
+}
+setupLivePreview();
+
+/* Persist / Load settings via URL */
+function applyUrlParams(){
+  const params = new URLSearchParams(window.location.search);
+  if([...params.keys()].length === 0) return;
+  const s = {};
+  for(const key of ['seed','style','size','padding','scale','rotation','bgType','bgColor']){
+    if(params.get(key)!==null) s[key] = params.get(key);
+  }
+  if(Object.keys(s).length) { loadSettings(s); applyPreviewBtn.click(); }
+}
+applyUrlParams();
+
+/* Export settings JSON */
+copyJSON.addEventListener('click', ()=>{
+  copyToClipboard(JSON.stringify(readSettingsFromUI(), null, 2));
+  alert('Settings JSON copied');
+});
+downloadJSON.addEventListener('click', ()=>{
+  const txt = JSON.stringify(readSettingsFromUI(), null, 2);
+  const blob = new Blob([txt], {type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'monadicon-settings.json'; a.click();
+});
+exportJSON.addEventListener('click', ()=>{
+  copyToClipboard(JSON.stringify(readSettingsFromUI(), null, 2));
+  alert('Settings copied for export');
+});
+
+/* History control */
+qs('#clearHistory').addEventListener('click', ()=>{ history=[]; renderHistory(); });
+
+/* Preset shortcuts */
+qsa('.patternToggle .small').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const seed = btn.dataset.seed;
+    const style = btn.dataset.style;
+    if(seed) seedEl.value = seed;
+    if(style) styleEl.value = style;
+    if(liveToggle.checked) applyPreviewBtn.click();
+  });
+});
+
+/* Theme */
+toggleThemeBtn.addEventListener('click', ()=>{
+  isLight = !isLight;
+  if(isLight){ document.body.classList.add('light'); document.body.classList.remove('dark'); toggleThemeBtn.textContent = 'Dark'; }
+  else { document.body.classList.remove('light'); document.body.classList.add('dark'); toggleThemeBtn.textContent = 'Light'; }
+});
+
+/* Confetti (simple) */
+function confetti(){
+  const canvas = document.createElement('canvas');
+  canvas.style.position='fixed'; canvas.style.left='0'; canvas.style.top='0'; canvas.style.pointerEvents='none';
+  canvas.width = innerWidth; canvas.height = innerHeight; document.body.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+  const pieces = Array.from({length:80}, ()=>({
+    x: innerWidth/2 + (Math.random()-0.5)*200,
+    y: innerHeight/2 + (Math.random()-0.5)*60,
+    vx: (Math.random()-0.5)*8,
+    vy: Math.random()*-10-2,
+    r: Math.random()*6+3,
+    c: `hsl(${Math.random()*360},80%,60%)`,
+    rot: Math.random()*Math.PI
+  }));
+  (function anim(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    pieces.forEach((p,i)=>{ p.x+=p.vx; p.y+=p.vy; p.vy+=0.4; p.rot+=0.2; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.c; ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r); ctx.restore();
+      if(p.y>canvas.height+50) pieces.splice(i,1);
+    });
+    if(pieces.length) requestAnimationFrame(anim); else canvas.remove();
+  })();
+}
+
+/* Particles background (subtle) */
+(function initParticles(){
+  const can = document.getElementById('particles');
+  if(!can) return;
+  const ctx = can.getContext('2d');
+  let parts = [];
+  function resize(){ can.width = innerWidth; can.height = innerHeight; }
+  window.addEventListener('resize', resize); resize();
+  for(let i=0;i<100;i++) parts.push({x:Math.random()*can.width,y:Math.random()*can.height,r:Math.random()*1.8+0.6,vx:(Math.random()-.5)*0.4,vy:(Math.random()-.5)*0.4});
+  (function draw(){
+    ctx.clearRect(0,0,can.width,can.height);
+    parts.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0||p.x>can.width) p.vx*=-1;
+      if(p.y<0||p.y>can.height) p.vy*=-1;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle='rgba(124,58,237,0.06)'; ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  })();
+})();
+
+/* initialize UI state string */
+settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
+
+/* Auto-render small preview on load (do not add to history) */
+applyPreviewBtn.click();
+
 </script>
 </body>
 </html>
