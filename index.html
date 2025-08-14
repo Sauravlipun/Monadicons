@@ -4,30 +4,25 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Monadicons — Avatar studio</title>
-<meta name="description" content="Generate avatars. Customize settings, preview, and download SVG/PNG." />
+<meta name="description" content="Generate avatars. Customize settings, preview, and download SVG/PNG. Optional AI image generation (server required)." />
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%237C3AED'/><text x='50' y='58' font-size='50' text-anchor='middle' fill='white' font-family='Arial'>M</text></svg>">
 
-<!-- jdenticon for local generation -->
+<!-- jdenticon used for local identicons -->
 <script src="https://cdn.jsdelivr.net/npm/jdenticon@3.2.0/dist/jdenticon.min.js"></script>
 
 <style>
 :root{
   --accent:#7C3AED; --accent-2:#5B21B6; --muted:#9fb0c9; --bg-1:#071124; --bg-2:#071a2b;
-  --card-bg: rgba(255,255,255,0.02);
-  --glass: rgba(255,255,255,0.04);
-  --gap:18px;
-  --radius:12px;
+  --card-bg: rgba(255,255,255,0.02); --glass: rgba(255,255,255,0.04);
+  --gap:18px; --radius:12px;
 }
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
-  margin:0;
-  font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial;
+  margin:0; font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial;
   color:#e6eef8;
   background:radial-gradient(1200px 600px at 10% 10%, rgba(124,58,237,0.12), transparent), linear-gradient(180deg,var(--bg-1),var(--bg-2));
-  -webkit-font-smoothing:antialiased;
-  padding:22px;
-  transition: background .25s ease, color .2s ease;
+  padding:22px; -webkit-font-smoothing:antialiased;
 }
 .container{max-width:1180px;margin:0 auto}
 .header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
@@ -49,7 +44,7 @@ h1{margin:0;font-size:20px}
 }
 .controls{margin-top:8px;display:flex;flex-wrap:wrap;gap:8px}
 .preview-box{width:100%;height:440px;border-radius:var(--radius);border:1px solid rgba(255,255,255,0.04);background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
-.preview-box svg{width:100%;height:100%;display:block}
+.preview-box > img, .preview-box > svg { width:100%; height:100%; object-fit:cover; display:block }
 .preview-meta{color:var(--muted);font-size:13px;margin-top:8px;text-align:center}
 .history{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .thumb{width:64px;height:64px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);overflow:hidden;cursor:pointer;background:white;display:flex;align-items:center;justify-content:center}
@@ -61,11 +56,6 @@ h1{margin:0;font-size:20px}
 .desc-card{margin-top:12px;background:linear-gradient(180deg, rgba(255,255,255,0.015), transparent);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
 .desc-title{font-weight:700;margin-bottom:6px}
 .desc-text{background:transparent;border-radius:8px;padding:10px;border:1px dashed rgba(255,255,255,0.04);color:var(--muted);font-size:14px;white-space:pre-wrap}
-
-/* Tooltip */
-.tooltip{position:relative;display:inline-block}
-.tooltip .tiptext{visibility:hidden;width:220px;background:#111;padding:8px;border-radius:8px;color:#fff;text-align:left;font-size:13px;position:absolute;z-index:10;bottom:125%;left:50%;transform:translateX(-50%);opacity:0;transition:opacity .12s ease,transform .12s ease}
-.tooltip:hover .tiptext{visibility:visible;opacity:1;transform:translateX(-50%) translateY(-6px)}
 
 /* Toast */
 #toast{position:fixed;right:18px;bottom:18px;z-index:9999;display:flex;flex-direction:column;gap:8px}
@@ -118,6 +108,7 @@ body.light .preview-box { background: linear-gradient(180deg, rgba(0,0,0,0.02), 
       <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
         <button id="applyPrompt" class="ghost">Apply Prompt → Seed</button>
         <button id="generateFromPrompt" class="btn">Generate from Prompt</button>
+        <button id="generateAI" class="ghost" title="Generate a literal image using AI (server endpoint required)">Generate AI Image</button>
         <div style="flex:1"></div>
         <label style="font-size:13px;color:var(--muted)"><input id="promptUseAsSeed" type="checkbox" style="margin-right:6px">Use prompt as seed automatically</label>
       </div>
@@ -153,9 +144,7 @@ body.light .preview-box { background: linear-gradient(180deg, rgba(0,0,0,0.02), 
         <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
           <label style="font-size:13px;color:var(--muted);display:flex;align-items:center">
             <input id="randomizeParts" type="checkbox" style="margin-right:6px">
-            Randomize parts <span style="margin-left:8px" class="tooltip">ℹ
-              <span class="tiptext">When deterministic Randomize is ON, parts are generated deterministically from the prompt — same prompt + settings will produce the same composition. Toggle OFF to simply split/pad parts.</span>
-            </span>
+            Randomize parts <span style="margin-left:8px;color:var(--muted)">• deterministic</span>
           </label>
           <div style="flex:1"></div>
           <small style="color:var(--muted)">Creates multiple seeds from the prompt and combines them.</small>
@@ -288,7 +277,6 @@ body.light .preview-box { background: linear-gradient(180deg, rgba(0,0,0,0.02), 
           </div>
           <div style="display:flex;gap:10px;margin-top:10px;align-items:flex-start">
             <div style="width:96px;height:96px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center" id="descThumb">
-              <!-- thumbnail inserted here -->
             </div>
             <div style="flex:1">
               <div id="autoDesc" class="desc-text">Generate an icon to view the auto-description here.</div>
@@ -307,65 +295,47 @@ body.light .preview-box { background: linear-gradient(180deg, rgba(0,0,0,0.02), 
 <div id="toast" aria-live="polite" aria-atomic="true"></div>
 
 <script>
-/* ---------- Utilities ---------- */
+/* -----------------------------------------------------------------------
+  IMPORTANT NOTE ABOUT AI (OpenAI) INTEGRATION
+  - This frontend calls a server endpoint at /api/generate-image-openai.
+  - You MUST implement a serverless function (Vercel / Netlify / any server)
+    that accepts POST { prompt, width, height } and uses your OPENAI_API_KEY
+    server-side to request an image from OpenAI Images or DALL·E, then returns:
+      { image: "<base64 string>", mime: "image/png" }
+    Or on error return { error: "...message..." }.
+
+  Example serverless behavior (not included here): server receives prompt,
+  calls OpenAI images generation, pulls base64 result (data[0].b64_json), and
+  returns it to the frontend. Keep the key secret on the server.
+
+  This file expects that endpoint. Do NOT put your API key in this file.
+  -----------------------------------------------------------------------*/
+
+/* ---------- small utilities ---------- */
 const qs = (sel, root=document) => root.querySelector(sel);
 const qsa = (sel, root=document) => Array.from(root.querySelectorAll(sel));
 const clamp = (v,min,max)=>Math.max(min,Math.min(max,v));
 
 function showToast(msg, ms=2200){
-  try{
-    const c = qs('#toast');
-    const t = document.createElement('div');
-    t.className = 'toast';
-    t.textContent = msg;
-    c.appendChild(t);
-    setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity .25s ease'; setTimeout(()=>t.remove(),250); }, ms);
-  }catch(e){ console.log('toast error', e); }
+  const c = qs('#toast');
+  const t = document.createElement('div'); t.className='toast'; t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity .25s ease'; setTimeout(()=>t.remove(),250); }, ms);
 }
 
-function hexToRgb(hex){
-  hex = (hex||'#ffffff').replace('#','');
-  if(hex.length===3) hex = hex.split('').map(c=>c+c).join('');
-  const r = parseInt(hex.slice(0,2),16);
-  const g = parseInt(hex.slice(2,4),16);
-  const b = parseInt(hex.slice(4,6),16);
-  return {r,g,b};
-}
-function mixWithWhite(hex, pct=0.6){
-  const c = hexToRgb(hex);
-  const r = Math.round(c.r + (255-c.r)*pct);
-  const g = Math.round(c.g + (255-c.g)*pct);
-  const b = Math.round(c.b + (255-c.b)*pct);
-  return `rgb(${r},${g},${b})`;
-}
-function hashString(s){
-  let h=2166136261>>>0;
-  for(let i=0;i<s.length;i++){ h = Math.imul(h ^ s.charCodeAt(i), 16777619)>>>0; }
-  return h;
-}
-function seededRandomFromSeed(seed){
-  let h = hashString(seed) >>> 0;
-  return function(){
-    h ^= h << 13; h >>>= 0;
-    h ^= h >>> 17; h >>>= 0;
-    h ^= h << 5;  h >>>= 0;
-    return (h >>> 0) / 4294967296;
-  };
-}
-function pickDeterministic(arr, seed, idx=0){
-  if(!Array.isArray(arr) || arr.length===0) return null;
-  const rnd = seededRandomFromSeed(seed + '|' + idx);
-  return arr[Math.floor(rnd() * arr.length)];
-}
+function hashString(s){ let h=2166136261>>>0; for(let i=0;i<s.length;i++){ h = Math.imul(h ^ s.charCodeAt(i), 16777619)>>>0; } return h; }
+function slugifyPrompt(s){ const trimmed=(s||'').trim(); const slug=trimmed.toLowerCase().replace(/[^\w\s\-]/g,'').replace(/\s+/g,'-').slice(0,70)||'anon'; const h = Math.abs(hashString(trimmed||slug)).toString(16).slice(0,5); return `${slug}-${h}`; }
+function seededRandomFromSeed(seed){ let h = hashString(seed) >>> 0; return function(){ h ^= h << 13; h >>>= 0; h ^= h >>> 17; h >>>= 0; h ^= h << 5; h >>>= 0; return (h >>> 0) / 4294967296; }; }
+function pickDeterministic(arr, seed, idx=0){ if(!arr || !arr.length) return null; const rnd = seededRandomFromSeed(seed + '|' + idx); return arr[Math.floor(rnd() * arr.length)]; }
 
-/* ---------- Elements ---------- */
+/* ---------- DOM elements ---------- */
 const liveToggle = qs('#liveToggle');
 const seedEl = qs('#seed');
-
 const promptEl = qs('#prompt');
 const promptUseAsSeedEl = qs('#promptUseAsSeed');
 const applyPromptBtn = qs('#applyPrompt');
 const generateFromPromptBtn = qs('#generateFromPrompt');
+const generateAIBtn = qs('#generateAI');
 
 const multiSeedEl = qs('#multiSeed');
 const delimiterEl = qs('#delimiter');
@@ -375,7 +345,7 @@ const randomizePartsEl = qs('#randomizeParts');
 
 const styleEl = qs('#style');
 const sizeEl = qs('#size');
-const scaleEl = qs('#scale');       // percent (100)
+const scaleEl = qs('#scale');
 const rotationEl = qs('#rotation');
 const bgTypeEl = qs('#bgType');
 const bgColorEl = qs('#bgColor');
@@ -398,7 +368,6 @@ const copyJSON = qs('#copyJSON');
 const downloadJSON = qs('#downloadJSON');
 const exportJSON = qs('#exportJSON');
 const settingsOut = qs('#settingsOut');
-
 const toggleThemeBtn = qs('#toggleTheme');
 
 const autoDescEl = qs('#autoDesc');
@@ -407,23 +376,19 @@ const regenDescBtn = qs('#regenDesc');
 const copyDescBtn = qs('#copyDesc');
 const downloadMetaBtn = qs('#downloadMeta');
 
-let isLight = false;
-
-/* ---------- State ---------- */
 let history = [];
 const sampleSeeds = ['aurora','lumen','nova','zephyr','sol','aero','pixel','nebula','miso','sora','echo','boreal','octopus','waffle','tiger','meteor'];
 
-/* ---------- Endpoints ---------- */
 const PRIMARY_DICEBEAR = 'https://api.dicebear.com/9.x';
 const FALLBACK_DICEBEAR = 'https://avatars.dicebear.com/api';
 
-/* ---------- Background defs ---------- */
-function buildDefsAndRect(bgType, color, size){
-  const idPrefix = 'mb_' + Math.random().toString(36).slice(2,8);
-  let defs = '';
-  let rectFill = color || 'transparent';
-  let noiseFilterId = null;
+/* ---------- background helpers ---------- */
+function hexToRgb(hex){ hex = (hex||'#ffffff').replace('#',''); if(hex.length===3) hex = hex.split('').map(c=>c+c).join(''); return { r: parseInt(hex.slice(0,2),16), g: parseInt(hex.slice(2,4),16), b: parseInt(hex.slice(4,6),16) }; }
+function mixWithWhite(hex, pct=0.6){ const c = hexToRgb(hex); const r = Math.round(c.r + (255-c.r)*pct); const g = Math.round(c.g + (255-c.g)*pct); const b = Math.round(c.b + (255-c.b)*pct); return `rgb(${r},${g},${b})`; }
 
+function buildDefsAndRect(bgType, color, outSize){
+  const idPrefix = 'mb_' + Math.random().toString(36).slice(2,8);
+  let defs = '', rectFill = color || 'transparent', noiseFilterId = null;
   if(bgType === 'transparent'){ rectFill = 'none'; }
   else if(bgType === 'solid'){ rectFill = color; }
   else if(bgType === 'gradient'){
@@ -431,40 +396,34 @@ function buildDefsAndRect(bgType, color, size){
     const lighter = mixWithWhite(color,0.55);
     defs = `<linearGradient id="${gradId}" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${color}" /><stop offset="100%" stop-color="${lighter}" stop-opacity="0.9" /></linearGradient>`;
     rectFill = `url(#${gradId})`;
-  }
-  else if(bgType === 'radial'){
+  } else if(bgType === 'radial'){
     const rid = idPrefix + '_r';
     const lighter = mixWithWhite(color,0.6);
     defs = `<radialGradient id="${rid}" cx="30%" cy="30%" r="80%"><stop offset="0%" stop-color="${lighter}" /><stop offset="100%" stop-color="${color}" /></radialGradient>`;
     rectFill = `url(#${rid})`;
-  }
-  else if(bgType === 'dots'){
+  } else if(bgType === 'dots'){
     const patId = idPrefix + '_p';
     defs = `<pattern id="${patId}" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="${mixWithWhite(color,0.85)}"/><circle cx="6" cy="6" r="2" fill="${color}"/></pattern>`;
     rectFill = `url(#${patId})`;
-  }
-  else if(bgType === 'stripes'){
+  } else if(bgType === 'stripes'){
     const patId = idPrefix + '_s';
     defs = `<pattern id="${patId}" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="5" height="10" fill="${color}" /><rect x="5" width="5" height="10" fill="transparent" /></pattern>`;
     rectFill = `url(#${patId})`;
-  }
-  else if(bgType === 'checker'){
+  } else if(bgType === 'checker'){
     const patId = idPrefix + '_c';
     const lighter = mixWithWhite(color,0.7);
     defs = `<pattern id="${patId}" width="20" height="20" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="${color}"/><rect x="10" y="10" width="10" height="10" fill="${color}"/><rect width="10" height="10" fill="${lighter}"/><rect x="10" y="10" width="10" height="10" fill="${lighter}"/></pattern>`;
     rectFill = `url(#${patId})`;
-  }
-  else if(bgType === 'noise'){
+  } else if(bgType === 'noise'){
     const filterId = idPrefix + '_f';
     defs = `<filter id="${filterId}"><feTurbulence baseFrequency="0.8" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0.2"/><feBlend mode="overlay" in2="SourceGraphic"/></filter>`;
     rectFill = color;
     noiseFilterId = filterId;
   }
-
   return { defs, rectFill, noiseFilterId };
 }
 
-/* ---------- Helper: extract inner dimensions and content ---------- */
+/* ---------- SVG extraction helpers ---------- */
 function extractInnerSvgInfo(svgText, defaultSize){
   if(!svgText) return { innerSvg:'', w: defaultSize, h: defaultSize };
   svgText = svgText.replace(/^<\?xml[\s\S]*?\?>\s*/i, '');
@@ -490,11 +449,10 @@ function extractInnerSvgInfo(svgText, defaultSize){
   return { innerSvg: inner, w: defaultSize, h: defaultSize };
 }
 
-/* ---------- Build final SVG (centered & scaled to fill) ---------- */
+/* ---------- Build final centered SVG ---------- */
 async function buildFinalSvg(settings){
   const outSize = clamp(parseInt(settings.size)||512, 64, 4096);
-  const scalePercent = clamp(parseFloat(settings.scale)||100, 50, 200);
-  const userScale = scalePercent / 100;
+  const userScale = clamp(parseFloat(settings.scale)||100, 50, 200) / 100;
   const rotation = clamp(parseFloat(settings.rotation)||0, -360, 360);
   const bgType = settings.bgType;
   const bgColor = settings.bgColor || '#ffffff';
@@ -518,27 +476,26 @@ async function buildFinalSvg(settings){
       `${PRIMARY_DICEBEAR}/${style}/svg?seed=${encodeURIComponent(seed)}&size=${outSize}`,
       `${FALLBACK_DICEBEAR}/${style}/${encodeURIComponent(seed)}.svg?size=${outSize}`
     ];
-    let lastErr = null;
     let fetchedText = null;
+    let lastErr = null;
     for(const url of tryUrls){
       try{
         const res = await fetch(url, {cache:'no-store'});
         if(!res.ok){ lastErr = new Error('Fetch failed ' + res.status + ' from ' + url); continue; }
         fetchedText = await res.text();
         break;
-      } catch(e){ lastErr = e; }
+      }catch(e){ lastErr = e; }
     }
-    if(!fetchedText){
-      throw new Error('Failed to fetch SVG from remote endpoints. See console for details. ' + (lastErr && lastErr.message));
-    }
+    if(!fetchedText) throw new Error('Failed to fetch SVG. ' + (lastErr && lastErr.message));
     const info = extractInnerSvgInfo(fetchedText, outSize);
     innerSvg = info.innerSvg;
     innerW = info.w;
     innerH = info.h;
   }
 
+  // compute scale to FILL box while respecting user scale percentage
   const maxInner = Math.max(innerW, innerH) || outSize;
-  const fillScale = (outSize / maxInner);
+  const fillScale = outSize / maxInner;       // scale needed to make inner cover outSize
   const totalScale = fillScale * userScale;
 
   const cx = outSize/2, cy = outSize/2;
@@ -558,7 +515,7 @@ async function buildFinalSvg(settings){
   return svg;
 }
 
-/* ---------- Composite builder for multi-seed (uses seeded randomness) ---------- */
+/* ---------- Composite builder for multi-seed ---------- */
 async function buildCompositeFromSeeds(seeds, baseSettings, mode='grid'){
   const outSize = clamp(parseInt(baseSettings.size)||512, 64, 4096);
   if(mode === 'grid'){
@@ -567,7 +524,7 @@ async function buildCompositeFromSeeds(seeds, baseSettings, mode='grid'){
     const rows = Math.ceil(count / cols);
     const tile = Math.floor(outSize / cols);
     const tileSvgs = await Promise.all(seeds.map(async (s)=>{
-      const sset = Object.assign({}, baseSettings, { seed: s, size: tile });
+      const sset = Object.assign({}, baseSettings, { seed: s, size: tile, scale: 100 });
       return await buildFinalSvg(sset);
     }));
     let images = '';
@@ -592,8 +549,9 @@ async function buildCompositeFromSeeds(seeds, baseSettings, mode='grid'){
 </svg>`;
     return svg;
   } else {
+    // layered composition
     const layers = await Promise.all(seeds.map(async (s)=> {
-      const sset = Object.assign({}, baseSettings, { seed: s, size: outSize });
+      const sset = Object.assign({}, baseSettings, { seed: s, size: outSize, scale: 100 });
       return await buildFinalSvg(sset);
     }));
     const transforms = seeds.map((_, idx)=>{
@@ -621,7 +579,7 @@ async function buildCompositeFromSeeds(seeds, baseSettings, mode='grid'){
   }
 }
 
-/* ---------- Render preview ---------- */
+/* ---------- Rendering ---------- */
 async function renderPreview(settings, { addToHistory=false } = {}){
   previewBox.innerHTML = `<div style="color:var(--muted);text-align:center">Rendering...</div>`;
   try{
@@ -649,7 +607,7 @@ async function renderPreview(settings, { addToHistory=false } = {}){
   }
 }
 
-/* ---------- Render composite preview (multi-seed) with deterministic randomization ---------- */
+/* ---------- Multi-seed composite runner ---------- */
 async function renderCompositeFromPrompt(promptText){
   const enabled = multiSeedEl.checked;
   if(!promptText){
@@ -660,42 +618,35 @@ async function renderCompositeFromPrompt(promptText){
     const s = readSettingsFromUI(); s.seed = promptText; await renderPreview(s, { addToHistory:true }); return;
   }
 
-  // parse parts deterministically
   let parts = [];
   const delim = delimiterEl.value;
   if(delim === 'space') parts = promptText.trim().split(/\s+/).filter(Boolean);
   else if(delim === 'comma') parts = promptText.split(',').map(s=>s.trim()).filter(Boolean);
   else if(delim === 'newline') parts = promptText.split(/\n+/).map(s=>s.trim()).filter(Boolean);
   else if(delim === 'char') parts = promptText.replace(/\s+/g,'').split('').filter(Boolean);
-
   if(parts.length === 0) parts = [promptText];
 
   const maxParts = clamp(parseInt(partsCountEl.value)||3, 2, 12);
 
   if(randomizePartsEl.checked){
-    // deterministic pseudo-random sampling using prompt as seed
     const rnd = seededRandomFromSeed(promptText + '::parts');
     const chosen = [];
     const pool = parts.slice();
-    // if pool small, augment with characters/words to increase variety deterministically
     while(pool.length < maxParts){
       pool.push(parts[pool.length % parts.length] + '-' + ((Math.abs(hashString(promptText + 'pad' + pool.length)) % 9000) + 1000));
     }
     for(let i=0;i<maxParts;i++){
       const idx = Math.floor(rnd() * pool.length);
-      // create deterministic variant suffix to avoid exact duplicates
       const suffix = '-' + ((Math.abs(hashString(promptText + 'suf' + i)) % 9000) + 1000);
       chosen.push(pool[idx] + suffix);
     }
     parts = chosen;
   } else {
-    // deterministic padding if too few
     if(parts.length >= maxParts) parts = parts.slice(0, maxParts);
     else {
       const padded = parts.slice();
       let i=0;
       while(padded.length < maxParts){
-        // deterministic suffix
         padded.push((parts[i % parts.length] || promptText) + '-' + ((Math.abs(hashString(promptText + '-pad-' + i)) % 9000) + 1000));
         i++;
       }
@@ -726,7 +677,7 @@ async function renderCompositeFromPrompt(promptText){
   }
 }
 
-/* ---------- Auto description generator ---------- */
+/* ---------- Auto description ---------- */
 function computeRarity(seedString){
   const h = hashString(seedString).toString();
   const v = parseInt(h.slice(-2), 10) || 0;
@@ -736,12 +687,8 @@ function computeRarity(seedString){
   if(v > 80) return 'Uncommon';
   return 'Common';
 }
-function titleCase(s){
-  return s.replace(/[-_]/g,' ').split(/\s+/).map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' ');
-}
-function shortHex(seed){
-  return (hashString(seed)>>>0).toString(16).slice(0,4).toUpperCase();
-}
+function titleCase(s){ return s.replace(/[-_]/g,' ').split(/\s+/).map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' '); }
+function shortHex(seed){ return (hashString(seed)>>>0).toString(16).slice(0,4).toUpperCase(); }
 function generateAttributes(settings, seeds){
   return [
     { trait_type: 'Style', value: settings.style },
@@ -763,30 +710,25 @@ function generateAutoDescription(settings, promptText, seeds){
   const rarity = computeRarity(seeds.join('|') || mainSeed);
   const mood = pickDeterministicAdjective(seeds.join('|') + '|' + settings.style);
   const promptNote = promptText ? ` Inspired by "${promptText.trim().slice(0,120)}".` : '';
-  const blurb = `${name} is a ${mood} avatar rendered in the ${settings.style} style with a ${settings.bgType} background.${promptNote} It showcases layered geometry and balanced composition — perfect for avatars, profiles, and collectibles.`;
+  const blurb = `${name} is a ${mood} avatar rendered in the ${settings.style} style with a ${settings.bgType} background.${promptNote} It showcases layered geometry and balanced composition — perfect for avatars and collectibles.`;
   const attributes = generateAttributes(settings, seeds);
   const traitsText = attributes.map(a => `${a.trait_type}: ${a.value}`).join(' • ');
   const hashtags = ['#Monadicons', '#Avatar', '#SVG', `#${rarity}`].join(' ');
   const description = `${blurb}\n\nAttributes\n${traitsText}\n\nRarity: ${rarity}\n\n${hashtags}`;
   return { name, description, attributes, rarity };
 }
-
-/* Update the auto description area after rendering */
 function updateAutoDescriptionFromRendered(svgText, settings){
   try{
     const seed = settings.seed ? settings.seed.toString() : 'anon';
     const promptText = (promptEl.value || '').trim();
     const meta = generateAutoDescription(settings, promptText, [seed]);
     autoDescEl.textContent = meta.description;
-    const thumbSvg = svgText;
-    const thumbData = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(thumbSvg)));
+    const thumbData = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgText)));
     descThumb.innerHTML = `<img src="${thumbData}" alt="thumb" style="width:100%;height:100%;object-fit:cover" />`;
     regenDescBtn._meta = { meta, svg: svgText, settings };
     copyDescBtn._meta = regenDescBtn._meta;
     downloadMetaBtn._meta = regenDescBtn._meta;
-  }catch(e){
-    console.error('updateAutoDescriptionFromRendered error', e);
-  }
+  }catch(e){ console.error('updateAutoDescriptionFromRendered error', e); }
 }
 function updateAutoDescriptionForComposite(parts, baseSettings, mode, compositeSvg){
   try{
@@ -799,9 +741,7 @@ function updateAutoDescriptionForComposite(parts, baseSettings, mode, compositeS
     regenDescBtn._meta = { meta, svg: compositeSvg, settings: baseSettings, parts, mode };
     copyDescBtn._meta = regenDescBtn._meta;
     downloadMetaBtn._meta = regenDescBtn._meta;
-  }catch(e){
-    console.error('updateAutoDescriptionForComposite error', e);
-  }
+  }catch(e){ console.error('updateAutoDescriptionForComposite error', e); }
 }
 
 /* ---------- Download helpers ---------- */
@@ -836,10 +776,7 @@ function renderHistory(){
   }
 }
 
-/* ---------- Copy/Export ---------- */
-function copyToClipboard(text){ navigator.clipboard.writeText(text).then(()=>{}).catch(e=>{ console.error('copy failed', e); showToast('Copy failed'); }); }
-
-/* ---------- Wiring & events ---------- */
+/* ---------- UI read/load ---------- */
 function readSettingsFromUI(){
   return {
     seed: seedEl.value || 'anon',
@@ -862,55 +799,91 @@ function loadSettings(s){
   settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
 }
 
-/* Generate / preview handlers */
-generateBtn.addEventListener('click', async ()=>{
-  const s = readSettingsFromUI();
-  await renderPreview(s, { addToHistory:true });
-});
-applyPreviewBtn.addEventListener('click', async ()=>{
-  const s = readSettingsFromUI();
-  await renderPreview(s, { addToHistory:false });
-});
+/* ---------- Event wiring ---------- */
+generateBtn.addEventListener('click', async ()=>{ const s = readSettingsFromUI(); await renderPreview(s, { addToHistory:true }); });
+applyPreviewBtn.addEventListener('click', async ()=>{ const s = readSettingsFromUI(); await renderPreview(s, { addToHistory:false }); });
 
-/* Prompt handlers */
 applyPromptBtn.addEventListener('click', ()=>{
   const p = (promptEl.value || '').trim();
   if(!p){ showToast('Please enter a prompt'); return; }
   seedEl.value = p;
   settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
-  if(promptUseAsSeedEl.checked && liveToggle.checked){
-    applyPreviewBtn.click();
-  }
+  if(promptUseAsSeedEl.checked && liveToggle.checked) applyPreviewBtn.click();
 });
 generateFromPromptBtn.addEventListener('click', async ()=>{
   const p = (promptEl.value || '').trim();
   if(!p){ showToast('Please enter a prompt'); return; }
-  if(multiSeedEl.checked){
-    await renderCompositeFromPrompt(p);
-  } else {
-    const s = readSettingsFromUI();
-    s.seed = p; // directly use the prompt as the seed (no mutation)
-    await renderPreview(s, { addToHistory:true });
-  }
+  if(multiSeedEl.checked){ await renderCompositeFromPrompt(p); return; }
+  const seedFromPrompt = slugifyPrompt(p);
+  seedEl.value = seedFromPrompt;
+  settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
+  const s = readSettingsFromUI();
+  await renderPreview(s, { addToHistory:true });
 });
 promptUseAsSeedEl.addEventListener('change', ()=>{
   if(promptUseAsSeedEl.checked){
-    seedEl.value = (promptEl.value || '').trim();
+    const p = (promptEl.value || '').trim();
+    if(p) seedEl.value = slugifyPrompt(p);
     settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
+    if(liveToggle.checked) applyPreviewBtn.click();
   }
 });
 promptEl.addEventListener('input', ()=>{
   if(promptUseAsSeedEl.checked){
-    seedEl.value = (promptEl.value || '').trim();
+    const p = (promptEl.value || '').trim();
+    if(p) seedEl.value = slugifyPrompt(p);
     settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
-    if(liveToggle.checked){
-      if(window._liveTimeout) clearTimeout(window._liveTimeout);
-      window._liveTimeout = setTimeout(()=>{ applyPreviewBtn.click(); }, 300);
-    }
+    if(liveToggle.checked){ if(window._liveTimeout) clearTimeout(window._liveTimeout); window._liveTimeout = setTimeout(()=>{ applyPreviewBtn.click(); }, 300); }
   }
 });
 
-/* Downloads & shares */
+/* ---------- Generate AI image (frontend) ---------- */
+generateAIBtn.addEventListener('click', async ()=>{
+  const prompt = (promptEl.value || '').trim();
+  if(!prompt){ showToast('Please enter a prompt'); return; }
+  // UI feedback:
+  generateAIBtn.disabled = true;
+  generateAIBtn.textContent = 'Generating AI...';
+  showToast('AI generation requested — server will do the work');
+
+  try{
+    const width = parseInt(sizeEl.value || 512, 10);
+    const height = width;
+    // POST to your serverless function which calls OpenAI (server must hold the key)
+    const resp = await fetch('/api/generate-image-openai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt, width, height })
+    });
+    const j = await resp.json();
+    if(!resp.ok || j.error){ console.error('AI error', j); showToast('AI generation failed (see console)'); return; }
+    if(j.image){
+      const mime = j.mime || 'image/png';
+      const dataUrl = `data:${mime};base64,${j.image}`;
+      // put the AI image into preview area (centered, covers)
+      previewBox.innerHTML = `<img src="${dataUrl}" alt="AI result" style="width:100%;height:100%;object-fit:cover" />`;
+      previewMeta.textContent = `AI image • ${prompt} • ${width}px`;
+      // update auto description and history
+      const svgWrapper = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}"><image href="${dataUrl}" width="${width}" height="${height}" /></svg>`;
+      updateAutoDescriptionFromRendered(svgWrapper, Object.assign(readSettingsFromUI(), { seed: prompt, style: 'ai-image' }));
+      history.unshift({ settings: { seed: prompt, style: 'ai-image', size: width }, svg: svgWrapper });
+      if(history.length>28) history.pop();
+      renderHistory();
+      showToast('AI image ready');
+    } else {
+      console.error('Unexpected AI response', j);
+      showToast('AI returned unexpected response — check console');
+    }
+  }catch(err){
+    console.error('AI generation failed', err);
+    showToast('AI generation failed — check console');
+  } finally {
+    generateAIBtn.disabled = false;
+    generateAIBtn.textContent = 'Generate AI Image';
+  }
+});
+
+/* ---------- Downloads & share ---------- */
 downloadSvgBtn.addEventListener('click', async ()=>{
   try{
     const curSvg = previewBox.querySelector('svg');
@@ -945,17 +918,15 @@ copyEmbedBtn.addEventListener('click', async ()=>{
   const curSvg = previewBox.querySelector('svg');
   if(curSvg){
     const svgText = new XMLSerializer().serializeToString(curSvg);
-    copyToClipboard(svgText);
-    showToast('SVG embed copied to clipboard');
+    navigator.clipboard.writeText(svgText).then(()=> showToast('SVG embed copied to clipboard')).catch(()=> showToast('Copy failed'));
     return;
   }
   const s = readSettingsFromUI();
   const svg = await buildFinalSvg(s);
-  copyToClipboard(svg);
-  showToast('SVG embed copied to clipboard');
+  navigator.clipboard.writeText(svg).then(()=> showToast('SVG embed copied to clipboard')).catch(()=> showToast('Copy failed'));
 });
 
-/* Random / presets */
+/* ---------- Random / presets ---------- */
 randomBtn.addEventListener('click', ()=>{
   seedEl.value = sampleSeeds[Math.floor(Math.random()*sampleSeeds.length)] + '-' + Math.floor(Math.random()*9999);
   const styles = qsa('#style option').map(o=>o.value);
@@ -978,7 +949,7 @@ qsa('.preset').forEach(btn=>{
   });
 });
 
-/* Live preview */
+/* ---------- Live preview ---------- */
 function setupLivePreview(){
   const inputs = [seedEl, styleEl, sizeEl, scaleEl, rotationEl, bgTypeEl, bgColorEl];
   inputs.forEach(inp => {
@@ -993,51 +964,26 @@ function setupLivePreview(){
 }
 setupLivePreview();
 
-/* URL params */
-function applyUrlParams(){
-  const params = new URLSearchParams(window.location.search);
-  if([...params.keys()].length === 0) return;
-  const s = {};
-  for(const key of ['seed','style','size','scale','rotation','bgType','bgColor']){
-    if(params.get(key)!==null) s[key] = params.get(key);
-  }
-  if(Object.keys(s).length) { loadSettings(s); applyPreviewBtn.click(); }
-}
-applyUrlParams();
-
-/* Export settings button: download JSON + copy to clipboard + notify */
-if(exportJSON){
-  exportJSON.addEventListener('click', ()=>{
-    try {
-      const settings = readSettingsFromUI();
-      const jsonText = JSON.stringify(settings, null, 2);
-      const filename = `monadicon-settings-${Date.now()}.json`;
-      const blob = new Blob([jsonText], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      navigator.clipboard?.writeText(jsonText).catch(()=>{/* ignore copy errors */});
-      showToast(`Settings exported and copied`);
-    } catch (err) {
-      console.error('Export failed', err);
-      showToast('Export failed — see console');
-    }
-  });
-}
-
-/* Export other UI handlers */
-qs('#copyJSON').addEventListener('click', ()=>{ copyToClipboard(JSON.stringify(readSettingsFromUI(), null, 2)); showToast('Settings JSON copied'); });
+/* ---------- Export ---------- */
+qs('#exportJSON').addEventListener('click', ()=>{
+  try {
+    const settings = readSettingsFromUI();
+    const jsonText = JSON.stringify(settings, null, 2);
+    const filename = `monadicon-settings-${Date.now()}.json`;
+    const blob = new Blob([jsonText], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = filename; a.click(); URL.revokeObjectURL(url);
+    navigator.clipboard?.writeText(jsonText).catch(()=>{});
+    showToast(`Settings exported and copied`);
+  } catch (err) { console.error('Export failed', err); showToast('Export failed — see console'); }
+});
+qs('#copyJSON').addEventListener('click', ()=>{ navigator.clipboard.writeText(JSON.stringify(readSettingsFromUI(), null, 2)); showToast('Settings JSON copied'); });
 qs('#downloadJSON').addEventListener('click', ()=>{ const txt = JSON.stringify(readSettingsFromUI(), null, 2); const blob = new Blob([txt], {type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='monadicon-settings.json'; a.click(); showToast('Settings JSON downloaded'); });
 
-/* History clear */
 qs('#clearHistory').addEventListener('click', ()=>{ history=[]; renderHistory(); showToast('History cleared'); });
 
-/* Theme toggle + persistence */
+/* ---------- Theme toggle ---------- */
+let isLight = false;
 function setTheme(light){
   isLight = !!light;
   if(isLight){ document.body.classList.add('light'); document.body.classList.remove('dark'); toggleThemeBtn.textContent = 'Dark'; }
@@ -1047,72 +993,47 @@ function setTheme(light){
 toggleThemeBtn.addEventListener('click', ()=> setTheme(!isLight));
 try{ const p = localStorage.getItem('monadicons:theme'); setTheme(p === 'light'); }catch(e){ setTheme(false); }
 
-/* Confetti & particles */
-function confetti(){ const canvas=document.createElement('canvas'); canvas.style.position='fixed'; canvas.style.left='0'; canvas.style.top='0'; canvas.style.pointerEvents='none'; canvas.width=innerWidth; canvas.height=innerHeight; document.body.appendChild(canvas); const ctx=canvas.getContext('2d'); const pieces=Array.from({length:80}, ()=>({x:innerWidth/2+(Math.random()-0.5)*200,y:innerHeight/2+(Math.random()-0.5)*60,vx:(Math.random()-0.5)*8,vy:Math.random()*-10-2,r:Math.random()*6+3,c:`hsl(${Math.random()*360},80%,60%)`,rot:Math.random()*Math.PI})); (function anim(){ ctx.clearRect(0,0,canvas.width,canvas.height); pieces.forEach((p,i)=>{ p.x+=p.vx; p.y+=p.vy; p.vy+=0.4; p.rot+=0.2; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.c; ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r); ctx.restore(); if(p.y>canvas.height+50) pieces.splice(i,1); }); if(pieces.length) requestAnimationFrame(anim); else canvas.remove(); })(); }
-(function initParticles(){ const can=document.createElement('canvas'); can.id='particles-canvas'; can.style.position='fixed'; can.style.top='0'; can.style.left='0'; can.style.width='100%'; can.style.height='100%'; can.style.pointerEvents='none'; can.style.zIndex='-1'; document.body.appendChild(can); const ctx = can.getContext('2d'); function resize(){ can.width = innerWidth; can.height = innerHeight; } window.addEventListener('resize', resize); resize(); const parts = Array.from({length:90}, ()=>({x:Math.random()*can.width,y:Math.random()*can.height,r:Math.random()*1.8+0.6,vx:(Math.random()-.5)*0.4,vy:(Math.random()-.5)*0.4})); (function draw(){ ctx.clearRect(0,0,can.width,can.height); parts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>can.width)p.vx*=-1; if(p.y<0||p.y>can.height)p.vy*=-1; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle='rgba(124,58,237,0.06)'; ctx.fill(); }); requestAnimationFrame(draw); })(); })();
-
-/* ---------- Auto desc controls (toast feedback) ---------- */
+/* ---------- Auto desc controls ---------- */
 regenDescBtn.addEventListener('click', async ()=>{
-  const meta = regenDescBtn._meta;
-  if(meta){
-    if(meta.parts){
-      updateAutoDescriptionForComposite(meta.parts, meta.settings, meta.mode, meta.svg);
-      showToast('Description regenerated');
-      return;
-    } else {
-      updateAutoDescriptionFromRendered(meta.svg, meta.settings);
-      showToast('Description regenerated');
+  try{
+    const curSvgNode = previewBox.querySelector('svg');
+    if(curSvgNode){
+      const svgText = new XMLSerializer().serializeToString(curSvgNode);
+      const settings = readSettingsFromUI();
+      updateAutoDescriptionFromRendered(svgText, settings);
+      showToast('Description regenerated from preview');
       return;
     }
-  }
-  const curSvgNode = previewBox.querySelector('svg');
-  if(curSvgNode){
-    const svgText = new XMLSerializer().serializeToString(curSvgNode);
-    const settings = readSettingsFromUI();
-    updateAutoDescriptionFromRendered(svgText, settings);
-    showToast('Description regenerated from preview');
-    return;
-  }
-  try{
     const s = readSettingsFromUI();
     const svg = await buildFinalSvg(s);
     updateAutoDescriptionFromRendered(svg, s);
-    showToast('Description regenerated (rebuilt from settings)');
-  }catch(e){
-    console.error('Regenerate failed', e);
-    showToast('Regenerate failed — see console');
-  }
+    showToast('Description regenerated (rebuilt)');
+  }catch(e){ console.error('Regenerate failed', e); showToast('Regenerate failed — see console'); }
 });
 copyDescBtn.addEventListener('click', ()=>{
   const meta = copyDescBtn._meta;
-  if(meta && meta.meta && meta.meta.description){
-    copyToClipboard(meta.meta.description); showToast('Description copied'); return;
-  }
+  if(meta && meta.meta && meta.meta.description){ navigator.clipboard.writeText(meta.meta.description); showToast('Description copied'); return; }
   const txt = autoDescEl.textContent || '';
-  if(txt) { copyToClipboard(txt); showToast('Description copied'); }
-  else showToast('No description available');
+  if(txt) { navigator.clipboard.writeText(txt); showToast('Description copied'); } else showToast('No description available');
 });
 downloadMetaBtn.addEventListener('click', ()=>{
   const meta = downloadMetaBtn._meta;
   if(!meta || !meta.meta){ showToast('Generate an icon first'); return; }
-  const metadata = {
-    name: meta.meta.name,
-    description: meta.meta.description,
-    attributes: meta.meta.attributes,
-    image: 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(meta.svg)))
-  };
+  const metadata = { name: meta.meta.name, description: meta.meta.description, attributes: meta.meta.attributes, image: 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(meta.svg))) };
   const txt = JSON.stringify(metadata, null, 2);
   const blob = new Blob([txt], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = `${meta.meta.name.replace(/\s+/g,'_')}-metadata.json`; a.click();
-  URL.revokeObjectURL(url);
+  const a = document.createElement('a'); a.href = url; a.download = `${meta.meta.name.replace(/\s+/g,'_')}-metadata.json`; a.click(); URL.revokeObjectURL(url);
   showToast('Metadata JSON downloaded');
 });
 
-/* ---------- Initialize UI state & attach other handlers ---------- */
+/* ---------- Confetti & particles ---------- */
+function confetti(){ const canvas=document.createElement('canvas'); canvas.style.position='fixed'; canvas.style.left='0'; canvas.style.top='0'; canvas.style.pointerEvents='none'; canvas.width=innerWidth; canvas.height=innerHeight; document.body.appendChild(canvas); const ctx=canvas.getContext('2d'); const pieces=Array.from({length:80}, ()=>({x:innerWidth/2+(Math.random()-0.5)*200,y:innerHeight/2+(Math.random()-0.5)*60,vx:(Math.random()-0.5)*8,vy:Math.random()*-10-2,r:Math.random()*6+3,c:`hsl(${Math.random()*360},80%,60%)`,rot:Math.random()*Math.PI})); (function anim(){ ctx.clearRect(0,0,canvas.width,canvas.height); pieces.forEach((p,i)=>{ p.x+=p.vx; p.y+=p.vy; p.vy+=0.4; p.rot+=0.2; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.c; ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r); ctx.restore(); if(p.y>canvas.height+50) pieces.splice(i,1); }); if(pieces.length) requestAnimationFrame(anim); else canvas.remove(); })(); }
+(function initParticles(){ const can=document.createElement('canvas'); can.id='particles-canvas'; can.style.position='fixed'; can.style.top='0'; can.style.left='0'; can.style.width='100%'; can.style.height='100%'; can.style.pointerEvents='none'; can.style.zIndex='-1'; document.body.appendChild(can); const ctx = can.getContext('2d'); function resize(){ can.width = innerWidth; can.height = innerHeight; } window.addEventListener('resize', resize); resize(); const parts = Array.from({length:90}, ()=>({x:Math.random()*can.width,y:Math.random()*can.height,r:Math.random()*1.8+0.6,vx:(Math.random()-.5)*0.4,vy:(Math.random()-.5)*0.4})); (function draw(){ ctx.clearRect(0,0,can.width,can.height); parts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>can.width)p.vx*=-1; if(p.y<0||p.y>can.height)p.vy*=-1; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle='rgba(124,58,237,0.06)'; ctx.fill(); }); requestAnimationFrame(draw); })(); })();
+
+/* ---------- Init ---------- */
 settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
 applyPreviewBtn.click();
-
 </script>
 </body>
 </html>
