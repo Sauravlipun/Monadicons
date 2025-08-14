@@ -3,837 +3,1433 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monadicons - OpenAI Image Generator</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Monadicons — Avatar Studio</title>
+    <meta name="description" content="Generate avatars with AI. Customize settings, preview, and download SVG/PNG.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%237C3AED'/><text x='50' y='58' font-size='50' text-anchor='middle' fill='white' font-family='Arial'>M</text></svg>">
+    <script src="https://cdn.jsdelivr.net/npm/jdenticon@3.2.0/dist/jdenticon.min.js"></script>
     <style>
         :root {
-            --primary: #10a37f;
-            --primary-dark: #0d8a6c;
-            --secondary: #ff6b6b;
-            --dark: #1a1a2e;
-            --darker: #0d0d1a;
-            --light: #f5f7ff;
-            --gray: #a0aec0;
-            --success: #48bb78;
-            --warning: #ed8936;
-            --error: #e53e3e;
+            --accent: #7C3AED;
+            --accent-2: #5B21B6;
+            --muted: #9fb0c9;
+            --bg-1: #071124;
+            --bg-2: #071a2b;
+            --card-bg: rgba(255, 255, 255, 0.02);
+            --glass: rgba(255, 255, 255, 0.04);
+            --gap: 18px;
+            --radius: 12px;
         }
-        
+
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
-        body {
-            background: linear-gradient(135deg, var(--darker), var(--dark));
-            color: var(--light);
-            min-height: 100vh;
-            padding: 20px;
+
+        html, body {
+            height: 100%;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #e6eef8;
+            background: radial-gradient(1200px 600px at 10% 10%, rgba(124, 58, 237, 0.12), transparent), linear-gradient(180deg, var(--bg-1), var(--bg-2));
+            padding: 22px;
+            -webkit-font-smoothing: antialiased;
         }
-        
+
         .container {
-            max-width: 1200px;
+            max-width: 1180px;
             margin: 0 auto;
         }
-        
-        header {
-            text-align: center;
-            padding: 20px 0 40px;
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 14px;
         }
-        
+
+        .brand {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
         .logo {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 15px;
-            margin-bottom: 15px;
+            font-weight: 800;
+            color: white;
+            font-size: 20px;
         }
-        
-        .logo-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-        
+
         h1 {
-            font-size: 2.8rem;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 0;
+            font-size: 20px;
         }
-        
-        .subtitle {
-            color: var(--gray);
-            font-size: 1.1rem;
-            max-width: 600px;
-            margin: 0 auto;
-            line-height: 1.6;
-        }
-        
-        .content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-        }
-        
-        @media (max-width: 900px) {
-            .content {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        .panel {
-            background: rgba(30, 30, 46, 0.7);
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-        
-        .panel-title {
+
+        .header-actions {
             display: flex;
+            gap: 8px;
             align-items: center;
-            gap: 10px;
-            font-size: 1.4rem;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
-        
-        .panel-title i {
-            color: var(--primary);
-            background: rgba(16, 163, 127, 0.1);
-            width: 36px;
-            height: 36px;
+
+        .btn, .ghost, .small {
+            cursor: pointer;
             border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
+            padding: 8px 12px;
             font-weight: 600;
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-        
-        input, textarea, select {
-            width: 100%;
-            padding: 14px;
-            border-radius: 10px;
-            background: rgba(20, 20, 35, 0.7);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: var(--light);
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-        
-        input:focus, textarea:focus, select:focus {
+            border: none;
             outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(16, 163, 127, 0.2);
+            transition: all 0.2s ease;
         }
-        
-        textarea {
-            min-height: 100px;
+
+        .btn {
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            color: white;
+            box-shadow: 0 8px 24px rgba(124, 58, 237, 0.12);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(124, 58, 237, 0.2);
+        }
+
+        .ghost {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: var(--muted);
+        }
+
+        .ghost:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .small {
+            padding: 6px 8px;
+            background: var(--glass);
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 440px;
+            gap: var(--gap);
+            align-items: start;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 16px;
+            border-radius: var(--radius);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .controls label {
+            display: block;
+            font-size: 13px;
+            color: var(--muted);
+            margin: 10px 0 6px;
+        }
+
+        .row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .input, select, input[type="color"], input[type="number"], input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            background: transparent;
+            color: inherit;
+            font-size: 14px;
             resize: vertical;
         }
-        
-        .range-container {
+
+        .controls {
+            margin-top: 8px;
             display: flex;
-            align-items: center;
-            gap: 15px;
+            flex-wrap: wrap;
+            gap: 8px;
         }
-        
-        .range-container input[type="range"] {
-            flex: 1;
-        }
-        
-        .range-value {
-            min-width: 50px;
-            text-align: center;
-            background: rgba(16, 163, 127, 0.1);
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-weight: 600;
-        }
-        
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-        
-        .btn-group {
-            display: flex;
-            gap: 15px;
-            margin-top: 25px;
-        }
-        
-        .btn {
-            flex: 1;
-            padding: 15px;
-            border-radius: 10px;
-            border: none;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s;
+
+        .preview-box {
+            width: 100%;
+            height: 440px;
+            border-radius: var(--radius);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), transparent);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-        }
-        
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 5px 15px rgba(16, 163, 127, 0.4);
-        }
-        
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-        
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--light);
-        }
-        
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.15);
-        }
-        
-        .image-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-top: 20px;
-        }
-        
-        .image-placeholder {
-            aspect-ratio: 1/1;
-            background: rgba(20, 20, 35, 0.5);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px dashed rgba(255,255,255,0.1);
             overflow: hidden;
             position: relative;
         }
-        
-        .image-placeholder i {
-            font-size: 3rem;
-            color: rgba(255,255,255,0.1);
-        }
-        
-        .image-placeholder img {
+
+        .preview-box > img, .preview-box > svg {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: none;
+            display: block;
         }
-        
-        .result-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0,0,0,0.7);
-            padding: 15px;
+
+        .preview-meta {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        .history {
             display: flex;
-            justify-content: space-between;
-            opacity: 0;
-            transition: opacity 0.3s;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
         }
-        
-        .image-placeholder:hover .result-overlay {
-            opacity: 1;
-        }
-        
-        .grid-3 {
-            grid-template-columns: 1fr 1fr 1fr;
-        }
-        
-        .grid-4 {
-            grid-template-columns: 1fr 1fr;
-        }
-        
-        .status {
-            padding: 20px;
-            border-radius: 10px;
-            background: rgba(20, 20, 35, 0.7);
-            margin-top: 20px;
-            text-align: center;
-            display: none;
-        }
-        
-        .status.loading {
-            display: block;
-            color: var(--gray);
-        }
-        
-        .status.error {
-            display: block;
-            background: rgba(229, 62, 62, 0.1);
-            color: var(--error);
-            border: 1px solid rgba(229, 62, 62, 0.3);
-        }
-        
-        .status.success {
-            display: block;
-            background: rgba(72, 187, 120, 0.1);
-            color: var(--success);
-            border: 1px solid rgba(72, 187, 120, 0.3);
-        }
-        
-        .spinner {
-            width: 24px;
-            height: 24px;
-            border: 3px solid rgba(255,255,255,0.2);
-            border-top: 3px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 10px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        footer {
-            text-align: center;
-            padding: 40px 0 20px;
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-        
-        .api-key-container {
-            background: rgba(20, 20, 35, 0.7);
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 20px;
-        }
-        
-        .api-key-container input {
-            background: rgba(10, 10, 25, 0.7);
-        }
-        
-        .tooltip {
-            position: relative;
-            display: inline-block;
-            margin-left: 8px;
-            color: var(--gray);
-            cursor: help;
-        }
-        
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 250px;
-            background-color: rgba(30, 30, 46, 0.9);
-            color: var(--light);
-            text-align: center;
-            border-radius: 6px;
-            padding: 10px;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            transform: translateX(-50%);
-            opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 0.9rem;
-            line-height: 1.4;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
-        }
-        
-        .history-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: var(--primary);
-            color: white;
+
+        .thumb {
+            width: 64px;
+            height: 64px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            overflow: hidden;
+            cursor: pointer;
+            background: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            cursor: pointer;
-            z-index: 100;
         }
-        
-        .quality-group {
-            display: flex;
-            gap: 10px;
+
+        .switch {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--glass);
+            padding: 6px;
+            border-radius: 999px;
         }
-        
-        .quality-option {
-            flex: 1;
-            padding: 10px;
-            border-radius: 8px;
-            background: rgba(20, 20, 35, 0.5);
+
+        .switch input {
+            display: none;
+        }
+
+        .footer-note {
+            color: var(--muted);
+            font-size: 13px;
             text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
+            margin-top: 18px;
         }
-        
-        .quality-option.selected {
-            background: var(--primary);
-            color: white;
+
+        /* Auto-desc */
+        .desc-card {
+            margin-top: 12px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.015), transparent);
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
         }
-        
-        .model-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
+
+        .desc-title {
+            font-weight: 700;
+            margin-bottom: 6px;
         }
-        
-        .model-option {
-            flex: 1;
-            padding: 10px;
+
+        .desc-text {
+            background: transparent;
             border-radius: 8px;
-            background: rgba(20, 20, 35, 0.5);
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
+            padding: 10px;
+            border: 1px dashed rgba(255, 255, 255, 0.04);
+            color: var(--muted);
+            font-size: 14px;
+            white-space: pre-wrap;
         }
-        
-        .model-option.selected {
-            background: var(--primary);
-            color: white;
+
+        /* Toast */
+        #toast {
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast {
+            background: rgba(0, 0, 0, 0.75);
+            color: #fff;
+            padding: 10px 14px;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            font-weight: 600;
+            min-width: 180px;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* LIGHT THEME */
+        body.light {
+            color: #1f2937;
+            background: linear-gradient(180deg, #f0f4f8, #e6eef5);
+        }
+
+        body.light .card {
+            background: white;
+            border-color: rgba(0, 0, 0, 0.06);
+            color: #1f2937;
+        }
+
+        body.light .input, body.light select {
+            background: #fff;
+            color: #111;
+            border-color: rgba(0, 0, 0, 0.12);
+        }
+
+        body.light .ghost {
+            border-color: rgba(0, 0, 0, 0.08);
+            color: #475569;
+        }
+
+        body.light .preview-box {
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.02), transparent);
+        }
+
+        /* Responsive */
+        @media (max-width: 1000px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            .preview-box {
+                height: 360px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .header-actions {
+                width: 100%;
+                margin-top: 12px;
+                justify-content: space-between;
+            }
+            .btn, .ghost, .small {
+                padding: 8px;
+                font-size: 13px;
+            }
+        }
+
+        /* AI Loading Indicator */
+        .ai-loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            padding: 20px;
+            text-align: center;
+            color: var(--muted);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 3px solid rgba(124, 58, 237, 0.2);
+            border-top-color: var(--accent);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <div class="logo">
-                <div class="logo-icon">
-                    <i class="fas fa-hat-cowboy"></i>
-                </div>
-                <h1>Monadicons</h1>
+        <div class="header">
+            <div class="brand">
+                <div class="logo">M</div>
+                <div><h1>Monadicons</h1></div>
             </div>
-            <p class="subtitle">Generate unique AI-powered icons using OpenAI's DALL-E. Describe what you want, adjust settings, and create!</p>
-        </header>
-        
-        <div class="content">
-            <div class="panel">
-                <div class="panel-title">
-                    <i class="fas fa-sliders-h"></i>
-                    <span>Generation Settings</span>
+
+            <div class="header-actions">
+                <div class="switch" title="Live preview (updates as you change inputs)">
+                    <input id="liveToggle" type="checkbox" checked>
+                    <label for="liveToggle" style="color:var(--muted);font-weight:600">Live</label>
                 </div>
-                
-                <div class="api-key-container">
-                    <label for="api-key">
-                        <i class="fas fa-key"></i> OpenAI API Key
-                        <span class="tooltip">
-                            <i class="fas fa-info-circle"></i>
-                            <span class="tooltiptext">Enter your OpenAI API key to generate images. You can get one from platform.openai.com</span>
-                        </span>
-                    </label>
-                    <input type="password" id="api-key" placeholder="sk-...">
+                <button id="randomBtn" class="ghost">Random</button>
+                <button id="exportJSON" class="small">Export Settings</button>
+                <button id="toggleTheme" class="small">Light</button>
+            </div>
+        </div>
+
+        <div class="grid">
+            <!-- LEFT -->
+            <div class="card controls">
+                <label for="seed">Seed / Name</label>
+                <input id="seed" class="input" type="text" placeholder="e.g., aurora" value="anon" />
+
+                <label for="prompt">Prompt</label>
+                <textarea id="prompt" rows="3" placeholder="Enter a prompt (e.g., 'friendly blue fox with stars')"></textarea>
+                <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
+                    <button id="applyPrompt" class="ghost">Apply Prompt → Seed</button>
+                    <button id="generateFromPrompt" class="btn">Generate from Prompt</button>
+                    <button id="generateAI" class="ghost" title="Generate a literal image using xAI">Generate xAI Image</button>
+                    <div style="flex:1"></div>
+                    <label style="font-size:13px;color:var(--muted)"><input id="promptUseAsSeed" type="checkbox" style="margin-right:6px">Use prompt as seed automatically</label>
                 </div>
-                
-                <div class="form-group">
-                    <label for="prompt"><i class="fas fa-feather-alt"></i> Prompt</label>
-                    <textarea id="prompt" placeholder="A ball with a hat...">A ball with a hat</textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label for="num-seeds"><i class="fas fa-seedling"></i> Number of Images</label>
-                    <input type="number" id="num-seeds" min="1" max="4" value="3">
-                </div>
-                
-                <div class="form-group">
-                    <label><i class="fas fa-paint-brush"></i> Image Quality</label>
-                    <div class="quality-group">
-                        <div class="quality-option selected" id="quality-standard">Standard</div>
-                        <div class="quality-option" id="quality-hd">HD</div>
+
+                <div style="margin-top:10px;border-radius:8px;padding:10px;background:rgba(255,255,255,0.01);border:1px solid rgba(255,255,255,0.02)">
+                    <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                        <div style="font-weight:700">Multi-seed</div>
+                        <label style="font-size:13px;color:var(--muted)"><input id="multiSeed" type="checkbox" style="margin-right:6px">Enable</label>
+                    </div>
+                    <div style="display:flex;gap:8px;margin-top:8px">
+                        <div style="flex:1">
+                            <label for="delimiter">Delimiter</label>
+                            <select id="delimiter" class="input">
+                                <option value="space">Space</option>
+                                <option value="comma">Comma</option>
+                                <option value="newline">Newline</option>
+                                <option value="char">Each char</option>
+                            </select>
+                        </div>
+                        <div style="width:120px">
+                            <label for="partsCount">Parts</label>
+                            <input id="partsCount" class="input" type="number" min="2" max="12" value="3" />
+                        </div>
+                        <div style="width:150px">
+                            <label for="composeMode">Compose</label>
+                            <select id="composeMode" class="input">
+                                <option value="grid">Grid</option>
+                                <option value="layer">Layered</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+                        <label style="font-size:13px;color:var(--muted);display:flex;align-items:center">
+                            <input id="randomizeParts" type="checkbox" style="margin-right:6px">
+                            Randomize parts <span style="margin-left:8px;color:var(--muted)">• deterministic</span>
+                        </label>
+                        <div style="flex:1"></div>
+                        <small style="color:var(--muted)">Creates multiple seeds from the prompt and combines them.</small>
                     </div>
                 </div>
-                
-                <div class="form-group">
-                    <label><i class="fas fa-microchip"></i> Model</label>
-                    <div class="model-group">
-                        <div class="model-option selected" id="model-dalle2">DALL-E 2</div>
-                        <div class="model-option" id="model-dalle3">DALL-E 3</div>
+
+                <label for="style" style="margin-top:10px">Style</label>
+                <select id="style" class="input">
+                    <optgroup label="Avatar styles">
+                        <option value="adventurer">adventurer</option>
+                        <option value="avataaars">avataaars</option>
+                        <option value="big-ears">big-ears</option>
+                        <option value="bottts">bottts</option>
+                        <option value="micah">micah</option>
+                        <option value="pixel-art-neutral">pixel-art-neutral</option>
+                        <option value="identicon">identicon</option>
+                    </optgroup>
+                    <optgroup label="Local">
+                        <option value="jdenticon">jdenticon (local)</option>
+                    </optgroup>
+                </select>
+
+                <div style="display:flex;gap:8px;margin-top:10px">
+                    <div style="flex:1">
+                        <label for="size">Size (px)</label>
+                        <input id="size" class="input" type="number" min="64" max="4096" value="512" />
+                    </div>
+                    <div style="width:150px">
+                        <label for="scale">Scale (%)</label>
+                        <input id="scale" class="input" type="number" min="50" max="200" value="100" />
+                    </div>
+                    <div style="width:150px">
+                        <label for="rotation">Rotation (°)</label>
+                        <input id="rotation" class="input" type="number" min="-180" max="180" value="0" />
                     </div>
                 </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="size"><i class="fas fa-expand"></i> Size</label>
-                        <select id="size">
-                            <option value="256x256">256x256</option>
-                            <option value="512x512" selected>512x512</option>
-                            <option value="1024x1024">1024x1024</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="style"><i class="fas fa-palette"></i> Style</label>
-                        <select id="style">
-                            <option value="vivid">Vivid</option>
-                            <option value="natural" selected>Natural</option>
-                        </select>
+
+                <label for="bgType">Background type</label>
+                <select id="bgType" class="input">
+                    <option value="transparent">transparent</option>
+                    <option value="solid">solid</option>
+                    <option value="gradient">gradient</option>
+                    <option value="radial">radial</option>
+                    <option value="dots">dots</option>
+                    <option value="stripes">stripes</option>
+                    <option value="checker">checker</option>
+                    <option value="noise">noise</option>
+                </select>
+
+                <label for="bgColor">Background color</label>
+                <input id="bgColor" type="color" value="#7C3AED" class="input" />
+
+                <div style="display:flex;gap:8px;margin-top:12px;align-items:center">
+                    <button id="generateBtn" class="btn">Generate (Add to history)</button>
+                    <button id="applyPreviewBtn" class="ghost">Apply Preview</button>
+                    <div style="flex:1"></div>
+                    <button id="clearHistory" class="small">Clear History</button>
+                </div>
+
+                <div class="toolbar" style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+                    <button id="downloadSvg" class="ghost">Download SVG</button>
+                    <button id="downloadPng" class="ghost">Download PNG</button>
+                    <button id="copyEmbed" class="ghost">Copy Embed</button>
+                    <button id="shareX" class="ghost">Share X</button>
+                    <button id="shareDiscord" class="ghost">Share Discord</button>
+                </div>
+
+                <div style="margin-top:12px">
+                    <label>Presets</label>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+                        <button class="small preset" data-seed="aurora" data-style="adventurer">Aurora</button>
+                        <button class="small preset" data-seed="nebula" data-style="pixel-art-neutral">Nebula</button>
+                        <button class="small preset" data-seed="octopus" data-style="micah">Octopus</button>
+                        <button class="small preset" data-seed="miso" data-style="jdenticon">Miso</button>
+                        <button class="small" id="randomPreset">Surprise me</button>
                     </div>
                 </div>
-                
-                <div class="btn-group">
-                    <button class="btn btn-secondary" id="randomize">
-                        <i class="fas fa-random"></i> Randomize
-                    </button>
-                    <button class="btn btn-primary" id="generate">
-                        <i class="fas fa-magic"></i> Generate Images
-                    </button>
+
+                <div style="margin-top:12px">
+                    <label>History</label>
+                    <div class="history" id="history"></div>
+                </div>
+
+                <div style="margin-top:12px">
+                    <label>Export/Save</label>
+                    <div class="row" style="gap:8px;margin-top:8px">
+                        <button id="copyJSON" class="small">Copy JSON</button>
+                        <button id="downloadJSON" class="small">Download JSON</button>
+                    </div>
                 </div>
             </div>
-            
-            <div class="panel">
-                <div class="panel-title">
-                    <i class="fas fa-images"></i>
-                    <span>Generated Images</span>
+
+            <!-- RIGHT -->
+            <div>
+                <div class="card">
+                    <div class="preview-box" id="previewBox">
+                        <div id="placeholder" style="text-align:center;color:var(--muted)">
+                            <div style="font-size:18px;margin-bottom:6px">Preview</div>
+                            <div style="font-size:13px">Configure settings on the left, then click Generate (or toggle Live)</div>
+                        </div>
+                    </div>
+                    <div class="preview-meta" id="previewMeta">—</div>
                 </div>
-                
-                <div class="image-container grid-3" id="image-grid">
-                    <div class="image-placeholder">
-                        <i class="fas fa-image"></i>
-                        <img src="" alt="Generated image 1">
-                        <div class="result-overlay">
-                            <button class="btn btn-secondary download-btn">
-                                <i class="fas fa-download"></i> Download
-                            </button>
+
+                <div style="height:12px"></div>
+
+                <div class="card">
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                        <div style="font-weight:700">Options snapshot</div>
+                        <div style="color:var(--muted);font-size:13px">Copy / Share below</div>
+                    </div>
+                    <pre id="settingsOut" style="white-space:pre-wrap;word-break:break-word;background:transparent;border:none;color:var(--muted);margin-top:8px"></pre>
+
+                    <div class="desc-card" id="descCard">
+                        <div style="display:flex;justify-content:space-between;align-items:center">
+                            <div>
+                                <div class="desc-title">Auto Description</div>
+                                <div style="color:var(--muted);font-size:13px">A short NFT-style description and attributes generated from your settings.</div>
+                            </div>
+                            <div style="display:flex;gap:8px">
+                                <button id="regenDesc" class="small">Regenerate</button>
+                                <button id="copyDesc" class="small">Copy</button>
+                                <button id="downloadMeta" class="small">Download JSON</button>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:10px;margin-top:10px;align-items:flex-start">
+                            <div style="width:96px;height:96px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center" id="descThumb">
+                            </div>
+                            <div style="flex:1">
+                                <div id="autoDesc" class="desc-text">Generate an icon to view the auto-description here.</div>
+                            </div>
                         </div>
                     </div>
-                    <div class="image-placeholder">
-                        <i class="fas fa-image"></i>
-                        <img src="" alt="Generated image 2">
-                        <div class="result-overlay">
-                            <button class="btn btn-secondary download-btn">
-                                <i class="fas fa-download"></i> Download
-                            </button>
-                        </div>
-                    </div>
-                    <div class="image-placeholder">
-                        <i class="fas fa-image"></i>
-                        <img src="" alt="Generated image 3">
-                        <div class="result-overlay">
-                            <button class="btn btn-secondary download-btn">
-                                <i class="fas fa-download"></i> Download
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="status" id="status">
-                    <div class="spinner"></div>
-                    <p>Generating your images...</p>
                 </div>
             </div>
         </div>
-        
-        <footer>
-            <p>Monadicons Generator &copy; 2023 | Powered by OpenAI DALL-E</p>
-        </footer>
+
+        <div class="footer-note">Powered by Monadicons & xAI • ©2025</div>
     </div>
 
-    <div class="history-btn">
-        <i class="fas fa-history"></i>
-    </div>
+    <div id="toast" aria-live="polite" aria-atomic="true"></div>
 
     <script>
-        // DOM Elements
-        const apiKeyInput = document.getElementById('api-key');
-        const promptInput = document.getElementById('prompt');
-        const numSeedsInput = document.getElementById('num-seeds');
-        const sizeInput = document.getElementById('size');
-        const styleInput = document.getElementById('style');
-        const generateBtn = document.getElementById('generate');
-        const randomizeBtn = document.getElementById('randomize');
-        const imageGrid = document.getElementById('image-grid');
-        const statusDiv = document.getElementById('status');
-        const imagePlaceholders = document.querySelectorAll('.image-placeholder');
-        const downloadButtons = document.querySelectorAll('.download-btn');
+        // DOM references
+        const liveToggle = document.getElementById('liveToggle');
+        const seedEl = document.getElementById('seed');
+        const promptEl = document.getElementById('prompt');
+        const promptUseAsSeedEl = document.getElementById('promptUseAsSeed');
+        const applyPromptBtn = document.getElementById('applyPrompt');
+        const generateFromPromptBtn = document.getElementById('generateFromPrompt');
+        const generateAIBtn = document.getElementById('generateAI');
+        const styleEl = document.getElementById('style');
+        const sizeEl = document.getElementById('size');
+        const scaleEl = document.getElementById('scale');
+        const rotationEl = document.getElementById('rotation');
+        const bgTypeEl = document.getElementById('bgType');
+        const bgColorEl = document.getElementById('bgColor');
+        const generateBtn = document.getElementById('generateBtn');
+        const applyPreviewBtn = document.getElementById('applyPreviewBtn');
+        const randomBtn = document.getElementById('randomBtn');
+        const previewBox = document.getElementById('previewBox');
+        const previewMeta = document.getElementById('previewMeta');
+        const placeholder = document.getElementById('placeholder');
+        const downloadSvgBtn = document.getElementById('downloadSvg');
+        const downloadPngBtn = document.getElementById('downloadPng');
+        const copyEmbedBtn = document.getElementById('copyEmbed');
+        const historyEl = document.getElementById('history');
+        const copyJSON = document.getElementById('copyJSON');
+        const downloadJSON = document.getElementById('downloadJSON');
+        const exportJSON = document.getElementById('exportJSON');
+        const settingsOut = document.getElementById('settingsOut');
+        const toggleThemeBtn = document.getElementById('toggleTheme');
+        const autoDescEl = document.getElementById('autoDesc');
+        const descThumb = document.getElementById('descThumb');
+        const regenDescBtn = document.getElementById('regenDesc');
+        const copyDescBtn = document.getElementById('copyDesc');
+        const downloadMetaBtn = document.getElementById('downloadMeta');
+        const randomPreset = document.getElementById('randomPreset');
+        const clearHistory = document.getElementById('clearHistory');
+
+        // Sample seeds for random generation
+        const sampleSeeds = ['aurora', 'lumen', 'nova', 'zephyr', 'sol', 'aero', 'pixel', 'nebula', 'miso', 'sora', 'echo', 'boreal', 'octopus', 'waffle', 'tiger', 'meteor'];
         
-        // Quality and model options
-        const qualityStandard = document.getElementById('quality-standard');
-        const qualityHD = document.getElementById('quality-hd');
-        const modelDalle2 = document.getElementById('model-dalle2');
-        const modelDalle3 = document.getElementById('model-dalle3');
+        // History storage
+        let history = [];
         
-        // Set initial selections
-        let currentQuality = 'standard';
-        let currentModel = 'dall-e-2';
-        
-        // Event listeners for quality
-        qualityStandard.addEventListener('click', () => {
-            qualityStandard.classList.add('selected');
-            qualityHD.classList.remove('selected');
-            currentQuality = 'standard';
-        });
-        
-        qualityHD.addEventListener('click', () => {
-            qualityHD.classList.add('selected');
-            qualityStandard.classList.remove('selected');
-            currentQuality = 'hd';
-        });
-        
-        // Event listeners for model
-        modelDalle2.addEventListener('click', () => {
-            modelDalle2.classList.add('selected');
-            modelDalle3.classList.remove('selected');
-            currentModel = 'dall-e-2';
-            sizeInput.innerHTML = `
-                <option value="256x256">256x256</option>
-                <option value="512x512" selected>512x512</option>
-                <option value="1024x1024">1024x1024</option>
-            `;
-        });
-        
-        modelDalle3.addEventListener('click', () => {
-            modelDalle3.classList.add('selected');
-            modelDalle2.classList.remove('selected');
-            currentModel = 'dall-e-3';
-            sizeInput.innerHTML = `
-                <option value="1024x1024" selected>1024x1024</option>
-                <option value="1792x1024">1792x1024</option>
-                <option value="1024x1792">1024x1792</option>
-            `;
-        });
-        
-        // Randomize settings
-        randomizeBtn.addEventListener('click', () => {
-            // Generate a random prompt
-            const objects = ['ball', 'cube', 'star', 'heart', 'diamond', 'pyramid', 'sphere', 'cone', 'cylinder'];
-            const accessories = ['hat', 'glasses', 'crown', 'mask', 'scarf', 'bowtie', 'cape', 'helmet', 'monocle'];
-            const adjectives = ['shiny', 'glowing', 'metallic', 'transparent', 'fuzzy', 'striped', 'spotted', 'checkered'];
-            const colors = ['red', 'blue', 'green', 'gold', 'silver', 'purple', 'teal', 'magenta'];
-            
-            const randomObject = objects[Math.floor(Math.random() * objects.length)];
-            const randomAccessory = accessories[Math.floor(Math.random() * accessories.length)];
-            const randomAdjective = adjectives[Math.floor(Math.random() * adjectives.length)];
-            const randomColor = colors[Math.floor(Math.random() * colors.length)];
-            
-            promptInput.value = `A ${randomAdjective} ${randomColor} ${randomObject} with a ${randomAccessory}`;
-            numSeedsInput.value = Math.floor(Math.random() * 3) + 1; // 1-4
-            
-            // Randomly select quality and model
-            if (Math.random() > 0.5) {
-                qualityHD.click();
-            } else {
-                qualityStandard.click();
-            }
-            
-            if (Math.random() > 0.7) {
-                modelDalle3.click();
-            } else {
-                modelDalle2.click();
-            }
-        });
-        
-        // Generate images
-        generateBtn.addEventListener('click', async () => {
-            const apiKey = apiKeyInput.value.trim();
-            const prompt = promptInput.value.trim();
-            const numSeeds = parseInt(numSeedsInput.value);
-            const size = sizeInput.value;
-            const style = styleInput.value;
-            
-            if (!apiKey) {
-                showStatus('Please enter your OpenAI API key', 'error');
-                return;
-            }
-            
-            if (!prompt) {
-                showStatus('Please enter a prompt', 'error');
-                return;
-            }
-            
-            if (numSeeds < 1 || numSeeds > 4) {
-                showStatus('Number of images must be between 1 and 4', 'error');
-                return;
-            }
-            
-            // Show loading state
-            showStatus('Generating images...', 'loading');
-            
-            // Update grid to match number of seeds
-            updateImageGrid(numSeeds);
-            
-            try {
-                // Call OpenAI API
-                const images = await callOpenAIApi({
-                    apiKey,
-                    prompt,
-                    n: numSeeds,
-                    size,
-                    style,
-                    quality: currentQuality,
-                    model: currentModel
-                });
-                
-                // Display images
-                images.forEach((imgData, index) => {
-                    const imgElement = imagePlaceholders[index].querySelector('img');
-                    imgElement.src = imgData.url;
-                    imgElement.style.display = 'block';
-                    imagePlaceholders[index].querySelector('i').style.display = 'none';
-                    
-                    // Set up download button
-                    const downloadBtn = imagePlaceholders[index].querySelector('.download-btn');
-                    downloadBtn.onclick = () => {
-                        downloadImage(imgData.url, `monadicon-${index + 1}.png`);
-                    };
-                });
-                
-                showStatus(`Successfully generated ${images.length} images!`, 'success');
-            } catch (error) {
-                console.error('Error generating images:', error);
-                showStatus(`Error: ${error.message}`, 'error');
-            }
-        });
-        
-        // Download image function
-        function downloadImage(url, filename) {
-            fetch(url)
-                .then(response => response.blob())
-                .then(blob => {
-                    const link = document.createElement('a');
-                    link.href = URL.createObjectURL(blob);
-                    link.download = filename;
-                    link.click();
-                    URL.revokeObjectURL(link.href);
-                })
-                .catch(err => {
-                    console.error('Error downloading image:', err);
-                    showStatus('Error downloading image', 'error');
-                });
+        // Utility functions
+        function showToast(msg, ms=2200) { 
+            const toastContainer = document.getElementById('toast'); 
+            const toast = document.createElement('div'); 
+            toast.className = 'toast'; 
+            toast.textContent = msg; 
+            toastContainer.appendChild(toast); 
+            setTimeout(() => { 
+                toast.style.opacity = '0'; 
+                toast.style.transition = 'opacity .25s'; 
+                setTimeout(() => toast.remove(), 250); 
+            }, ms); 
         }
         
-        // Update image grid based on number of seeds
-        function updateImageGrid(numSeeds) {
-            // Reset all placeholders
-            imagePlaceholders.forEach(placeholder => {
-                placeholder.style.display = 'none';
-                const img = placeholder.querySelector('img');
-                img.style.display = 'none';
-                placeholder.querySelector('i').style.display = 'block';
-            });
+        function hashString(s) { 
+            let h = 2166136261; 
+            for (let i = 0; i < s.length; i++) { 
+                h = Math.imul(h ^ s.charCodeAt(i), 16777619); 
+            } 
+            return h; 
+        }
+        
+        function slugifyPrompt(s) { 
+            const trimmed = (s || '').trim(); 
+            const slug = trimmed.toLowerCase()
+                .replace(/[^\w\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .slice(0, 70) || 'anon'; 
+            const h = Math.abs(hashString(trimmed || slug)).toString(16).slice(0, 5); 
+            return `${slug}-${h}`; 
+        }
+        
+        function seededRandomFromSeed(seed) { 
+            let h = hashString(seed); 
+            return function() { 
+                h ^= h << 13; 
+                h ^= h >> 17; 
+                h ^= h << 5; 
+                return (h >>> 0) / 4294967296; 
+            }; 
+        }
+        
+        function pickDeterministic(arr, seed, idx=0) { 
+            if (!arr || !arr.length) return null; 
+            const rnd = seededRandomFromSeed(seed + '|' + idx); 
+            return arr[Math.floor(rnd() * arr.length)]; 
+        }
+        
+        function clamp(value, min, max) {
+            return Math.max(min, Math.min(max, value));
+        }
+        
+        // Background helpers
+        function hexToRgb(hex) { 
+            hex = (hex || '#ffffff').replace('#', ''); 
+            if (hex.length === 3) {
+                hex = hex.split('').map(c => c + c).join(''); 
+            }
+            return { 
+                r: parseInt(hex.slice(0, 2), 16), 
+                g: parseInt(hex.slice(2, 4), 16), 
+                b: parseInt(hex.slice(4, 6), 16) 
+            }; 
+        }
+        
+        function mixWithWhite(hex, pct=0.6) { 
+            const c = hexToRgb(hex); 
+            const r = Math.round(c.r + (255 - c.r) * pct); 
+            const g = Math.round(c.g + (255 - c.g) * pct); 
+            const b = Math.round(c.b + (255 - c.b) * pct); 
+            return `rgb(${r}, ${g}, ${b})`; 
+        }
+        
+        function buildDefsAndRect(bgType, color, outSize) {
+            const idPrefix = 'mb_' + Math.random().toString(36).slice(2, 8);
+            let defs = '', rectFill = color || 'transparent', noiseFilterId = null;
             
-            // Show the required number of placeholders
-            for (let i = 0; i < numSeeds; i++) {
-                if (imagePlaceholders[i]) {
-                    imagePlaceholders[i].style.display = 'block';
+            if (bgType === 'transparent') { 
+                rectFill = 'none'; 
+            } else if (bgType === 'solid') { 
+                rectFill = color; 
+            } else if (bgType === 'gradient') { 
+                const gradId = idPrefix + '_g'; 
+                const lighter = mixWithWhite(color, 0.55); 
+                defs = `<linearGradient id="${gradId}" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${color}" /><stop offset="100%" stop-color="${lighter}" stop-opacity="0.9" /></linearGradient>`; 
+                rectFill = `url(#${gradId})`; 
+            } else if (bgType === 'radial') { 
+                const rid = idPrefix + '_r'; 
+                const lighter = mixWithWhite(color, 0.6); 
+                defs = `<radialGradient id="${rid}" cx="30%" cy="30%" r="80%"><stop offset="0%" stop-color="${lighter}" /><stop offset="100%" stop-color="${color}" /></radialGradient>`; 
+                rectFill = `url(#${rid})`; 
+            } else if (bgType === 'dots') { 
+                const patId = idPrefix + '_p'; 
+                defs = `<pattern id="${patId}" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="${mixWithWhite(color, 0.85)}"/><circle cx="6" cy="6" r="2" fill="${color}"/></pattern>`; 
+                rectFill = `url(#${patId})`; 
+            } else if (bgType === 'stripes') { 
+                const patId = idPrefix + '_s'; 
+                defs = `<pattern id="${patId}" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="5" height="10" fill="${color}" /><rect x="5" width="5" height="10" fill="transparent" /></pattern>`; 
+                rectFill = `url(#${patId})`; 
+            } else if (bgType === 'checker') { 
+                const patId = idPrefix + '_c'; 
+                const lighter = mixWithWhite(color, 0.7); 
+                defs = `<pattern id="${patId}" width="20" height="20" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="${color}"/><rect x="10" y="10" width="10" height="10" fill="${color}"/><rect width="10" height="10" fill="${lighter}"/><rect x="10" y="10" width="10" height="10" fill="${lighter}"/></pattern>`; 
+                rectFill = `url(#${patId})`; 
+            } else if (bgType === 'noise') { 
+                const filterId = idPrefix + '_f'; 
+                defs = `<filter id="${filterId}"><feTurbulence baseFrequency="0.8" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0.2"/><feBlend mode="overlay" in2="SourceGraphic"/></filter>`; 
+                rectFill = color; 
+                noiseFilterId = filterId; 
+            }
+            
+            return { defs, rectFill, noiseFilterId };
+        }
+        
+        // SVG extraction
+        function extractInnerSvgInfo(svgText, defaultSize) {
+            if (!svgText) return { innerSvg: '', w: defaultSize, h: defaultSize };
+            
+            svgText = svgText.replace(/^<\?xml[\s\S]*?\?>\s*/i, '');
+            const vb = svgText.match(/viewBox=["']?([\d\.\-\s,]+)["']?/i);
+            
+            if (vb) { 
+                const parts = vb[1].trim().split(/[\s,]+/).map(Number); 
+                if (parts.length >= 4 && parts[2] && parts[3]) { 
+                    const inner = svgText.replace(/^<svg[^>]*>/i, '').replace(/<\/svg>$/i, ''); 
+                    return { innerSvg: inner, w: Math.abs(parts[2]), h: Math.abs(parts[3]) }; 
+                } 
+            }
+            
+            const wAttr = svgText.match(/<svg[^>]*\bwidth=["']?(\d+(?:\.\d+)?)["']?/i);
+            const hAttr = svgText.match(/<svg[^>]*\bheight=["']?(\d+(?:\.\d+)?)["']?/i);
+            
+            if (wAttr || hAttr) { 
+                const innerW = wAttr ? Math.round(Number(wAttr[1])) : defaultSize; 
+                const innerH = hAttr ? Math.round(Number(hAttr[1])) : defaultSize; 
+                const inner = svgText.replace(/^<svg[^>]*>/i, '').replace(/<\/svg>$/i, ''); 
+                return { innerSvg: inner, w: innerW, h: innerH }; 
+            }
+            
+            const inner = svgText.replace(/^<svg[^>]*>/i, '').replace(/<\/svg>$/i, '');
+            return { innerSvg: inner, w: defaultSize, h: defaultSize };
+        }
+        
+        // Build final SVG
+        async function buildFinalSvg(settings) {
+            const outSize = clamp(parseInt(settings.size) || 512, 64, 4096);
+            const userScale = clamp(parseFloat(settings.scale) || 100, 50, 200) / 100;
+            const rotation = clamp(parseFloat(settings.rotation) || 0, -360, 360);
+            const bgType = settings.bgType;
+            const bgColor = settings.bgColor || '#ffffff';
+            const style = settings.style;
+            const seed = (settings.seed || 'anon').toString();
+
+            const { defs, rectFill, noiseFilterId } = buildDefsAndRect(bgType, bgColor, outSize);
+            let innerSvg = '', innerW = outSize, innerH = outSize;
+
+            if (style === 'jdenticon') {
+                const svgText = jdenticon.toSvg(seed, outSize);
+                const info = extractInnerSvgInfo(svgText, outSize);
+                innerSvg = info.innerSvg;
+                innerW = info.w;
+                innerH = info.h;
+            } else {
+                const tryUrls = [
+                    `https://api.dicebear.com/9.x/${style}/svg?seed=${encodeURIComponent(seed)}&size=${outSize}`,
+                    `https://avatars.dicebear.com/api/${style}/${encodeURIComponent(seed)}.svg?size=${outSize}`
+                ];
+                
+                let fetchedText = null;
+                for (const url of tryUrls) {
+                    try {
+                        const res = await fetch(url, { cache: 'no-store' });
+                        if (res.ok) {
+                            fetchedText = await res.text();
+                            break;
+                        }
+                    } catch (e) { 
+                        console.error('Fetch error:', e);
+                    }
                 }
-            }
-            
-            // Update grid layout
-            if (numSeeds === 1) {
-                imageGrid.className = 'image-container';
-            } else if (numSeeds === 2) {
-                imageGrid.className = 'image-container grid-4';
-            } else if (numSeeds === 3) {
-                imageGrid.className = 'image-container grid-3';
-            } else {
-                imageGrid.className = 'image-container grid-3';
-            }
-        }
-        
-        // Show status message
-        function showStatus(message, type) {
-            statusDiv.innerHTML = type === 'loading' ? 
-                '<div class="spinner"></div><p>' + message + '</p>' : 
-                '<p>' + message + '</p>';
                 
-            statusDiv.className = 'status';
-            
-            if (type) {
-                statusDiv.classList.add(type);
+                if (!fetchedText) throw new Error('Failed to fetch SVG');
+                const info = extractInnerSvgInfo(fetchedText, outSize);
+                innerSvg = info.innerSvg;
+                innerW = info.w;
+                innerH = info.h;
             }
+
+            const maxInner = Math.max(innerW, innerH) || outSize;
+            const fillScale = outSize / maxInner;
+            const totalScale = fillScale * userScale;
+
+            const cx = outSize / 2, cy = outSize / 2;
+            const transform = `translate(${cx}, ${cy}) rotate(${rotation}) scale(${totalScale}) translate(${-innerW / 2}, ${-innerH / 2})`;
+            const rectFilterAttr = noiseFilterId ? ` filter="url(#${noiseFilterId})"` : '';
+
+            const svg = `
+<svg xmlns="http://www.w3.org/2000/svg" width="${outSize}" height="${outSize}" viewBox="0 0 ${outSize} ${outSize}" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Monadicon">
+    <defs>${defs}</defs>
+    <rect width="${outSize}" height="${outSize}" fill="${rectFill}" ${rectFilterAttr} />
+    <g transform="${transform}">${innerSvg}</g>
+</svg>`;
             
-            // Auto-hide success messages
-            if (type === 'success') {
-                setTimeout(() => {
-                    statusDiv.style.display = 'none';
-                }, 5000);
-            }
+            return svg;
         }
         
-        // Call OpenAI API
-        async function callOpenAIApi(params) {
-            // Show loading state
-            showStatus('Connecting to OpenAI API...', 'loading');
-            
-            const requestBody = {
-                model: params.model,
-                prompt: params.prompt,
-                n: params.n,
-                size: params.size,
-                response_format: "url"
-            };
-            
-            // Add DALL-E 3 specific parameters
-            if (params.model === 'dall-e-3') {
-                requestBody.quality = params.quality;
-                requestBody.style = params.style;
-            }
+        // Render preview
+        async function renderPreview(settings, addToHistory = false) {
+            previewBox.innerHTML = `<div style="color:var(--muted);text-align:center">Rendering...</div>`;
             
             try {
-                const response = await fetch('https://api.openai.com/v1/images/generations', {
+                const finalSvg = await buildFinalSvg(settings);
+                previewBox.innerHTML = finalSvg;
+                if (placeholder) placeholder.style.display = 'none';
+                previewMeta.textContent = `${settings.style} • ${settings.seed} • ${settings.size}px`;
+                settingsOut.textContent = JSON.stringify(settings, null, 2);
+
+                updateAutoDescriptionFromRendered(finalSvg, settings);
+
+                if (addToHistory) {
+                    history.unshift({ settings, svg: finalSvg });
+                    if (history.length > 28) history.pop();
+                    renderHistory();
+                    confetti();
+                    showToast('Generated and added to history');
+                } else {
+                    showToast('Preview applied');
+                }
+            } catch (e) {
+                previewBox.innerHTML = `<div style="color:#ff6b6b;font-weight:700">Error rendering preview</div><div style="color:var(--muted);margin-top:8px">Check console for details.</div>`;
+                console.error('Preview error:', e);
+                showToast('Preview error — check console');
+            }
+        }
+        
+        // xAI Integration (wired to your serverless endpoint)
+        async function generateWithxAI(prompt, width = 512) {
+            previewBox.innerHTML = `
+                <div class="ai-loading">
+                    <div class="spinner"></div>
+                    <div>Generating AI image...</div>
+                    <div style="font-size:12px;margin-top:8px">This may take 10-20 seconds</div>
+                </div>
+            `;
+            
+            try {
+                // Call the serverless function that calls OpenAI (server returns base64)
+                const response = await fetch('/api/generate-image-openai', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${params.apiKey}`
-                    },
-                    body: JSON.stringify(requestBody)
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt, width, height: width })
                 });
                 
                 if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(`OpenAI API error: ${errorData.error?.message || response.statusText}`);
+                    const errorText = await response.text();
+                    throw new Error(`Server error ${response.status}: ${errorText}`);
                 }
                 
-                const data = await response.json();
-                return data.data;
+                const result = await response.json();
+                if (!result || !result.image) {
+                    throw new Error('No image returned from server');
+                }
+
+                // result.image is base64 — build data URL
+                const dataUrl = `data:image/png;base64,${result.image}`;
+
+                const img = document.createElement('img');
+                img.src = dataUrl;
+                img.alt = `AI Generated: ${prompt}`;
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.objectFit = 'cover';
+                
+                previewBox.innerHTML = '';
+                previewBox.appendChild(img);
+                previewMeta.textContent = `AI • ${prompt} • ${width}px`;
+                
+                const svgWrapper = `
+<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${width}">
+    <image href="${dataUrl}" width="${width}" height="${width}" />
+</svg>`;
+
+                history.unshift({ 
+                    settings: { seed: prompt, style: 'xai-image', size: width }, 
+                    svg: svgWrapper 
+                });
+                
+                if (history.length > 28) history.pop();
+                renderHistory();
+                
+                updateAutoDescriptionForAI(prompt, width, svgWrapper);
+                
+                showToast('AI image generated successfully!');
+                return svgWrapper;
             } catch (error) {
-                throw new Error(`API request failed: ${error.message}`);
+                console.error('AI generation error:', error);
+                previewBox.innerHTML = `
+                    <div style="text-align:center;color:#ff6b6b">
+                        <div style="font-weight:700;margin-bottom:8px">AI Generation Failed</div>
+                        <div style="font-size:14px">${error.message || 'Please try again'}</div>
+                    </div>
+                `;
+                showToast('AI generation failed — see console');
+                return null;
             }
         }
         
-        // Initialize the UI
-        function init() {
-            updateImageGrid(3);
+        // Auto description
+        function computeRarity(seedString) { 
+            const h = hashString(seedString).toString(); 
+            const v = parseInt(h.slice(-2), 10) || 0; 
+            if (v > 240) return 'Legendary'; 
+            if (v > 200) return 'Epic'; 
+            if (v > 140) return 'Rare'; 
+            if (v > 80) return 'Uncommon'; 
+            return 'Common'; 
         }
         
-        // Initialize on load
-        window.addEventListener('DOMContentLoaded', init);
+        function titleCase(s) { 
+            return s.replace(/[-_]/g, ' ').split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '); 
+        }
+        
+        function shortHex(seed) { 
+            return (hashString(seed) >>> 0).toString(16).slice(0, 4).toUpperCase(); 
+        }
+        
+        function generateAttributes(settings, seeds) {
+            return [
+                { trait_type: 'Style', value: settings.style },
+                { trait_type: 'Background', value: settings.bgType },
+                { trait_type: 'BgColor', value: settings.bgColor },
+                { trait_type: 'Scale', value: `${settings.scale}%` },
+                { trait_type: 'Rotation', value: `${settings.rotation}°` },
+                { trait_type: 'Seeds', value: seeds.join(', ') },
+                { trait_type: 'Rarity', value: computeRarity(seeds.join('|')) }
+            ];
+        }
+        
+        function pickDeterministicAdjective(seed) { 
+            const adjectives = ['glowing', 'playful', 'enigmatic', 'vibrant', 'serene', 'bold', 'whimsical', 'sleek', 'crisp', 'dreamy', 'electric', 'retro']; 
+            return pickDeterministic(adjectives, seed); 
+        }
+        
+        function generateAutoDescription(settings, promptText, seeds) {
+            const mainSeed = seeds && seeds.length ? seeds[0] : (settings.seed || 'anon');
+            const name = `${titleCase(mainSeed.toString().slice(0, 16))} #${shortHex(seeds.join('|') || mainSeed)}`;
+            const rarity = computeRarity(seeds.join('|') || mainSeed);
+            const mood = pickDeterministicAdjective(seeds.join('|') + '|' + settings.style);
+            const promptNote = promptText ? ` Inspired by "${promptText.trim().slice(0, 120)}".` : '';
+            const blurb = `${name} is a ${mood} avatar rendered in the ${settings.style} style with a ${settings.bgType} background.${promptNote} It showcases layered geometry and balanced composition — perfect for avatars and collectibles.`;
+            const attributes = generateAttributes(settings, seeds);
+            const traitsText = attributes.map(a => `${a.trait_type}: ${a.value}`).join(' • ');
+            const hashtags = ['#Monadicons', '#Avatar', '#SVG', `#${rarity}`].join(' ');
+            const description = `${blurb}\n\nAttributes\n${traitsText}\n\nRarity: ${rarity}\n\n${hashtags}`;
+            return { name, description, attributes, rarity };
+        }
+        
+        function updateAutoDescriptionFromRendered(svgText, settings) {
+            try {
+                const seed = settings.seed ? settings.seed.toString() : 'anon';
+                const promptText = (promptEl.value || '').trim();
+                const meta = generateAutoDescription(settings, promptText, [seed]);
+                autoDescEl.textContent = meta.description;
+                const thumbData = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgText)));
+                descThumb.innerHTML = `<img src="${thumbData}" alt="thumb" style="width:100%;height:100%;object-fit:cover" />`;
+                regenDescBtn._meta = { meta, svg: svgText, settings };
+                copyDescBtn._meta = regenDescBtn._meta;
+                downloadMetaBtn._meta = regenDescBtn._meta;
+            } catch (e) { 
+                console.error('updateAutoDescriptionFromRendered error', e); 
+            }
+        }
+        
+        function updateAutoDescriptionForAI(prompt, width, svgText) {
+            try {
+                const name = `AI: ${titleCase(prompt.slice(0, 20))}`;
+                const description = `${name}\n\nThis image was generated using xAI based on the prompt: "${prompt}".\n\nResolution: ${width}x${width}px\n\n#AI #xAI #GeneratedArt`;
+                
+                autoDescEl.textContent = description;
+                const thumbData = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgText)));
+                descThumb.innerHTML = `<img src="${thumbData}" alt="thumb" style="width:100%;height:100%;object-fit:cover" />`;
+                
+                const meta = {
+                    name,
+                    description,
+                    attributes: [
+                        { trait_type: 'Generator', value: 'xAI' },
+                        { trait_type: 'Prompt', value: prompt },
+                        { trait_type: 'Resolution', value: `${width}x${width}` }
+                    ],
+                    rarity: 'Unique'
+                };
+                
+                regenDescBtn._meta = { meta, svg: svgText };
+                copyDescBtn._meta = regenDescBtn._meta;
+                downloadMetaBtn._meta = regenDescBtn._meta;
+            } catch (e) { 
+                console.error('updateAutoDescriptionForAI error', e); 
+            }
+        }
+        
+        // Download functions
+        function downloadSVGfromString(svgString, filename = 'monadicon.svg') { 
+            const blob = new Blob([svgString], { type: 'image/svg+xml' }); 
+            const url = URL.createObjectURL(blob); 
+            const a = document.createElement('a'); 
+            a.href = url; 
+            a.download = filename; 
+            a.click(); 
+            URL.revokeObjectURL(url); 
+        }
+        
+        function downloadPNGfromSvgString(svgString, filename = 'monadicon.png') { 
+            const img = new Image(); 
+            img.onload = () => { 
+                const canvas = document.createElement('canvas'); 
+                canvas.width = img.width; 
+                canvas.height = img.height; 
+                const ctx = canvas.getContext('2d'); 
+                ctx.drawImage(img, 0, 0); 
+                canvas.toBlob((blob) => { 
+                    const url = URL.createObjectURL(blob); 
+                    const a = document.createElement('a'); 
+                    a.href = url; 
+                    a.download = filename; 
+                    a.click(); 
+                    URL.revokeObjectURL(url); 
+                }, 'image/png'); 
+            }; 
+            img.onerror = e => { 
+                showToast('PNG conversion failed'); 
+                console.error(e); 
+            }; 
+            img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString))); 
+        }
+        
+        function renderHistory() { 
+            historyEl.innerHTML = ''; 
+            for (const item of history) { 
+                const thumb = document.createElement('div'); 
+                thumb.className = 'thumb'; 
+                thumb.title = `${item.settings.seed || 'composite'} • ${item.settings.style}`; 
+                const img = document.createElement('img'); 
+                img.style.width = '100%'; 
+                img.style.height = '100%'; 
+                img.style.objectFit = 'cover'; 
+                
+                if (item.settings.style === 'xai-image') {
+                    const parser = new DOMParser();
+                    const svgDoc = parser.parseFromString(item.svg, 'image/svg+xml');
+                    const image = svgDoc.querySelector('image');
+                    img.src = image ? image.getAttribute('href') : '';
+                } else {
+                    img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(item.svg)));
+                }
+                
+                thumb.appendChild(img); 
+                thumb.onclick = () => { 
+                    loadSettings(item.settings); 
+                    previewBox.innerHTML = item.svg; 
+                    if (item.settings.style === 'xai-image') {
+                        updateAutoDescriptionForAI(item.settings.seed, item.settings.size, item.svg);
+                    } else {
+                        updateAutoDescriptionFromRendered(item.svg, item.settings); 
+                    }
+                    showToast('Loaded from history'); 
+                }; 
+                historyEl.appendChild(thumb); 
+            } 
+        }
+        
+        // Settings management
+        function readSettingsFromUI() { 
+            return { 
+                seed: seedEl.value || 'anon', 
+                style: styleEl.value, 
+                size: parseInt(sizeEl.value) || 512, 
+                scale: parseFloat(scaleEl.value) || 100, 
+                rotation: parseFloat(rotationEl.value) || 0, 
+                bgType: bgTypeEl.value, 
+                bgColor: bgColorEl.value || '#7C3AED' 
+            }; 
+        }
+        
+        function loadSettings(s) { 
+            seedEl.value = s.seed || 'anon'; 
+            styleEl.value = s.style || 'adventurer'; 
+            sizeEl.value = s.size || 512; 
+            scaleEl.value = s.scale || 100; 
+            rotationEl.value = s.rotation || 0; 
+            bgTypeEl.value = s.bgType || 'transparent'; 
+            bgColorEl.value = s.bgColor || '#7C3AED'; 
+            settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2); 
+        }
+        
+        // Confetti effect
+        function confetti() { 
+            const canvas = document.createElement('canvas'); 
+            canvas.style.position = 'fixed'; 
+            canvas.style.left = '0'; 
+            canvas.style.top = '0'; 
+            canvas.style.pointerEvents = 'none'; 
+            canvas.width = innerWidth; 
+            canvas.height = innerHeight; 
+            document.body.appendChild(canvas); 
+            const ctx = canvas.getContext('2d'); 
+            const pieces = Array.from({ length: 80 }, () => ({ 
+                x: innerWidth / 2 + (Math.random() - 0.5) * 200, 
+                y: innerHeight / 2 + (Math.random() - 0.5) * 60, 
+                vx: (Math.random() - 0.5) * 8, 
+                vy: Math.random() * -10 - 2, 
+                r: Math.random() * 6 + 3, 
+                c: `hsl(${Math.random() * 360},80%,60%)`, 
+                rot: Math.random() * Math.PI 
+            })); 
+            
+            (function anim() { 
+                ctx.clearRect(0, 0, canvas.width, canvas.height); 
+                pieces.forEach((p, i) => { 
+                    p.x += p.vx; 
+                    p.y += p.vy; 
+                    p.vy += 0.4; 
+                    p.rot += 0.2; 
+                    ctx.save(); 
+                    ctx.translate(p.x, p.y); 
+                    ctx.rotate(p.rot); 
+                    ctx.fillStyle = p.c; 
+                    ctx.fillRect(-p.r / 2, -p.r / 2, p.r, p.r); 
+                    ctx.restore(); 
+                    if (p.y > canvas.height + 50) pieces.splice(i, 1); 
+                }); 
+                if (pieces.length) requestAnimationFrame(anim); 
+                else canvas.remove(); 
+            })(); 
+        }
+        
+        // Theme management
+        let isLight = false;
+        
+        function setTheme(light) { 
+            isLight = !!light; 
+            if (isLight) { 
+                document.body.classList.add('light'); 
+                document.body.classList.remove('dark'); 
+                toggleThemeBtn.textContent = 'Dark'; 
+            } else { 
+                document.body.classList.remove('light'); 
+                document.body.classList.add('dark'); 
+                toggleThemeBtn.textContent = 'Light'; 
+            } 
+            try { 
+                localStorage.setItem('monadicons:theme', isLight ? 'light' : 'dark'); 
+            } catch (e) { } 
+        }
+        
+        // Event listeners
+        generateBtn.addEventListener('click', async () => { 
+            const s = readSettingsFromUI(); 
+            await renderPreview(s, true); 
+        });
+        
+        applyPreviewBtn.addEventListener('click', async () => { 
+            const s = readSettingsFromUI(); 
+            await renderPreview(s, false); 
+        });
+        
+        applyPromptBtn.addEventListener('click', () => { 
+            const p = (promptEl.value || '').trim(); 
+            if (!p) { 
+                showToast('Please enter a prompt'); 
+                return; 
+            } 
+            seedEl.value = p; 
+            settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2); 
+            if (promptUseAsSeedEl.checked && liveToggle.checked) applyPreviewBtn.click(); 
+        });
+        
+        generateFromPromptBtn.addEventListener('click', async () => { 
+            const p = (promptEl.value || '').trim(); 
+            if (!p) { 
+                showToast('Please enter a prompt'); 
+                return; 
+            } 
+            const seedFromPrompt = promptUseAsSeedEl.checked ? p : slugifyPrompt(p); 
+            seedEl.value = seedFromPrompt; 
+            settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2); 
+            const s = readSettingsFromUI(); 
+            await renderPreview(s, true); 
+        });
+        
+        // Hook AI button to generateWithxAI
+        generateAIBtn.addEventListener('click', async () => { 
+            const prompt = (promptEl.value || '').trim(); 
+            if (!prompt) { 
+                showToast('Please enter a prompt'); 
+                return; 
+            } 
+            const width = parseInt(sizeEl.value) || 512; 
+            await generateWithxAI(prompt, width); 
+        });
+        
+        promptUseAsSeedEl.addEventListener('change', () => { 
+            if (promptUseAsSeedEl.checked) { 
+                const p = (promptEl.value || '').trim(); 
+                if (p) seedEl.value = p; 
+                settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2); 
+                if (liveToggle.checked) applyPreviewBtn.click(); 
+            } 
+        });
+        
+        promptEl.addEventListener('input', () => { 
+            if (promptUseAsSeedEl.checked) { 
+                const p = (promptEl.value || '').trim(); 
+                if (p) seedEl.value = p; 
+                settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2); 
+                if (liveToggle.checked) { 
+                    if (window._liveTimeout) clearTimeout(window._liveTimeout); 
+                    window._liveTimeout = setTimeout(() => { applyPreviewBtn.click(); }, 300); 
+                } 
+            } 
+        });
+        
+        downloadSvgBtn.addEventListener('click', async () => { 
+            try { 
+                const curSvg = previewBox.querySelector('svg'); 
+                if (curSvg) { 
+                    const svgText = new XMLSerializer().serializeToString(curSvg); 
+                    downloadSVGfromString(svgText, `${(seedEl.value || 'monadicon')}.svg`); 
+                    showToast('SVG downloaded'); 
+                    return; 
+                } 
+                const s = readSettingsFromUI(); 
+                const svg = await buildFinalSvg(s); 
+                downloadSVGfromString(svg, `${(s.seed || 'monadicon')}.svg`); 
+                showToast('SVG downloaded'); 
+            } catch (e) { 
+                showToast('SVG download failed'); 
+                console.error(e); 
+            } 
+        });
+        
+        downloadPngBtn.addEventListener('click', async () => { 
+            try { 
+                const curSvg = previewBox.querySelector('svg'); 
+                if (curSvg) { 
+                    const svgText = new XMLSerializer().serializeToString(curSvg); 
+                    downloadPNGfromSvgString(svgText, `${(seedEl.value || 'monadicon')}.png`); 
+                    showToast('PNG download started'); 
+                    return; 
+                } 
+                const s = readSettingsFromUI(); 
+                const svg = await buildFinalSvg(s); 
+                downloadPNGfromSvgString(svg, `${(s.seed || 'monadicon')}.png`); 
+                showToast('PNG download started'); 
+            } catch (e) { 
+                showToast('PNG creation failed'); 
+                console.error(e); 
+            } 
+        });
+        
+        copyEmbedBtn.addEventListener('click', async () => { 
+            const curSvg = previewBox.querySelector('svg'); 
+            if (curSvg) { 
+                const svgText = new XMLSerializer().serializeToString(curSvg); 
+                navigator.clipboard.writeText(svgText).then(() => showToast('SVG embed copied to clipboard')).catch(() => showToast('Copy failed')); 
+                return; 
+            } 
+            const s = readSettingsFromUI(); 
+            const svg = await buildFinalSvg(s); 
+            navigator.clipboard.writeText(svg).then(() => showToast('SVG embed copied to clipboard')).catch(() => showToast('Copy failed')); 
+        });
+        
+        randomBtn.addEventListener('click', () => { 
+            seedEl.value = sampleSeeds[Math.floor(Math.random() * sampleSeeds.length)] + '-' + Math.floor(Math.random() * 9999); 
+            const styles = Array.from(document.querySelectorAll('#style option')).map(o => o.value); 
+            styleEl.value = styles[Math.floor(Math.random() * styles.length)]; 
+            bgTypeEl.value = ['transparent', 'solid', 'gradient', 'radial', 'dots', 'stripes', 'checker', 'noise'][Math.floor(Math.random() * 8)]; 
+            bgColorEl.value = '#' + Math.floor(Math.random() * 0xFFFFFF).toString(16).padStart(6, '0'); 
+            sizeEl.value = [128, 256, 512, 768, 1024][Math.floor(Math.random() * 5)]; 
+            scaleEl.value = 80 + Math.floor(Math.random() * 60); 
+            rotationEl.value = Math.floor(Math.random() * 360) - 180; 
+            if (liveToggle.checked) applyPreviewBtn.click(); 
+        });
+        
+        document.querySelectorAll('.preset').forEach(btn => { 
+            btn.addEventListener('click', () => { 
+                const seed = btn.dataset.seed; 
+                const style = btn.dataset.style; 
+                if (seed) seedEl.value = seed; 
+                if (style) styleEl.value = style; 
+                if (liveToggle.checked) applyPreviewBtn.click(); 
+            }); 
+        });
+        
+        randomPreset.addEventListener('click', () => randomBtn.click());
+        
+        exportJSON.addEventListener('click', () => { 
+            try { 
+                const settings = readSettingsFromUI(); 
+                const jsonText = JSON.stringify(settings, null, 2); 
+                const filename = `monadicon-settings-${Date.now()}.json`; 
+                const blob = new Blob([jsonText], { type: 'application/json' }); 
+                const url = URL.createObjectURL(blob); 
+                const a = document.createElement('a'); 
+                a.href = url; 
+                a.download = filename; 
+                a.click(); 
+                URL.revokeObjectURL(url); 
+                navigator.clipboard?.writeText(jsonText).catch(() => { }); 
+                showToast(`Settings exported and copied`); 
+            } catch (e) { 
+                console.error(e); 
+                showToast('Export failed'); 
+            } 
+        });
+        
+        copyJSON.addEventListener('click', () => { 
+            navigator.clipboard.writeText(JSON.stringify(readSettingsFromUI(), null, 2)); 
+            showToast('Settings JSON copied'); 
+        });
+        
+        downloadJSON.addEventListener('click', () => { 
+            const txt = JSON.stringify(readSettingsFromUI(), null, 2); 
+            const blob = new Blob([txt], { type: 'application/json' }); 
+            const a = document.createElement('a'); 
+            a.href = URL.createObjectURL(blob); 
+            a.download = 'monadicon-settings.json'; 
+            a.click(); 
+            showToast('Settings JSON downloaded'); 
+        });
+        
+        clearHistory.addEventListener('click', () => { 
+            history = []; 
+            renderHistory(); 
+            showToast('History cleared'); 
+        });
+        
+        toggleThemeBtn.addEventListener('click', () => setTheme(!isLight));
+        
+        regenDescBtn.addEventListener('click', async () => { 
+            try { 
+                const curSvgNode = previewBox.querySelector('svg'); 
+                if (curSvgNode) { 
+                    const svgText = new XMLSerializer().serializeToString(curSvgNode); 
+                    const settings = readSettingsFromUI(); 
+                    updateAutoDescriptionFromRendered(svgText, settings); 
+                    showToast('Description regenerated from preview'); 
+                    return; 
+                } 
+                const s = readSettingsFromUI(); 
+                const svg = await buildFinalSvg(s); 
+                updateAutoDescriptionFromRendered(svg, s); 
+                showToast('Description regenerated (rebuilt)'); 
+            } catch (e) { 
+                console.error('Regenerate failed', e); 
+                showToast('Regenerate failed — see console'); 
+            } 
+        });
+        
+        copyDescBtn.addEventListener('click', () => { 
+            const meta = copyDescBtn._meta; 
+            if (meta && meta.meta && meta.meta.description) { 
+                navigator.clipboard.writeText(meta.meta.description); 
+                showToast('Description copied'); 
+                return; 
+            } 
+            const txt = autoDescEl.textContent || ''; 
+            if (txt) { 
+                navigator.clipboard.writeText(txt); 
+                showToast('Description copied'); 
+            } else showToast('No description available'); 
+        });
+        
+        downloadMetaBtn.addEventListener('click', () => { 
+            const meta = downloadMetaBtn._meta; 
+            if (!meta || !meta.meta) { 
+                showToast('Generate an icon first'); 
+                return; 
+            } 
+            const metadata = { 
+                name: meta.meta.name, 
+                description: meta.meta.description, 
+                attributes: meta.meta.attributes, 
+                image: 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(meta.svg))) 
+            }; 
+            const txt = JSON.stringify(metadata, null, 2); 
+            const blob = new Blob([txt], { type: 'application/json' }); 
+            const url = URL.createObjectURL(blob); 
+            const a = document.createElement('a'); 
+            a.href = url; 
+            a.download = `${meta.meta.name.replace(/\s+/g, '_')}-metadata.json`; 
+            a.click(); 
+            URL.revokeObjectURL(url); 
+            showToast('Metadata JSON downloaded'); 
+        });
+        
+        // Live preview setup
+        function setupLivePreview() { 
+            const inputs = [seedEl, styleEl, sizeEl, scaleEl, rotationEl, bgTypeEl, bgColorEl]; 
+            inputs.forEach(inp => { 
+                inp.addEventListener('input', () => { 
+                    settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2); 
+                    if (liveToggle.checked) { 
+                        if (window._liveTimeout) clearTimeout(window._liveTimeout); 
+                        window._liveTimeout = setTimeout(() => { applyPreviewBtn.click(); }, 300); 
+                    } 
+                }); 
+            }); 
+        }
+        
+        // Initialize
+        setupLivePreview();
+        try { 
+            const p = localStorage.getItem('monadicons:theme'); 
+            setTheme(p === 'light'); 
+        } catch (e) { 
+            setTheme(false); 
+        }
+        settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
+        applyPreviewBtn.click();
     </script>
 </body>
 </html>
