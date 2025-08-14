@@ -7,14 +7,23 @@
 <meta name="description" content="Generate avatars. Customize settings, preview, and download SVG/PNG. Optional AI image generation (server required)." />
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%237C3AED'/><text x='50' y='58' font-size='50' text-anchor='middle' fill='white' font-family='Arial'>M</text></svg>">
 
-<!-- local identicon renderer -->
+<!-- jdenticon used for local identicons -->
 <script src="https://cdn.jsdelivr.net/npm/jdenticon@3.2.0/dist/jdenticon.min.js"></script>
 
 <style>
-:root{ --accent:#7C3AED; --accent-2:#5B21B6; --muted:#9fb0c9; --bg-1:#071124; --bg-2:#071a2b; --card-bg: rgba(255,255,255,0.02); --glass: rgba(255,255,255,0.04); --gap:18px; --radius:12px; }
+:root{
+  --accent:#7C3AED; --accent-2:#5B21B6; --muted:#9fb0c9; --bg-1:#071124; --bg-2:#071a2b;
+  --card-bg: rgba(255,255,255,0.02); --glass: rgba(255,255,255,0.04);
+  --gap:18px; --radius:12px;
+}
 *{box-sizing:border-box}
 html,body{height:100%}
-body{margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial;color:#e6eef8;background:radial-gradient(1200px 600px at 10% 10%, rgba(124,58,237,0.12), transparent), linear-gradient(180deg,var(--bg-1),var(--bg-2));padding:22px;-webkit-font-smoothing:antialiased}
+body{
+  margin:0; font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial;
+  color:#e6eef8;
+  background:radial-gradient(1200px 600px at 10% 10%, rgba(124,58,237,0.12), transparent), linear-gradient(180deg,var(--bg-1),var(--bg-2));
+  padding:22px; -webkit-font-smoothing:antialiased;
+}
 .container{max-width:1180px;margin:0 auto}
 .header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
 .brand{display:flex;gap:12px;align-items:center}
@@ -29,7 +38,10 @@ h1{margin:0;font-size:20px}
 .card{background:var(--card-bg);padding:16px;border-radius:var(--radius);border:1px solid rgba(255,255,255,0.03)}
 .controls label{display:block;font-size:13px;color:var(--muted);margin:10px 0 6px}
 .row{display:flex;gap:8px;align-items:center}
-.input, select, input[type="color"], input[type="number"], input[type="text"], textarea{width:100%; padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;font-size:14px;resize:vertical}
+.input, select, input[type="color"], input[type="number"], input[type="text"], textarea{
+  width:100%; padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;font-size:14px;
+  resize:vertical;
+}
 .controls{margin-top:8px;display:flex;flex-wrap:wrap;gap:8px}
 .preview-box{width:100%;height:440px;border-radius:var(--radius);border:1px solid rgba(255,255,255,0.04);background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
 .preview-box > img, .preview-box > svg { width:100%; height:100%; object-fit:cover; display:block }
@@ -40,7 +52,7 @@ h1{margin:0;font-size:20px}
 .switch input{display:none}
 .footer-note{color:var(--muted);font-size:13px;text-align:center;margin-top:18px}
 
-/* Auto-desc */
+/* Auto-desc styles */
 .desc-card{margin-top:12px;background:linear-gradient(180deg, rgba(255,255,255,0.015), transparent);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
 .desc-title{font-weight:700;margin-bottom:6px}
 .desc-text{background:transparent;border-radius:8px;padding:10px;border:1px dashed rgba(255,255,255,0.04);color:var(--muted);font-size:14px;white-space:pre-wrap}
@@ -49,18 +61,25 @@ h1{margin:0;font-size:20px}
 #toast{position:fixed;right:18px;bottom:18px;z-index:9999;display:flex;flex-direction:column;gap:8px}
 .toast{background:rgba(0,0,0,0.75);color:#fff;padding:10px 14px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.4);font-weight:600;min-width:180px}
 
-/* LIGHT THEME */
-body.light{color:#1f2937;background:linear-gradient(180deg,#f0f4f8,#e6eef5)}
-body.light .card{background:white;border-color:rgba(0,0,0,0.06);color:#1f2937}
-body.light .input, body.light select { background:#fff; color:#111; border-color: rgba(0,0,0,0.12) }
+/* LIGHT THEME OVERRIDES */
+body.light{
+  color: #1f2937;
+  background: linear-gradient(180deg,#f0f4f8,#e6eef5);
+}
+body.light .card{ background: white; border-color: rgba(0,0,0,0.06); color: #1f2937 }
+body.light .input, body.light select { background: white; color: #111; border-color: rgba(0,0,0,0.12) }
 body.light .ghost { border-color: rgba(0,0,0,0.08); color: #475569 }
 body.light .preview-box { background: linear-gradient(180deg, rgba(0,0,0,0.02), transparent) }
 
-@media(max-width:1000px){ .grid{grid-template-columns:1fr;} .preview-box{height:360px} }
+@media(max-width:1000px){
+  .grid{grid-template-columns:1fr; }
+  .preview-box{height:360px}
+}
 </style>
 </head>
 <body>
 <div class="container">
+
   <div class="header">
     <div class="brand">
       <div class="logo">M</div>
@@ -78,11 +97,12 @@ body.light .preview-box { background: linear-gradient(180deg, rgba(0,0,0,0.02), 
   </div>
 
   <div class="grid">
-    <!-- LEFT -->
+    <!-- LEFT: controls -->
     <div class="card controls">
       <label for="seed">Seed / Name</label>
       <input id="seed" class="input" type="text" placeholder="e.g., aurora" value="anon" />
 
+      <!-- Prompt section -->
       <label for="prompt">Prompt</label>
       <textarea id="prompt" rows="3" placeholder="Enter a prompt (e.g., 'friendly blue fox with stars')"></textarea>
       <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
@@ -93,6 +113,7 @@ body.light .preview-box { background: linear-gradient(180deg, rgba(0,0,0,0.02), 
         <label style="font-size:13px;color:var(--muted)"><input id="promptUseAsSeed" type="checkbox" style="margin-right:6px">Use prompt as seed automatically</label>
       </div>
 
+      <!-- Multi-seed controls -->
       <div style="margin-top:10px;border-radius:8px;padding:10px;background:rgba(255,255,255,0.01);border:1px solid rgba(255,255,255,0.02)">
         <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
           <div style="font-weight:700">Multi-seed</div>
@@ -129,17 +150,21 @@ body.light .preview-box { background: linear-gradient(180deg, rgba(0,0,0,0.02), 
           <small style="color:var(--muted)">Creates multiple seeds from the prompt and combines them.</small>
         </div>
       </div>
+      <!-- END Multi-seed -->
 
       <label for="style" style="margin-top:10px">Style</label>
       <select id="style" class="input">
-        <optgroup label="Avatar styles">
+        <optgroup label="DiceBear">
           <option value="adventurer">adventurer</option>
           <option value="avataaars">avataaars</option>
           <option value="big-ears">big-ears</option>
           <option value="bottts">bottts</option>
+          <option value="croodles">croodles</option>
+          <option value="fun-emoji">fun-emoji</option>
+          <option value="icons">icons</option>
+          <option value="identicon">identicon</option>
           <option value="micah">micah</option>
           <option value="pixel-art-neutral">pixel-art-neutral</option>
-          <option value="identicon">identicon</option>
         </optgroup>
         <optgroup label="Local">
           <option value="jdenticon">jdenticon (local)</option>
@@ -196,7 +221,7 @@ body.light .preview-box { background: linear-gradient(180deg, rgba(0,0,0,0.02), 
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
           <button class="small preset" data-seed="aurora" data-style="adventurer">Aurora</button>
           <button class="small preset" data-seed="nebula" data-style="pixel-art-neutral">Nebula</button>
-          <button class="small preset" data-seed="octopus" data-style="micah">Octopus</button>
+          <button class="small preset" data-seed="octopus" data-style="fun-emoji">Octopus</button>
           <button class="small preset" data-seed="miso" data-style="jdenticon">Miso</button>
           <button class="small" id="randomPreset">Surprise me</button>
         </div>
@@ -216,7 +241,7 @@ body.light .preview-box { background: linear-gradient(180deg, rgba(0,0,0,0.02), 
       </div>
     </div>
 
-    <!-- RIGHT -->
+    <!-- RIGHT: preview -->
     <div>
       <div class="card">
         <div class="preview-box" id="previewBox">
@@ -237,6 +262,7 @@ body.light .preview-box { background: linear-gradient(180deg, rgba(0,0,0,0.02), 
         </div>
         <pre id="settingsOut" style="white-space:pre-wrap;word-break:break-word;background:transparent;border:none;color:var(--muted);margin-top:8px"></pre>
 
+        <!-- Auto description card -->
         <div class="desc-card" id="descCard">
           <div style="display:flex;justify-content:space-between;align-items:center">
             <div>
@@ -257,6 +283,7 @@ body.light .preview-box { background: linear-gradient(180deg, rgba(0,0,0,0.02), 
             </div>
           </div>
         </div>
+        <!-- end auto desc -->
       </div>
     </div>
   </div>
@@ -264,21 +291,37 @@ body.light .preview-box { background: linear-gradient(180deg, rgba(0,0,0,0.02), 
   <div class="footer-note">Powered by Monadicons • ©2025</div>
 </div>
 
+<!-- Toast container -->
 <div id="toast" aria-live="polite" aria-atomic="true"></div>
 
 <script>
-/* ---------- Utilities ---------- */
-const qs = (s, root=document)=>root.querySelector(s);
-const qsa = (s, root=document)=>Array.from(root.querySelectorAll(s));
-const clamp = (v,m,M)=>Math.max(m,Math.min(M,v));
-function showToast(msg, ms=2200){ const c=qs('#toast'); const t=document.createElement('div'); t.className='toast'; t.textContent=msg; c.appendChild(t); setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity .25s'; setTimeout(()=>t.remove(),250); }, ms); }
+/* -----------------------------------------------------------------------
+  IMPORTANT NOTE ABOUT AI (xAI) INTEGRATION
+  - This frontend calls a server endpoint at /api/generate-image-xai.
+  - You MUST deploy the provided serverless function (api/generate-image-xai.js)
+    on Vercel with your xAI API key set as an environment variable (XAI_API_KEY).
+  - Replace the fetch URL in generateAIBtn with your deployed Vercel URL
+    (e.g., https://your-project-name.vercel.app/api/generate-image-xai).
+  -----------------------------------------------------------------------*/
+
+/* ---------- small utilities ---------- */
+const qs = (sel, root=document) => root.querySelector(sel);
+const qsa = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+const clamp = (v,min,max)=>Math.max(min,Math.min(max,v));
+
+function showToast(msg, ms=2200){
+  const c = qs('#toast');
+  const t = document.createElement('div'); t.className='toast'; t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity .25s ease'; setTimeout(()=>t.remove(),250); }, ms);
+}
 
 function hashString(s){ let h=2166136261>>>0; for(let i=0;i<s.length;i++){ h = Math.imul(h ^ s.charCodeAt(i), 16777619)>>>0; } return h; }
 function slugifyPrompt(s){ const trimmed=(s||'').trim(); const slug=trimmed.toLowerCase().replace(/[^\w\s\-]/g,'').replace(/\s+/g,'-').slice(0,70)||'anon'; const h = Math.abs(hashString(trimmed||slug)).toString(16).slice(0,5); return `${slug}-${h}`; }
 function seededRandomFromSeed(seed){ let h = hashString(seed) >>> 0; return function(){ h ^= h << 13; h >>>= 0; h ^= h >>> 17; h >>>= 0; h ^= h << 5; h >>>= 0; return (h >>> 0) / 4294967296; }; }
-function pickDeterministic(arr, seed, idx=0){ if(!arr||!arr.length) return null; const rnd = seededRandomFromSeed(seed + '|' + idx); return arr[Math.floor(rnd()*arr.length)]; }
+function pickDeterministic(arr, seed, idx=0){ if(!arr || !arr.length) return null; const rnd = seededRandomFromSeed(seed + '|' + idx); return arr[Math.floor(rnd() * arr.length)]; }
 
-/* ---------- DOM refs ---------- */
+/* ---------- DOM elements ---------- */
 const liveToggle = qs('#liveToggle');
 const seedEl = qs('#seed');
 const promptEl = qs('#prompt');
@@ -329,42 +372,77 @@ const downloadMetaBtn = qs('#downloadMeta');
 let history = [];
 const sampleSeeds = ['aurora','lumen','nova','zephyr','sol','aero','pixel','nebula','miso','sora','echo','boreal','octopus','waffle','tiger','meteor'];
 
-/* ---------- DiceBear endpoints ---------- */
-const API_BASE = 'https://api.dicebear.com/9.x';
-const FALLBACK_BASE = 'https://avatars.dicebear.com/api';
+const PRIMARY_DICEBEAR = 'https://api.dicebear.com/9.x';
+const FALLBACK_DICEBEAR = 'https://avatars.dicebear.com/api';
 
-/* ---------- Background helpers ---------- */
-function hexToRgb(hex){ hex=(hex||'#ffffff').replace('#',''); if(hex.length===3) hex=hex.split('').map(c=>c+c).join(''); return { r:parseInt(hex.slice(0,2),16), g:parseInt(hex.slice(2,4),16), b:parseInt(hex.slice(4,6),16) }; }
-function mixWithWhite(hex,pct=0.6){ const c=hexToRgb(hex); const r=Math.round(c.r+(255-c.r)*pct); const g=Math.round(c.g+(255-c.g)*pct); const b=Math.round(c.b+(255-c.b)*pct); return `rgb(${r},${g},${b})`; }
+/* ---------- background helpers ---------- */
+function hexToRgb(hex){ hex = (hex||'#ffffff').replace('#',''); if(hex.length===3) hex = hex.split('').map(c=>c+c).join(''); return { r: parseInt(hex.slice(0,2),16), g: parseInt(hex.slice(2,4),16), b: parseInt(hex.slice(4,6),16) }; }
+function mixWithWhite(hex, pct=0.6){ const c = hexToRgb(hex); const r = Math.round(c.r + (255-c.r)*pct); const g = Math.round(c.g + (255-c.g)*pct); const b = Math.round(c.b + (255-c.b)*pct); return `rgb(${r},${g},${b})`; }
 
-function buildDefsAndRect(bgType,color,outSize){
+function buildDefsAndRect(bgType, color, outSize){
   const idPrefix = 'mb_' + Math.random().toString(36).slice(2,8);
-  let defs='', rectFill=color||'transparent', noiseFilterId=null;
-  if(bgType==='transparent'){ rectFill='none'; }
-  else if(bgType==='solid'){ rectFill=color; }
-  else if(bgType==='gradient'){ const gradId=idPrefix+'_g'; const lighter = mixWithWhite(color,0.55); defs=`<linearGradient id="${gradId}" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${color}" /><stop offset="100%" stop-color="${lighter}" stop-opacity="0.9" /></linearGradient>`; rectFill=`url(#${gradId})`; }
-  else if(bgType==='radial'){ const rid=idPrefix+'_r'; const lighter = mixWithWhite(color,0.6); defs=`<radialGradient id="${rid}" cx="30%" cy="30%" r="80%"><stop offset="0%" stop-color="${lighter}" /><stop offset="100%" stop-color="${color}" /></radialGradient>`; rectFill=`url(#${rid})`; }
-  else if(bgType==='dots'){ const patId=idPrefix+'_p'; defs=`<pattern id="${patId}" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="${mixWithWhite(color,0.85)}"/><circle cx="6" cy="6" r="2" fill="${color}"/></pattern>`; rectFill=`url(#${patId})`; }
-  else if(bgType==='stripes'){ const patId=idPrefix+'_s'; defs=`<pattern id="${patId}" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="5" height="10" fill="${color}" /><rect x="5" width="5" height="10" fill="transparent" /></pattern>`; rectFill=`url(#${patId})`; }
-  else if(bgType==='checker'){ const patId=idPrefix+'_c'; const lighter = mixWithWhite(color,0.7); defs=`<pattern id="${patId}" width="20" height="20" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="${color}"/><rect x="10" y="10" width="10" height="10" fill="${color}"/><rect width="10" height="10" fill="${lighter}"/><rect x="10" y="10" width="10" height="10" fill="${lighter}"/></pattern>`; rectFill=`url(#${patId})`; }
-  else if(bgType==='noise'){ const filterId = idPrefix+'_f'; defs = `<filter id="${filterId}"><feTurbulence baseFrequency="0.8" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0.2"/><feBlend mode="overlay" in2="SourceGraphic"/></filter>`; rectFill=color; noiseFilterId=filterId; }
+  let defs = '', rectFill = color || 'transparent', noiseFilterId = null;
+  if(bgType === 'transparent'){ rectFill = 'none'; }
+  else if(bgType === 'solid'){ rectFill = color; }
+  else if(bgType === 'gradient'){
+    const gradId = idPrefix + '_g';
+    const lighter = mixWithWhite(color,0.55);
+    defs = `<linearGradient id="${gradId}" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${color}" /><stop offset="100%" stop-color="${lighter}" stop-opacity="0.9" /></linearGradient>`;
+    rectFill = `url(#${gradId})`;
+  } else if(bgType === 'radial'){
+    const rid = idPrefix + '_r';
+    const lighter = mixWithWhite(color,0.6);
+    defs = `<radialGradient id="${rid}" cx="30%" cy="30%" r="80%"><stop offset="0%" stop-color="${lighter}" /><stop offset="100%" stop-color="${color}" /></radialGradient>`;
+    rectFill = `url(#${rid})`;
+  } else if(bgType === 'dots'){
+    const patId = idPrefix + '_p';
+    defs = `<pattern id="${patId}" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="${mixWithWhite(color,0.85)}"/><circle cx="6" cy="6" r="2" fill="${color}"/></pattern>`;
+    rectFill = `url(#${patId})`;
+  } else if(bgType === 'stripes'){
+    const patId = idPrefix + '_s';
+    defs = `<pattern id="${patId}" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="5" height="10" fill="${color}" /><rect x="5" width="5" height="10" fill="transparent" /></pattern>`;
+    rectFill = `url(#${patId})`;
+  } else if(bgType === 'checker'){
+    const patId = idPrefix + '_c';
+    const lighter = mixWithWhite(color,0.7);
+    defs = `<pattern id="${patId}" width="20" height="20" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="${color}"/><rect x="10" y="10" width="10" height="10" fill="${color}"/><rect width="10" height="10" fill="${lighter}"/><rect x="10" y="10" width="10" height="10" fill="${lighter}"/></pattern>`;
+    rectFill = `url(#${patId})`;
+  } else if(bgType === 'noise'){
+    const filterId = idPrefix + '_f';
+    defs = `<filter id="${filterId}"><feTurbulence baseFrequency="0.8" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0.2"/><feBlend mode="overlay" in2="SourceGraphic"/></filter>`;
+    rectFill = color;
+    noiseFilterId = filterId;
+  }
   return { defs, rectFill, noiseFilterId };
 }
 
-/* ---------- SVG extraction ---------- */
+/* ---------- SVG extraction helpers ---------- */
 function extractInnerSvgInfo(svgText, defaultSize){
   if(!svgText) return { innerSvg:'', w: defaultSize, h: defaultSize };
-  svgText = svgText.replace(/^<\?xml[\s\S]*?\?>\s*/i,'');
+  svgText = svgText.replace(/^<\?xml[\s\S]*?\?>\s*/i, '');
   const vb = svgText.match(/viewBox=["']?([\d\.\-\s,]+)["']?/i);
-  if(vb){ const parts = vb[1].trim().split(/[\s,]+/).map(Number); if(parts.length>=4 && parts[2] && parts[3]){ const inner = svgText.replace(/^<svg[^>]*>/i,'').replace(/<\/svg>$/i,''); return { innerSvg:inner, w:Math.abs(parts[2]), h:Math.abs(parts[3]) }; } }
+  if(vb){
+    const parts = vb[1].trim().split(/[\s,]+/).map(Number);
+    if(parts.length >= 4 && parts[2] && parts[3]){
+      const innerW = Math.abs(parts[2]);
+      const innerH = Math.abs(parts[3]);
+      const inner = svgText.replace(/^<svg[^>]*>/i,'').replace(/<\/svg>$/i,'');
+      return { innerSvg: inner, w: innerW, h: innerH };
+    }
+  }
   const wAttr = svgText.match(/<svg[^>]*\bwidth=["']?(\d+(?:\.\d+)?)["']?/i);
   const hAttr = svgText.match(/<svg[^>]*\bheight=["']?(\d+(?:\.\d+)?)["']?/i);
-  if(wAttr||hAttr){ const innerW = wAttr?Math.round(Number(wAttr[1])):defaultSize; const innerH = hAttr?Math.round(Number(hAttr[1])):defaultSize; const inner = svgText.replace(/^<svg[^>]*>/i,'').replace(/<\/svg>$/i,''); return { innerSvg:inner, w:innerW, h:innerH }; }
+  if(wAttr || hAttr){
+    const innerW = wAttr ? Math.round(Number(wAttr[1])) : defaultSize;
+    const innerH = hAttr ? Math.round(Number(hAttr[1])) : defaultSize;
+    const inner = svgText.replace(/^<svg[^>]*>/i,'').replace(/<\/svg>$/i,'');
+    return { innerSvg: inner, w: innerW, h: innerH };
+  }
   const inner = svgText.replace(/^<svg[^>]*>/i,'').replace(/<\/svg>$/i,'');
-  return { innerSvg:inner, w:defaultSize, h:defaultSize };
+  return { innerSvg: inner, w: defaultSize, h: defaultSize };
 }
 
-/* ---------- Build final & centered SVG ---------- */
+/* ---------- Build final centered SVG ---------- */
 async function buildFinalSvg(settings){
   const outSize = clamp(parseInt(settings.size)||512, 64, 4096);
   const userScale = clamp(parseFloat(settings.scale)||100, 50, 200) / 100;
@@ -376,7 +454,9 @@ async function buildFinalSvg(settings){
 
   const { defs, rectFill, noiseFilterId } = buildDefsAndRect(bgType, bgColor, outSize);
 
-  let innerSvg='', innerW=outSize, innerH=outSize;
+  let innerSvg = '';
+  let innerW = outSize;
+  let innerH = outSize;
 
   if(style === 'jdenticon'){
     const svgText = jdenticon.toSvg(seed, outSize);
@@ -385,30 +465,30 @@ async function buildFinalSvg(settings){
     innerW = info.w;
     innerH = info.h;
   } else {
-    // Try API with primary and fallback endpoints
     const tryUrls = [
-      `${API_BASE}/${style}/svg?seed=${encodeURIComponent(seed)}&size=${outSize}`,
-      `${FALLBACK_BASE}/${style}/${encodeURIComponent(seed)}.svg?size=${outSize}`
+      `${PRIMARY_DICEBEAR}/${style}/svg?seed=${encodeURIComponent(seed)}&size=${outSize}`,
+      `${FALLBACK_DICEBEAR}/${style}/${encodeURIComponent(seed)}.svg?size=${outSize}`
     ];
-    let fetchedText=null, lastErr=null;
+    let fetchedText = null;
+    let lastErr = null;
     for(const url of tryUrls){
       try{
         const res = await fetch(url, {cache:'no-store'});
-        if(!res.ok){ lastErr = new Error('Fetch failed ' + res.status + ' ' + url); continue; }
+        if(!res.ok){ lastErr = new Error('Fetch failed ' + res.status + ' from ' + url); continue; }
         fetchedText = await res.text();
         break;
       }catch(e){ lastErr = e; }
     }
-    if(!fetchedText) throw new Error('Failed to fetch SVG: ' + (lastErr && lastErr.message));
+    if(!fetchedText) throw new Error('Failed to fetch SVG. ' + (lastErr && lastErr.message));
     const info = extractInnerSvgInfo(fetchedText, outSize);
     innerSvg = info.innerSvg;
     innerW = info.w;
     innerH = info.h;
   }
 
-  // compute scale to FILL the output while respecting user scale %
+  // compute scale to FILL box while respecting user scale percentage
   const maxInner = Math.max(innerW, innerH) || outSize;
-  const fillScale = outSize / maxInner;
+  const fillScale = outSize / maxInner;       // scale needed to make inner cover outSize
   const totalScale = fillScale * userScale;
 
   const cx = outSize/2, cy = outSize/2;
@@ -428,26 +508,28 @@ async function buildFinalSvg(settings){
   return svg;
 }
 
-/* ---------- Composite builder (multi-seed) ---------- */
+/* ---------- Composite builder for multi-seed ---------- */
 async function buildCompositeFromSeeds(seeds, baseSettings, mode='grid'){
   const outSize = clamp(parseInt(baseSettings.size)||512, 64, 4096);
   if(mode === 'grid'){
     const count = seeds.length;
     const cols = Math.ceil(Math.sqrt(count));
+    const rows = Math.ceil(count / cols);
     const tile = Math.floor(outSize / cols);
     const tileSvgs = await Promise.all(seeds.map(async (s)=>{
       const sset = Object.assign({}, baseSettings, { seed: s, size: tile, scale: 100 });
       return await buildFinalSvg(sset);
     }));
     let images = '';
-    let i=0;
-    for(let r=0;r<Math.ceil(seeds.length/cols);r++){
+    let i = 0;
+    for(let r=0;r<rows;r++){
       for(let c=0;c<cols;c++){
-        if(i>=tileSvgs.length) break;
+        if(i >= tileSvgs.length) break;
         const dataUri = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(tileSvgs[i])));
         const x = c * tile;
         const y = r * tile;
-        images += `<image x="${x}" y="${y}" width="${tile}" height="${tile}" href="${dataUri}" />\n`; i++;
+        images += `<image x="${x}" y="${y}" width="${tile}" height="${tile}" href="${dataUri}" />\n`;
+        i++;
       }
     }
     const { defs, rectFill, noiseFilterId } = buildDefsAndRect(baseSettings.bgType, baseSettings.bgColor, outSize);
@@ -460,7 +542,7 @@ async function buildCompositeFromSeeds(seeds, baseSettings, mode='grid'){
 </svg>`;
     return svg;
   } else {
-    // layered mode
+    // layered composition
     const layers = await Promise.all(seeds.map(async (s)=> {
       const sset = Object.assign({}, baseSettings, { seed: s, size: outSize, scale: 100 });
       return await buildFinalSvg(sset);
@@ -474,7 +556,7 @@ async function buildCompositeFromSeeds(seeds, baseSettings, mode='grid'){
     });
     const { defs, rectFill, noiseFilterId } = buildDefsAndRect(baseSettings.bgType, baseSettings.bgColor, outSize);
     const rectFilterAttr = noiseFilterId ? ` filter="url(#${noiseFilterId})"` : '';
-    let inner='';
+    let inner = '';
     for(let i=0;i<layers.length;i++){
       const dataUri = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(layers[i])));
       const tr = transforms[i];
@@ -518,11 +600,16 @@ async function renderPreview(settings, { addToHistory=false } = {}){
   }
 }
 
-/* ---------- Multi-seed composite ---------- */
+/* ---------- Multi-seed composite runner ---------- */
 async function renderCompositeFromPrompt(promptText){
   const enabled = multiSeedEl.checked;
-  if(!promptText){ showToast('Please enter a prompt'); return; }
-  if(!enabled){ const s = readSettingsFromUI(); s.seed = promptText; await renderPreview(s, { addToHistory:true }); return; }
+  if(!promptText){
+    showToast('Please enter a prompt');
+    return;
+  }
+  if(!enabled){
+    const s = readSettingsFromUI(); s.seed = promptText; await renderPreview(s, { addToHistory:true }); return;
+  }
 
   let parts = [];
   const delim = delimiterEl.value;
@@ -584,10 +671,18 @@ async function renderCompositeFromPrompt(promptText){
 }
 
 /* ---------- Auto description ---------- */
-function computeRarity(seedString){ const h=hashString(seedString).toString(); const v=parseInt(h.slice(-2),10)||0; if(v>240) return 'Legendary'; if(v>200) return 'Epic'; if(v>140) return 'Rare'; if(v>80) return 'Uncommon'; return 'Common'; }
+function computeRarity(seedString){
+  const h = hashString(seedString).toString();
+  const v = parseInt(h.slice(-2), 10) || 0;
+  if(v > 240) return 'Legendary';
+  if(v > 200) return 'Epic';
+  if(v > 140) return 'Rare';
+  if(v > 80) return 'Uncommon';
+  return 'Common';
+}
 function titleCase(s){ return s.replace(/[-_]/g,' ').split(/\s+/).map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' '); }
 function shortHex(seed){ return (hashString(seed)>>>0).toString(16).slice(0,4).toUpperCase(); }
-function generateAttributes(settings,seeds){
+function generateAttributes(settings, seeds){
   return [
     { trait_type: 'Style', value: settings.style },
     { trait_type: 'Background', value: settings.bgType },
@@ -598,7 +693,10 @@ function generateAttributes(settings,seeds){
     { trait_type: 'Rarity', value: computeRarity(seeds.join('|')) }
   ];
 }
-function pickDeterministicAdjective(seed){ const adjectives=['glowing','playful','enigmatic','vibrant','serene','bold','whimsical','sleek','crisp','dreamy','electric','retro']; return pickDeterministic(adjectives, seed); }
+function pickDeterministicAdjective(seed){
+  const adjectives = ['glowing','playful','enigmatic','vibrant','serene','bold','whimsical','sleek','crisp','dreamy','electric','retro'];
+  return pickDeterministic(adjectives, seed);
+}
 function generateAutoDescription(settings, promptText, seeds){
   const mainSeed = seeds && seeds.length ? seeds[0] : (settings.seed || 'anon');
   const name = `${titleCase(mainSeed.toString().slice(0,16))} #${shortHex(seeds.join('|')|| mainSeed)}`;
@@ -606,7 +704,7 @@ function generateAutoDescription(settings, promptText, seeds){
   const mood = pickDeterministicAdjective(seeds.join('|') + '|' + settings.style);
   const promptNote = promptText ? ` Inspired by "${promptText.trim().slice(0,120)}".` : '';
   const blurb = `${name} is a ${mood} avatar rendered in the ${settings.style} style with a ${settings.bgType} background.${promptNote} It showcases layered geometry and balanced composition — perfect for avatars and collectibles.`;
-  const attributes = generateAttributes(settings,seeds);
+  const attributes = generateAttributes(settings, seeds);
   const traitsText = attributes.map(a => `${a.trait_type}: ${a.value}`).join(' • ');
   const hashtags = ['#Monadicons', '#Avatar', '#SVG', `#${rarity}`].join(' ');
   const description = `${blurb}\n\nAttributes\n${traitsText}\n\nRarity: ${rarity}\n\n${hashtags}`;
@@ -639,149 +737,190 @@ function updateAutoDescriptionForComposite(parts, baseSettings, mode, compositeS
   }catch(e){ console.error('updateAutoDescriptionForComposite error', e); }
 }
 
-/* ---------- Download & history ---------- */
-function downloadSVGfromString(svgString, filename='monadicon.svg'){ const blob=new Blob([svgString],{type:'image/svg+xml'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url); }
-function downloadPNGfromSvgString(svgString, filename='monadicon.png'){ const img=new Image(); img.onload=()=>{ const w=img.width, h=img.height; const canvas=document.createElement('canvas'); canvas.width=w; canvas.height=h; const ctx=canvas.getContext('2d'); ctx.drawImage(img,0,0); canvas.toBlob((blob)=>{ const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url); }, 'image/png'); }; img.onerror=e=>{ showToast('PNG conversion failed'); console.error(e); }; img.src='data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString))); }
+/* ---------- Download helpers ---------- */
+function downloadSVGfromString(svgString, filename='monadicon.svg'){
+  const blob = new Blob([svgString], {type:'image/svg+xml'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
+function downloadPNGfromSvgString(svgString, filename='monadicon.png'){
+  const img = new Image();
+  img.onload = () => {
+    const w = img.width, h = img.height;
+    const canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext('2d'); ctx.drawImage(img,0,0);
+    canvas.toBlob((blob)=>{ const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = filename; a.click(); URL.revokeObjectURL(url); }, 'image/png');
+  };
+  img.onerror = e => { showToast('PNG conversion failed'); console.error(e); };
+  img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
+}
 
-function renderHistory(){ historyEl.innerHTML=''; for(const item of history){ const thumb=document.createElement('div'); thumb.className='thumb'; thumb.title=`${item.settings.seed || 'composite'} • ${item.settings.style}`; const img=document.createElement('img'); img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover'; img.src='data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(item.svg))); thumb.appendChild(img); thumb.onclick = ()=>{ loadSettings(item.settings); previewBox.innerHTML = item.svg; updateAutoDescriptionFromRendered(item.svg, item.settings); showToast('Loaded from history'); }; historyEl.appendChild(thumb); } }
+/* ---------- History UI ---------- */
+function renderHistory(){
+  historyEl.innerHTML = '';
+  for(const item of history){
+    const thumb = document.createElement('div'); thumb.className='thumb'; thumb.title = `${item.settings.seed || 'composite'} • ${item.settings.style}`;
+    const img = document.createElement('img'); img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover';
+    img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(item.svg)));
+    thumb.appendChild(img);
+    thumb.onclick = ()=> { loadSettings(item.settings); previewBox.innerHTML = item.svg; updateAutoDescriptionFromRendered(item.svg, item.settings); showToast('Loaded from history'); };
+    historyEl.appendChild(thumb);
+  }
+}
 
 /* ---------- UI read/load ---------- */
-function readSettingsFromUI(){ return { seed: seedEl.value || 'anon', style: styleEl.value, size: parseInt(sizeEl.value) || 512, scale: parseFloat(scaleEl.value) || 100, rotation: parseFloat(rotationEl.value) || 0, bgType: bgTypeEl.value, bgColor: bgColorEl.value || '#7C3AED' }; }
-function loadSettings(s){ seedEl.value = s.seed || 'anon'; styleEl.value = s.style || 'adventurer'; sizeEl.value = s.size || 512; scaleEl.value = s.scale || 100; rotationEl.value = s.rotation || 0; bgTypeEl.value = s.bgType || 'transparent'; bgColorEl.value = s.bgColor || '#7C3AED'; settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2); }
+function readSettingsFromUI(){
+  return {
+    seed: seedEl.value || 'anon',
+    style: styleEl.value,
+    size: parseInt(sizeEl.value) || 512,
+    scale: parseFloat(scaleEl.value) || 100,
+    rotation: parseFloat(rotationEl.value) || 0,
+    bgType: bgTypeEl.value,
+    bgColor: bgColorEl.value || '#7C3AED'
+  };
+}
+function loadSettings(s){
+  seedEl.value = s.seed || 'anon';
+  styleEl.value = s.style || 'adventurer';
+  sizeEl.value = s.size || 512;
+  scaleEl.value = s.scale || 100;
+  rotationEl.value = s.rotation || 0;
+  bgTypeEl.value = s.bgType || 'transparent';
+  bgColorEl.value = s.bgColor || '#7C3AED';
+  settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
+}
 
 /* ---------- Event wiring ---------- */
-generateBtn.addEventListener('click', async ()=>{ const s = readSettingsFromUI(); await renderPreview(s, { addToHistory:true }); });
-applyPreviewBtn.addEventListener('click', async ()=>{ const s = readSettingsFromUI(); await renderPreview(s, { addToHistory:false }); });
+generateBtn.addEventListener('click', async () => { const s = readSettingsFromUI(); await renderPreview(s, { addToHistory: true }); });
+applyPreviewBtn.addEventListener('click', async () => { const s = readSettingsFromUI(); await renderPreview(s, { addToHistory: false }); });
 
-applyPromptBtn.addEventListener('click', ()=>{ const p=(promptEl.value||'').trim(); if(!p){ showToast('Please enter a prompt'); return; } seedEl.value = p; settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2); if(promptUseAsSeedEl.checked && liveToggle.checked) applyPreviewBtn.click(); });
-
-generateFromPromptBtn.addEventListener('click', async ()=>{
+applyPromptBtn.addEventListener('click', () => {
   const p = (promptEl.value || '').trim();
-  if(!p){ showToast('Please enter a prompt'); return; }
-  if(multiSeedEl.checked){ await renderCompositeFromPrompt(p); return; }
-  // Use prompt text directly if the checkbox is enabled, otherwise slugify+hash (deterministic but shorter)
-  const seedFromPrompt = promptUseAsSeedEl.checked ? p : slugifyPrompt(p);
+  if (!p) { showToast('Please enter a prompt'); return; }
+  seedEl.value = p;
+  settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
+  if (promptUseAsSeedEl.checked && liveToggle.checked) applyPreviewBtn.click();
+});
+generateFromPromptBtn.addEventListener('click', async () => {
+  const p = (promptEl.value || '').trim();
+  if (!p) { showToast('Please enter a prompt'); return; }
+  if (multiSeedEl.checked) { await renderCompositeFromPrompt(p); return; }
+  const seedFromPrompt = slugifyPrompt(p);
   seedEl.value = seedFromPrompt;
   settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
   const s = readSettingsFromUI();
-  await renderPreview(s, { addToHistory:true });
+  await renderPreview(s, { addToHistory: true });
 });
-
-promptUseAsSeedEl.addEventListener('change', ()=>{
-  if(promptUseAsSeedEl.checked){ const p=(promptEl.value||'').trim(); if(p) seedEl.value = p; settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2); if(liveToggle.checked) applyPreviewBtn.click(); }
+promptUseAsSeedEl.addEventListener('change', () => {
+  if (promptUseAsSeedEl.checked) {
+    const p = (promptEl.value || '').trim();
+    if (p) seedEl.value = slugifyPrompt(p);
+    settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
+    if (liveToggle.checked) applyPreviewBtn.click();
+  }
 });
-
-promptEl.addEventListener('input', ()=>{
-  if(promptUseAsSeedEl.checked){ const p=(promptEl.value||'').trim(); if(p) seedEl.value = p; settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2); if(liveToggle.checked){ if(window._liveTimeout) clearTimeout(window._liveTimeout); window._liveTimeout = setTimeout(()=>{ applyPreviewBtn.click(); }, 300); } }
+promptEl.addEventListener('input', () => {
+  if (promptUseAsSeedEl.checked) {
+    const p = (promptEl.value || '').trim();
+    if (p) seedEl.value = slugifyPrompt(p);
+    settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
+    if (liveToggle.checked) { if (window._liveTimeout) clearTimeout(window._liveTimeout); window._liveTimeout = setTimeout(() => { applyPreviewBtn.click(); }, 300); }
+  }
 });
 
 /* ---------- Generate AI image (frontend) ---------- */
-generateAIBtn.addEventListener('click', async ()=>{
+generateAIBtn.addEventListener('click', async () => {
   const prompt = (promptEl.value || '').trim();
-  if(!prompt){ showToast('Please enter a prompt'); return; }
+  if (!prompt) { showToast('Please enter a prompt'); return; }
   generateAIBtn.disabled = true;
-  const prevText = generateAIBtn.textContent;
   generateAIBtn.textContent = 'Generating AI...';
   showToast('AI generation requested — server will do the work');
 
-  try{
+  try {
     const width = parseInt(sizeEl.value || 512, 10);
-    const resp = await fetch('/api/generate-image-openai', {
+    const height = width;
+    const resp = await fetch('https://your-project-name.vercel.app/api/generate-image-xai', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt, width, height: width })
+      body: JSON.stringify({ prompt, width, height })
     });
     const j = await resp.json();
-    if(!resp.ok || j.error){ console.error('AI error', j); showToast('AI generation failed (see console)'); return; }
-    if(j.image){
+    if (!resp.ok || j.error) { 
+      console.error('AI error', j); 
+      showToast('AI generation failed (see console): ' + (j.error || 'Unknown error')); 
+      return; 
+    }
+    if (j.image) {
       const mime = j.mime || 'image/png';
       const dataUrl = `data:${mime};base64,${j.image}`;
       previewBox.innerHTML = `<img src="${dataUrl}" alt="AI result" style="width:100%;height:100%;object-fit:cover" />`;
       previewMeta.textContent = `AI image • ${prompt} • ${width}px`;
-      const svgWrapper = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${width}"><image href="${dataUrl}" width="${width}" height="${width}" /></svg>`;
+      const svgWrapper = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}"><image href="${dataUrl}" width="${width}" height="${height}" /></svg>`;
       updateAutoDescriptionFromRendered(svgWrapper, Object.assign(readSettingsFromUI(), { seed: prompt, style: 'ai-image' }));
       history.unshift({ settings: { seed: prompt, style: 'ai-image', size: width }, svg: svgWrapper });
-      if(history.length>28) history.pop();
+      if (history.length > 28) history.pop();
       renderHistory();
       showToast('AI image ready');
     } else {
       console.error('Unexpected AI response', j);
       showToast('AI returned unexpected response — check console');
     }
-  }catch(err){
+  } catch (err) {
     console.error('AI generation failed', err);
-    showToast('AI generation failed — check console');
+    showToast('AI generation failed — check console: ' + err.message);
   } finally {
     generateAIBtn.disabled = false;
-    generateAIBtn.textContent = prevText;
+    generateAIBtn.textContent = 'Generate AI Image';
   }
 });
 
 /* ---------- Downloads & share ---------- */
-qs('#downloadSvg').addEventListener('click', async ()=>{
+downloadSvgBtn.addEventListener('click', async () => {
   try{
     const curSvg = previewBox.querySelector('svg');
-    if(curSvg){ const svgText = new XMLSerializer().serializeToString(curSvg); downloadSVGfromString(svgText, `${(seedEl.value||'monadicon')}.svg`); showToast('SVG downloaded'); return; }
-    const s = readSettingsFromUI(); const svg = await buildFinalSvg(s); downloadSVGfromString(svg, `${(s.seed||'monadicon')}.svg`); showToast('SVG downloaded');
+    if(curSvg){
+      const svgText = new XMLSerializer().serializeToString(curSvg);
+      downloadSVGfromString(svgText, `${(seedEl.value||'monadicon')}.svg`);
+      showToast('SVG downloaded');
+      return;
+    }
+    const s = readSettingsFromUI();
+    const svg = await buildFinalSvg(s);
+    downloadSVGfromString(svg, `${(s.seed||'monadicon')}.svg`);
+    showToast('SVG downloaded');
   }catch(e){ showToast('SVG download failed'); console.error(e); }
 });
-qs('#downloadPng').addEventListener('click', async ()=>{
+downloadPngBtn.addEventListener('click', async () => {
   try{
     const curSvg = previewBox.querySelector('svg');
-    if(curSvg){ const svgText = new XMLSerializer().serializeToString(curSvg); downloadPNGfromSvgString(svgText, `${(seedEl.value||'monadicon')}.png`); showToast('PNG download started'); return; }
-    const s = readSettingsFromUI(); const svg = await buildFinalSvg(s); downloadPNGfromSvgString(svg, `${(s.seed||'monadicon')}.png`); showToast('PNG download started');
+    if(curSvg){
+      const svgText = new XMLSerializer().serializeToString(curSvg);
+      downloadPNGfromSvgString(svgText, `${(seedEl.value||'monadicon')}.png`);
+      showToast('PNG download started');
+      return;
+    }
+    const s = readSettingsFromUI();
+    const svg = await buildFinalSvg(s);
+    downloadPNGfromSvgString(svg, `${(s.seed||'monadicon')}.png`);
+    showToast('PNG download started');
   }catch(e){ showToast('PNG creation failed'); console.error(e); }
 });
-qs('#copyEmbed').addEventListener('click', async ()=>{
+copyEmbedBtn.addEventListener('click', async () => {
   const curSvg = previewBox.querySelector('svg');
-  if(curSvg){ const svgText = new XMLSerializer().serializeToString(curSvg); navigator.clipboard.writeText(svgText).then(()=> showToast('SVG embed copied to clipboard')).catch(()=> showToast('Copy failed')); return; }
-  const s = readSettingsFromUI(); const svg = await buildFinalSvg(s); navigator.clipboard.writeText(svg).then(()=> showToast('SVG embed copied to clipboard')).catch(()=> showToast('Copy failed'));
+  if(curSvg){
+    const svgText = new XMLSerializer().serializeToString(curSvg);
+    navigator.clipboard.writeText(svgText).then(() => showToast('SVG embed copied to clipboard')).catch(() => showToast('Copy failed'));
+    return;
+  }
+  const s = readSettingsFromUI();
+  const svg = await buildFinalSvg(s);
+  navigator.clipboard.writeText(svg).then(() => showToast('SVG embed copied to clipboard')).catch(() => showToast('Copy failed'));
 });
 
 /* ---------- Random / presets ---------- */
-randomBtn.addEventListener('click', ()=>{
+randomBtn.addEventListener('click', () => {
   seedEl.value = sampleSeeds[Math.floor(Math.random()*sampleSeeds.length)] + '-' + Math.floor(Math.random()*9999);
-  const styles = qsa('#style option').map(o=>o.value);
-  styleEl.value = styles[Math.floor(Math.random()*styles.length)];
-  bgTypeEl.value = ['transparent','solid','gradient','radial','dots','stripes','checker','noise'][Math.floor(Math.random()*8)];
-  bgColorEl.value = '#'+Math.floor(Math.random()*0xFFFFFF).toString(16).padStart(6,'0');
-  sizeEl.value = [128,256,512,768,1024][Math.floor(Math.random()*5)];
-  scaleEl.value = 80 + Math.floor(Math.random()*60);
-  rotationEl.value = Math.floor(Math.random()*360)-180;
-  if(liveToggle.checked) applyPreviewBtn.click();
-});
-qs('#randomPreset').addEventListener('click', ()=> randomBtn.click());
-qsa('.preset').forEach(btn=>{ btn.addEventListener('click', ()=>{ const seed = btn.dataset.seed; const style = btn.dataset.style; if(seed) seedEl.value = seed; if(style) styleEl.value = style; if(liveToggle.checked) applyPreviewBtn.click(); }); });
-
-/* ---------- Live preview ---------- */
-function setupLivePreview(){ const inputs=[seedEl, styleEl, sizeEl, scaleEl, rotationEl, bgTypeEl, bgColorEl]; inputs.forEach(inp=>{ inp.addEventListener('input', ()=>{ settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2); if(liveToggle.checked){ if(window._liveTimeout) clearTimeout(window._liveTimeout); window._liveTimeout = setTimeout(()=>{ applyPreviewBtn.click(); }, 300); } }); }); }
-setupLivePreview();
-
-/* ---------- Export ---------- */
-qs('#exportJSON').addEventListener('click', ()=>{ try{ const settings = readSettingsFromUI(); const jsonText = JSON.stringify(settings,null,2); const filename = `monadicon-settings-${Date.now()}.json`; const blob = new Blob([jsonText],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url); navigator.clipboard?.writeText(jsonText).catch(()=>{}); showToast(`Settings exported and copied`); } catch(e){ console.error(e); showToast('Export failed'); } });
-qs('#copyJSON').addEventListener('click', ()=>{ navigator.clipboard.writeText(JSON.stringify(readSettingsFromUI(), null, 2)); showToast('Settings JSON copied'); });
-qs('#downloadJSON').addEventListener('click', ()=>{ const txt = JSON.stringify(readSettingsFromUI(), null, 2); const blob = new Blob([txt], {type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='monadicon-settings.json'; a.click(); showToast('Settings JSON downloaded'); });
-
-qs('#clearHistory').addEventListener('click', ()=>{ history=[]; renderHistory(); showToast('History cleared'); });
-
-/* ---------- Theme ---------- */
-let isLight=false;
-function setTheme(light){ isLight=!!light; if(isLight){ document.body.classList.add('light'); document.body.classList.remove('dark'); toggleThemeBtn.textContent='Dark'; } else { document.body.classList.remove('light'); document.body.classList.add('dark'); toggleThemeBtn.textContent='Light'; } try{ localStorage.setItem('monadicons:theme', isLight?'light':'dark'); }catch(e){} }
-toggleThemeBtn.addEventListener('click', ()=> setTheme(!isLight));
-try{ const p = localStorage.getItem('monadicons:theme'); setTheme(p === 'light'); }catch(e){ setTheme(false); }
-
-/* ---------- Auto desc controls ---------- */
-regenDescBtn.addEventListener('click', async ()=>{ try{ const curSvgNode = previewBox.querySelector('svg'); if(curSvgNode){ const svgText = new XMLSerializer().serializeToString(curSvgNode); const settings = readSettingsFromUI(); updateAutoDescriptionFromRendered(svgText, settings); showToast('Description regenerated from preview'); return; } const s = readSettingsFromUI(); const svg = await buildFinalSvg(s); updateAutoDescriptionFromRendered(svg, s); showToast('Description regenerated (rebuilt)'); }catch(e){ console.error('Regenerate failed', e); showToast('Regenerate failed — see console'); } });
-copyDescBtn.addEventListener('click', ()=>{ const meta = copyDescBtn._meta; if(meta && meta.meta && meta.meta.description){ navigator.clipboard.writeText(meta.meta.description); showToast('Description copied'); return; } const txt = autoDescEl.textContent || ''; if(txt){ navigator.clipboard.writeText(txt); showToast('Description copied'); } else showToast('No description available'); });
-downloadMetaBtn.addEventListener('click', ()=>{ const meta = downloadMetaBtn._meta; if(!meta || !meta.meta){ showToast('Generate an icon first'); return; } const metadata = { name: meta.meta.name, description: meta.meta.description, attributes: meta.meta.attributes, image: 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(meta.svg))) }; const txt = JSON.stringify(metadata, null, 2); const blob = new Blob([txt], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `${meta.meta.name.replace(/\s+/g,'_')}-metadata.json`; a.click(); URL.revokeObjectURL(url); showToast('Metadata JSON downloaded'); });
-
-/* ---------- Confetti & particles ---------- */
-function confetti(){ const canvas=document.createElement('canvas'); canvas.style.position='fixed'; canvas.style.left='0'; canvas.style.top='0'; canvas.style.pointerEvents='none'; canvas.width=innerWidth; canvas.height=innerHeight; document.body.appendChild(canvas); const ctx=canvas.getContext('2d'); const pieces=Array.from({length:80}, ()=>({x:innerWidth/2+(Math.random()-0.5)*200,y:innerHeight/2+(Math.random()-0.5)*60,vx:(Math.random()-0.5)*8,vy:Math.random()*-10-2,r:Math.random()*6+3,c:`hsl(${Math.random()*360},80%,60%)`,rot:Math.random()*Math.PI})); (function anim(){ ctx.clearRect(0,0,canvas.width,canvas.height); pieces.forEach((p,i)=>{ p.x+=p.vx; p.y+=p.vy; p.vy+=0.4; p.rot+=0.2; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.c; ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r); ctx.restore(); if(p.y>canvas.height+50) pieces.splice(i,1); }); if(pieces.length) requestAnimationFrame(anim); else canvas.remove(); })(); }
-(function initParticles(){ const can=document.createElement('canvas'); can.id='particles-canvas'; can.style.position='fixed'; can.style.top='0'; can.style.left='0'; can.style.width='100%'; can.style.height='100%'; can.style.pointerEvents='none'; can.style.zIndex='-1'; document.body.appendChild(can); const ctx = can.getContext('2d'); function resize(){ can.width = innerWidth; can.height = innerHeight; } window.addEventListener('resize', resize); resize(); const parts = Array.from({length:90}, ()=>({x:Math.random()*can.width,y:Math.random()*can.height,r:Math.random()*1.8+0.6,vx:(Math.random()-.5)*0.4,vy:(Math.random()-.5)*0.4})); (function draw(){ ctx.clearRect(0,0,can.width,can.height); parts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>can.width)p.vx*=-1; if(p.y<0||p.y>can.height)p.vy*=-1; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle='rgba(124,58,237,0.06)'; ctx.fill(); }); requestAnimationFrame(draw); })(); })();
-
-/* ---------- Init ---------- */
-settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
-applyPreviewBtn.click();
-</script>
-</body>
-</html>
+  const styles = qsa('#style option').map(o => o.value);
+  styleEl.value = styles[Math.floor(Math.random()*
