@@ -1,22 +1,18 @@
-// Place this file at: /api/generate-image-openai.js (root of your Vercel project)
-//
-// Uses the environment variable: Monadicons_Key
-// Returns JSON: { image: "data:image/png;base64,...." }
-
-const { TextDecoder } = require("util");
+// /api/generate-image-openai.js
+// Vercel serverless function. Uses env var Monadicons_Key.
+// Expects POST { prompt: string, width?: number, height?: number }
+// Returns { image: "<base64-encoded-png-without-dataurl>" }
 
 module.exports = async (req, res) => {
   try {
-    // Only allow POST
     if (req.method !== "POST") {
       res.setHeader("Allow", "POST");
       return res.status(405).json({ error: "Method not allowed. Use POST." });
     }
 
-    // Ensure body parsed (Vercel auto-parses JSON, but guard anyway)
+    // Parse body (Vercel usually populates req.body)
     let body = req.body;
     if (!body) {
-      // try parse raw
       try {
         const raw = await new Promise((resolve) => {
           let data = "";
@@ -30,45 +26,53 @@ module.exports = async (req, res) => {
     }
 
     const prompt = (body.prompt || "").toString().trim();
-    const size = body.size || "512x512";
+    const width = parseInt(body.width || body.w || body.size || 512, 10) || 512;
+    const height = parseInt(body.height || body.h || body.size || 512, 10) || 512;
 
-    if (!prompt) return res.status(400).json({ error: "Missing `prompt` in request body." });
+    if (!prompt) {
+      return res.status(400).json({ error: "Missing `prompt` in request body." });
+    }
 
     const OPENAI_KEY = process.env.Monadicons_Key;
-    if (!OPENAI_KEY) return res.status(500).json({ error: "OpenAI key not configured (Monadicons_Key)." });
+    if (!OPENAI_KEY) {
+      return res.status(500).json({ error: "OpenAI key not configured. Set env var Monadicons_Key in Vercel." });
+    }
 
-    // Call OpenAI Images endpoint and ask for base64 response
-    const openaiResp = await fetch("https://api.openai.com/v1/images/generations", {
+    // Clamp to safe bounds the API supports (keep reasonable)
+    const w = Math.max(64, Math.min(2048, width));
+    const h = Math.max(64, Math.min(2048, height));
+    const size = `${w}x${h}`;
+
+    // Call OpenAI Images endpoint and request base64 response
+    const response = await fetch("https://api.openai.com/v1/images/generations", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${OPENAI_KEY}`,
+        Authorization: `Bearer ${OPENAI_KEY}`
       },
       body: JSON.stringify({
         model: "gpt-image-1",
-        prompt: prompt,
-        size: size,
-        response_format: "b64_json", // request base64 for easy browser preview
-      }),
+        prompt,
+        size,
+        response_format: "b64_json"
+      })
     });
 
-    const data = await openaiResp.json();
+    const data = await response.json();
 
-    if (!openaiResp.ok) {
-      // Forward OpenAI error info for debugging
-      console.error("OpenAI error:", data);
-      return res.status(openaiResp.status || 500).json({ error: "OpenAI API error", details: data });
+    if (!response.ok) {
+      console.error("OpenAI API error:", data);
+      return res.status(response.status || 500).json({ error: "OpenAI API error", details: data });
     }
 
-    // Extract base64 result
     const b64 = data?.data?.[0]?.b64_json;
     if (!b64) {
       console.error("Unexpected OpenAI response:", data);
       return res.status(500).json({ error: "No image returned from OpenAI", details: data });
     }
 
-    const dataUrl = `data:image/png;base64,${b64}`;
-    return res.status(200).json({ image: dataUrl });
+    // Return base64 only (frontend will add data:image/png;base64,)
+    return res.status(200).json({ image: b64 });
   } catch (err) {
     console.error("Server error in /api/generate-image-openai:", err);
     return res.status(500).json({ error: "Server error", details: String(err) });
