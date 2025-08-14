@@ -43,8 +43,9 @@ h1{margin:0;font-size:20px}
 .card{background:var(--card-bg);padding:16px;border-radius:var(--radius);border:1px solid rgba(255,255,255,0.03)}
 .controls label{display:block;font-size:13px;color:var(--muted);margin:10px 0 6px}
 .row{display:flex;gap:8px;align-items:center}
-.input, select, input[type="color"], input[type="number"], input[type="text"]{
+.input, select, input[type="color"], input[type="number"], input[type="text"], textarea{
   width:100%; padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;font-size:14px;
+  resize:vertical;
 }
 .controls{margin-top:8px;display:flex;flex-wrap:wrap;gap:8px}
 .preview-box{width:100%;height:440px;border-radius:var(--radius);border:1px solid rgba(255,255,255,0.04);background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
@@ -54,7 +55,7 @@ h1{margin:0;font-size:20px}
 .thumb{width:64px;height:64px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);overflow:hidden;cursor:pointer;background:white;display:flex;align-items:center;justify-content:center}
 .switch{display:inline-flex;align-items:center;gap:8px;background:var(--glass);padding:6px;border-radius:999px}
 .switch input{display:none}
-footer{color:var(--muted);font-size:13px;text-align:center;margin-top:18px}
+.footer-note{color:var(--muted);font-size:13px;text-align:center;margin-top:18px}
 
 /* LIGHT THEME OVERRIDES */
 body.light{
@@ -97,7 +98,53 @@ body.light .preview-box { background: linear-gradient(180deg, rgba(0,0,0,0.02), 
       <label for="seed">Seed / Name</label>
       <input id="seed" class="input" type="text" placeholder="e.g., aurora" value="anon" />
 
-      <label for="style">Style</label>
+      <!-- Prompt section -->
+      <label for="prompt">Prompt</label>
+      <textarea id="prompt" rows="3" placeholder="Enter a prompt (e.g., 'friendly blue fox with stars')"></textarea>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
+        <button id="applyPrompt" class="ghost">Apply Prompt → Seed</button>
+        <button id="generateFromPrompt" class="btn">Generate from Prompt</button>
+        <div style="flex:1"></div>
+        <label style="font-size:13px;color:var(--muted)"><input id="promptUseAsSeed" type="checkbox" style="margin-right:6px">Use prompt as seed automatically</label>
+      </div>
+
+      <!-- Multi-seed controls -->
+      <div style="margin-top:10px;border-radius:8px;padding:10px;background:rgba(255,255,255,0.01);border:1px solid rgba(255,255,255,0.02)">
+        <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+          <div style="font-weight:700">Multi-seed</div>
+          <label style="font-size:13px;color:var(--muted)"><input id="multiSeed" type="checkbox" style="margin-right:6px">Enable</label>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <div style="flex:1">
+            <label for="delimiter">Delimiter</label>
+            <select id="delimiter" class="input">
+              <option value="space">Space</option>
+              <option value="comma">Comma</option>
+              <option value="newline">Newline</option>
+              <option value="char">Each char</option>
+            </select>
+          </div>
+          <div style="width:120px">
+            <label for="partsCount">Parts</label>
+            <input id="partsCount" class="input" type="number" min="2" max="12" value="3" />
+          </div>
+          <div style="width:150px">
+            <label for="composeMode">Compose</label>
+            <select id="composeMode" class="input">
+              <option value="grid">Grid</option>
+              <option value="layer">Layered</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+          <label style="font-size:13px;color:var(--muted)"><input id="randomizeParts" type="checkbox" style="margin-right:6px">Randomize parts</label>
+          <div style="flex:1"></div>
+          <small style="color:var(--muted)">Creates multiple seeds from the prompt and combines them.</small>
+        </div>
+      </div>
+      <!-- END Multi-seed -->
+
+      <label for="style" style="margin-top:10px">Style</label>
       <select id="style" class="input">
         <optgroup label="DiceBear">
           <option value="adventurer">adventurer</option>
@@ -210,7 +257,7 @@ body.light .preview-box { background: linear-gradient(180deg, rgba(0,0,0,0.02), 
     </div>
   </div>
 
-  <footer>Powered by Monadicons • ©2025</footer>
+  <div class="footer-note">Powered by Monadicons • ©2025</div>
 </div>
 
 <script>
@@ -238,6 +285,18 @@ function mixWithWhite(hex, pct=0.6){
 /* ---------- Elements ---------- */
 const liveToggle = qs('#liveToggle');
 const seedEl = qs('#seed');
+
+const promptEl = qs('#prompt');
+const promptUseAsSeedEl = qs('#promptUseAsSeed');
+const applyPromptBtn = qs('#applyPrompt');
+const generateFromPromptBtn = qs('#generateFromPrompt');
+
+const multiSeedEl = qs('#multiSeed');
+const delimiterEl = qs('#delimiter');
+const partsCountEl = qs('#partsCount');
+const composeModeEl = qs('#composeMode');
+const randomizePartsEl = qs('#randomizeParts');
+
 const styleEl = qs('#style');
 const sizeEl = qs('#size');
 const scaleEl = qs('#scale');       // percent (100)
@@ -257,8 +316,6 @@ const placeholder = qs('#placeholder');
 const downloadSvgBtn = qs('#downloadSvg');
 const downloadPngBtn = qs('#downloadPng');
 const copyEmbedBtn = qs('#copyEmbed');
-const shareXBtn = qs('#shareX');
-const shareDiscordBtn = qs('#shareDiscord');
 
 const historyEl = qs('#history');
 const copyJSON = qs('#copyJSON');
@@ -403,7 +460,6 @@ async function buildFinalSvg(settings){
   const totalScale = fillScale * userScale;
 
   const cx = outSize/2, cy = outSize/2;
-  // Scale about center, but inner coordinate origin might not be 0,0 so later we translate by innerW/2,innerH/2
   const transform = `translate(${cx},${cy}) rotate(${rotation}) scale(${totalScale}) translate(${-innerW/2},${-innerH/2})`;
   const rectFilterAttr = noiseFilterId ? ` filter="url(#${noiseFilterId})"` : '';
 
@@ -418,6 +474,79 @@ async function buildFinalSvg(settings){
   </g>
 </svg>`;
   return svg;
+}
+
+/* ---------- Composite builder for multi-seed ---------- */
+async function buildCompositeFromSeeds(seeds, baseSettings, mode='grid'){
+  // seeds: array of strings
+  // mode: 'grid' or 'layer'
+  const outSize = clamp(parseInt(baseSettings.size)||512, 64, 4096);
+
+  if(mode === 'grid'){
+    const count = seeds.length;
+    const cols = Math.ceil(Math.sqrt(count));
+    const rows = Math.ceil(count / cols);
+    const tile = Math.floor(outSize / cols);
+    // generate each tile SVG
+    const tileSvgs = await Promise.all(seeds.map(async (s)=>{
+      const sset = Object.assign({}, baseSettings, { seed: s, size: tile });
+      return await buildFinalSvg(sset);
+    }));
+    // assemble parent svg with <image> tiles
+    let images = '';
+    let i = 0;
+    for(let r=0;r<rows;r++){
+      for(let c=0;c<cols;c++){
+        if(i >= tileSvgs.length) break;
+        const dataUri = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(tileSvgs[i])));
+        const x = c * tile;
+        const y = r * tile;
+        images += `<image x="${x}" y="${y}" width="${tile}" height="${tile}" href="${dataUri}" />\n`;
+        i++;
+      }
+    }
+    // background defs based on baseSettings
+    const { defs, rectFill, noiseFilterId } = buildDefsAndRect(baseSettings.bgType, baseSettings.bgColor, outSize);
+    const rectFilterAttr = noiseFilterId ? ` filter="url(#${noiseFilterId})"` : '';
+    const svg =
+`<svg xmlns="http://www.w3.org/2000/svg" width="${outSize}" height="${outSize}" viewBox="0 0 ${outSize} ${outSize}">
+  <defs>${defs}</defs>
+  <rect width="${outSize}" height="${outSize}" fill="${rectFill}" ${rectFilterAttr}/>
+  ${images}
+</svg>`;
+    return svg;
+  } else { // layer
+    // create several full-size svgs and layer them with transforms & opacities
+    const layers = await Promise.all(seeds.map(async (s)=> {
+      const sset = Object.assign({}, baseSettings, { seed: s, size: outSize });
+      return await buildFinalSvg(sset);
+    }));
+    // prepare transforms: each layer will be scaled slightly and rotated randomly
+    const transforms = seeds.map((_, idx)=>{
+      const t = 1 - (idx * 0.08); // decreasing scale
+      const rot = (idx - Math.floor(seeds.length/2)) * 8 * (Math.random()*1.0);
+      const tx = (Math.random()-0.5) * outSize * 0.03 * (idx+1);
+      const ty = (Math.random()-0.5) * outSize * 0.03 * (idx+1);
+      return { t, rot, tx, ty, opacity: Math.max(0.6 - idx*0.12, 0.28) };
+    });
+    // assemble
+    const { defs, rectFill, noiseFilterId } = buildDefsAndRect(baseSettings.bgType, baseSettings.bgColor, outSize);
+    const rectFilterAttr = noiseFilterId ? ` filter="url(#${noiseFilterId})"` : '';
+    let inner = '';
+    for(let i=0;i<layers.length;i++){
+      const dataUri = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(layers[i])));
+      const tr = transforms[i];
+      // use image with transform and opacity
+      inner += `<image href="${dataUri}" width="${outSize}" height="${outSize}" opacity="${tr.opacity}" transform="translate(${tr.tx},${tr.ty}) rotate(${tr.rot} ${outSize/2} ${outSize/2}) scale(${tr.t})" preserveAspectRatio="xMidYMid slice" />\n`;
+    }
+    const svg =
+`<svg xmlns="http://www.w3.org/2000/svg" width="${outSize}" height="${outSize}" viewBox="0 0 ${outSize} ${outSize}">
+  <defs>${defs}</defs>
+  <rect width="${outSize}" height="${outSize}" fill="${rectFill}" ${rectFilterAttr}/>
+  ${inner}
+</svg>`;
+    return svg;
+  }
 }
 
 /* ---------- Render preview ---------- */
@@ -439,6 +568,74 @@ async function renderPreview(settings, { addToHistory=false } = {}){
   }catch(e){
     previewBox.innerHTML = `<div style="color:#ff6b6b;font-weight:700">Error rendering preview</div><div style="color:var(--muted);margin-top:8px">Check console for details.</div>`;
     console.error('Preview error:', e);
+  }
+}
+
+/* ---------- Render composite preview (multi-seed) ---------- */
+async function renderCompositeFromPrompt(promptText){
+  const enabled = multiSeedEl.checked;
+  if(!promptText || !enabled) {
+    // fallback: generate normally using prompt as seed
+    const s = readSettingsFromUI(); s.seed = promptText || s.seed;
+    await renderPreview(s, { addToHistory:true });
+    return;
+  }
+
+  // generate parts
+  let parts = [];
+  const delim = delimiterEl.value;
+  if(delim === 'space') parts = promptText.trim().split(/\s+/).filter(Boolean);
+  else if(delim === 'comma') parts = promptText.split(',').map(s=>s.trim()).filter(Boolean);
+  else if(delim === 'newline') parts = promptText.split(/\n+/).map(s=>s.trim()).filter(Boolean);
+  else if(delim === 'char') parts = promptText.replace(/\s+/g,'').split('').filter(Boolean);
+
+  // if not enough parts, split into words fallback
+  if(parts.length === 0) parts = [promptText];
+
+  // choose partsCount
+  const maxParts = clamp(parseInt(partsCountEl.value)||3, 2, 12);
+  if(randomizePartsEl.checked){
+    // create an array by randomly sampling or repeating words
+    const pool = parts.slice();
+    const chosen = [];
+    for(let i=0;i<maxParts;i++){
+      const pick = pool[Math.floor(Math.random()*pool.length)];
+      chosen.push(pick + '-' + Math.floor(Math.random()*9000));
+    }
+    parts = chosen;
+  } else {
+    // deterministic: if we have >= maxParts, take first maxParts; else, break words further or repeat with suffix
+    if(parts.length >= maxParts) parts = parts.slice(0, maxParts);
+    else {
+      // if too few, pad with variants
+      const padded = parts.slice();
+      let i=0;
+      while(padded.length < maxParts){
+        padded.push((parts[i % parts.length] || promptText) + '-' + (1000 + padded.length));
+        i++;
+      }
+      parts = padded;
+    }
+  }
+
+  // build composite
+  const baseSettings = readSettingsFromUI();
+  const mode = composeModeEl.value || 'grid';
+  // build composite and show
+  previewBox.innerHTML = `<div style="color:var(--muted);text-align:center">Rendering composite...</div>`;
+  try{
+    const compositeSvg = await buildCompositeFromSeeds(parts, Object.assign({}, baseSettings, { size: parseInt(baseSettings.size) }), mode);
+    previewBox.innerHTML = compositeSvg;
+    previewMeta.textContent = `Composite (${mode}) • ${parts.length} parts`;
+    settingsOut.textContent = JSON.stringify({ multiSeeds: parts, base: baseSettings }, null, 2);
+    // add to history
+    history.unshift({ settings: { seed: 'composite', style: baseSettings.style, size: baseSettings.size }, svg: compositeSvg });
+    if(history.length>28) history.pop();
+    renderHistory();
+    confetti();
+  } catch(e){
+    console.error('Composite error', e);
+    previewBox.innerHTML = `<div style="color:#ff6b6b;font-weight:700">Error creating composite</div>`;
   }
 }
 
@@ -465,11 +662,11 @@ function downloadPNGfromSvgString(svgString, filename='monadicon.png'){
 function renderHistory(){
   historyEl.innerHTML = '';
   for(const item of history){
-    const thumb = document.createElement('div'); thumb.className='thumb'; thumb.title = `${item.settings.seed} • ${item.settings.style}`;
+    const thumb = document.createElement('div'); thumb.className='thumb'; thumb.title = `${item.settings.seed || 'composite'} • ${item.settings.style}`;
     const img = document.createElement('img'); img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover';
     img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(item.svg)));
     thumb.appendChild(img);
-    thumb.onclick = ()=> { loadSettings(item.settings); renderPreview(item.settings); };
+    thumb.onclick = ()=> { loadSettings(item.settings); previewBox.innerHTML = item.svg; };
     historyEl.appendChild(thumb);
   }
 }
@@ -510,35 +707,86 @@ applyPreviewBtn.addEventListener('click', async ()=>{
   await renderPreview(s, { addToHistory:false });
 });
 
+/* Prompt handlers */
+applyPromptBtn.addEventListener('click', ()=>{
+  const p = (promptEl.value || '').trim();
+  if(!p){ alert('Please enter a prompt'); return; }
+  seedEl.value = p;
+  settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
+  if(promptUseAsSeedEl.checked && liveToggle.checked){
+    applyPreviewBtn.click();
+  }
+});
+generateFromPromptBtn.addEventListener('click', async ()=>{
+  const p = (promptEl.value || '').trim();
+  if(!p){ alert('Please enter a prompt'); return; }
+  if(multiSeedEl.checked){
+    await renderCompositeFromPrompt(p);
+  } else {
+    const s = readSettingsFromUI();
+    s.seed = p;
+    await renderPreview(s, { addToHistory:true });
+  }
+});
+promptUseAsSeedEl.addEventListener('change', ()=>{
+  if(promptUseAsSeedEl.checked){
+    seedEl.value = (promptEl.value || '').trim();
+    settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
+  }
+});
+promptEl.addEventListener('input', ()=>{
+  if(promptUseAsSeedEl.checked){
+    seedEl.value = (promptEl.value || '').trim();
+    settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
+    if(liveToggle.checked){
+      if(window._liveTimeout) clearTimeout(window._liveTimeout);
+      window._liveTimeout = setTimeout(()=>{ applyPreviewBtn.click(); }, 300);
+    }
+  }
+});
+
 /* Downloads & shares */
 downloadSvgBtn.addEventListener('click', async ()=>{
-  const s = readSettingsFromUI();
-  const svg = await buildFinalSvg(s);
-  downloadSVGfromString(svg, `${(s.seed||'monadicon')}.svg`);
+  // uses current preview - if preview contains an svg inner markup, use that; else rebuild
+  try{
+    // try to extract current svg markup from previewBox
+    const curSvg = previewBox.querySelector('svg');
+    if(curSvg){
+      const svgText = new XMLSerializer().serializeToString(curSvg);
+      downloadSVGfromString(svgText, `${(seedEl.value||'monadicon')}.svg`);
+      return;
+    }
+    // fallback: rebuild from settings
+    const s = readSettingsFromUI();
+    const svg = await buildFinalSvg(s);
+    downloadSVGfromString(svg, `${(s.seed||'monadicon')}.svg`);
+  }catch(e){ alert('SVG download failed'); console.error(e); }
 });
 downloadPngBtn.addEventListener('click', async ()=>{
-  const s = readSettingsFromUI();
-  const svg = await buildFinalSvg(s);
-  downloadPNGfromSvgString(svg, `${(s.seed||'monadicon')}.png`);
+  try{
+    const curSvg = previewBox.querySelector('svg');
+    if(curSvg){
+      const svgText = new XMLSerializer().serializeToString(curSvg);
+      downloadPNGfromSvgString(svgText, `${(seedEl.value||'monadicon')}.png`);
+      return;
+    }
+    const s = readSettingsFromUI();
+    const svg = await buildFinalSvg(s);
+    downloadPNGfromSvgString(svg, `${(s.seed||'monadicon')}.png`);
+  }catch(e){ alert('PNG creation failed'); console.error(e); }
 });
 copyEmbedBtn.addEventListener('click', async ()=>{
+  const curSvg = previewBox.querySelector('svg');
+  if(curSvg){
+    const svgText = new XMLSerializer().serializeToString(curSvg);
+    copyToClipboard(svgText);
+    alert('SVG embed copied to clipboard (full SVG markup)');
+    return;
+  }
   const s = readSettingsFromUI();
   const svg = await buildFinalSvg(s);
   copyToClipboard(svg);
   alert('SVG embed copied to clipboard (full SVG markup)');
-});
-qs('#shareX').addEventListener('click', ()=>{
-  const s = readSettingsFromUI();
-  const params = new URLSearchParams(s);
-  const url = location.origin + location.pathname + '?' + params.toString();
-  const tweet = `I made a Monadicon — ${url}`;
-  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(tweet)}`, '_blank');
-});
-qs('#shareDiscord').addEventListener('click', ()=>{
-  const s = readSettingsFromUI();
-  const params = new URLSearchParams(s);
-  const url = location.origin + location.pathname + '?' + params.toString();
-  copyToClipboard(url); alert('Share link copied to clipboard — paste into Discord');
 });
 
 /* Random / presets */
@@ -608,10 +856,8 @@ if(exportJSON){
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-
       // Copy to clipboard (best-effort)
       navigator.clipboard?.writeText(jsonText).catch(()=>{/* ignore copy errors */});
-
       // Notify user
       alert(`Settings exported as ${filename} and copied to clipboard.`);
     } catch (err) {
