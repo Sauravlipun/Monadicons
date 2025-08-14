@@ -23,7 +23,7 @@ export default async function handler(req, res) {
     // Note: xAI API endpoint and parameters are different from OpenAI
     const sizeStr = `${width}x${width}`;
     
-    const response = await fetch('https://api.x.ai/v1/images/generations', {
+    const response = await fetch('https://api.x.ai/v1', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${XAI_KEY}`,
