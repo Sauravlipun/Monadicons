@@ -57,6 +57,11 @@ h1{margin:0;font-size:20px}
 .switch input{display:none}
 .footer-note{color:var(--muted);font-size:13px;text-align:center;margin-top:18px}
 
+/* Auto-desc styles */
+.desc-card{margin-top:12px;background:linear-gradient(180deg, rgba(255,255,255,0.015), transparent);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
+.desc-title{font-weight:700;margin-bottom:6px}
+.desc-text{background:transparent;border-radius:8px;padding:10px;border:1px dashed rgba(255,255,255,0.04);color:var(--muted);font-size:14px;white-space:pre-wrap}
+
 /* LIGHT THEME OVERRIDES */
 body.light{
   color: #1f2937;
@@ -205,7 +210,6 @@ body.light .preview-box { background: linear-gradient(180deg, rgba(0,0,0,0.02), 
         <button id="downloadPng" class="ghost">Download PNG</button>
         <button id="copyEmbed" class="ghost">Copy Embed</button>
         <button id="shareX" class="ghost">Share X</button>
-        <button id="shareDiscord" class="ghost">Share Discord</button>
       </div>
 
       <div style="margin-top:12px">
@@ -253,6 +257,30 @@ body.light .preview-box { background: linear-gradient(180deg, rgba(0,0,0,0.02), 
           <div style="color:var(--muted);font-size:13px">Copy / Share below</div>
         </div>
         <pre id="settingsOut" style="white-space:pre-wrap;word-break:break-word;background:transparent;border:none;color:var(--muted);margin-top:8px"></pre>
+
+        <!-- Auto description card -->
+        <div class="desc-card" id="descCard">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div class="desc-title">Auto Description</div>
+              <div style="color:var(--muted);font-size:13px">A short NFT-style description and attributes generated from your settings.</div>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button id="regenDesc" class="small">Regenerate</button>
+              <button id="copyDesc" class="small">Copy</button>
+              <button id="downloadMeta" class="small">Download JSON</button>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:10px;align-items:flex-start">
+            <div style="width:96px;height:96px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center" id="descThumb">
+              <!-- thumbnail inserted here -->
+            </div>
+            <div style="flex:1">
+              <div id="autoDesc" class="desc-text">Generate an icon to view the auto-description here.</div>
+            </div>
+          </div>
+        </div>
+        <!-- end auto desc -->
       </div>
     </div>
   </div>
@@ -280,6 +308,14 @@ function mixWithWhite(hex, pct=0.6){
   const g = Math.round(c.g + (255-c.g)*pct);
   const b = Math.round(c.b + (255-c.b)*pct);
   return `rgb(${r},${g},${b})`;
+}
+function hashString(s){
+  let h=2166136261>>>0;
+  for(let i=0;i<s.length;i++){ h = Math.imul(h ^ s.charCodeAt(i), 16777619)>>>0; }
+  return h;
+}
+function pickDeterministic(arr, seed){
+  return arr[Math.abs(hashString(seed+'|pick')) % arr.length];
 }
 
 /* ---------- Elements ---------- */
@@ -324,6 +360,12 @@ const exportJSON = qs('#exportJSON');
 const settingsOut = qs('#settingsOut');
 
 const toggleThemeBtn = qs('#toggleTheme');
+
+const autoDescEl = qs('#autoDesc');
+const descThumb = qs('#descThumb');
+const regenDescBtn = qs('#regenDesc');
+const copyDescBtn = qs('#copyDesc');
+const downloadMetaBtn = qs('#downloadMeta');
 
 let isLight = false;
 
@@ -478,21 +520,16 @@ async function buildFinalSvg(settings){
 
 /* ---------- Composite builder for multi-seed ---------- */
 async function buildCompositeFromSeeds(seeds, baseSettings, mode='grid'){
-  // seeds: array of strings
-  // mode: 'grid' or 'layer'
   const outSize = clamp(parseInt(baseSettings.size)||512, 64, 4096);
-
   if(mode === 'grid'){
     const count = seeds.length;
     const cols = Math.ceil(Math.sqrt(count));
     const rows = Math.ceil(count / cols);
     const tile = Math.floor(outSize / cols);
-    // generate each tile SVG
     const tileSvgs = await Promise.all(seeds.map(async (s)=>{
       const sset = Object.assign({}, baseSettings, { seed: s, size: tile });
       return await buildFinalSvg(sset);
     }));
-    // assemble parent svg with <image> tiles
     let images = '';
     let i = 0;
     for(let r=0;r<rows;r++){
@@ -505,7 +542,6 @@ async function buildCompositeFromSeeds(seeds, baseSettings, mode='grid'){
         i++;
       }
     }
-    // background defs based on baseSettings
     const { defs, rectFill, noiseFilterId } = buildDefsAndRect(baseSettings.bgType, baseSettings.bgColor, outSize);
     const rectFilterAttr = noiseFilterId ? ` filter="url(#${noiseFilterId})"` : '';
     const svg =
@@ -515,28 +551,24 @@ async function buildCompositeFromSeeds(seeds, baseSettings, mode='grid'){
   ${images}
 </svg>`;
     return svg;
-  } else { // layer
-    // create several full-size svgs and layer them with transforms & opacities
+  } else {
     const layers = await Promise.all(seeds.map(async (s)=> {
       const sset = Object.assign({}, baseSettings, { seed: s, size: outSize });
       return await buildFinalSvg(sset);
     }));
-    // prepare transforms: each layer will be scaled slightly and rotated randomly
     const transforms = seeds.map((_, idx)=>{
-      const t = 1 - (idx * 0.08); // decreasing scale
+      const t = 1 - (idx * 0.08);
       const rot = (idx - Math.floor(seeds.length/2)) * 8 * (Math.random()*1.0);
       const tx = (Math.random()-0.5) * outSize * 0.03 * (idx+1);
       const ty = (Math.random()-0.5) * outSize * 0.03 * (idx+1);
       return { t, rot, tx, ty, opacity: Math.max(0.6 - idx*0.12, 0.28) };
     });
-    // assemble
     const { defs, rectFill, noiseFilterId } = buildDefsAndRect(baseSettings.bgType, baseSettings.bgColor, outSize);
     const rectFilterAttr = noiseFilterId ? ` filter="url(#${noiseFilterId})"` : '';
     let inner = '';
     for(let i=0;i<layers.length;i++){
       const dataUri = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(layers[i])));
       const tr = transforms[i];
-      // use image with transform and opacity
       inner += `<image href="${dataUri}" width="${outSize}" height="${outSize}" opacity="${tr.opacity}" transform="translate(${tr.tx},${tr.ty}) rotate(${tr.rot} ${outSize/2} ${outSize/2}) scale(${tr.t})" preserveAspectRatio="xMidYMid slice" />\n`;
     }
     const svg =
@@ -559,6 +591,8 @@ async function renderPreview(settings, { addToHistory=false } = {}){
     previewMeta.textContent = `${settings.style} • ${settings.seed} • ${settings.size}px`;
     settingsOut.textContent = JSON.stringify(settings, null, 2);
 
+    updateAutoDescriptionFromRendered(finalSvg, settings);
+
     if(addToHistory){
       history.unshift({settings, svg: finalSvg});
       if(history.length>28) history.pop();
@@ -575,27 +609,19 @@ async function renderPreview(settings, { addToHistory=false } = {}){
 async function renderCompositeFromPrompt(promptText){
   const enabled = multiSeedEl.checked;
   if(!promptText || !enabled) {
-    // fallback: generate normally using prompt as seed
     const s = readSettingsFromUI(); s.seed = promptText || s.seed;
     await renderPreview(s, { addToHistory:true });
     return;
   }
-
-  // generate parts
   let parts = [];
   const delim = delimiterEl.value;
   if(delim === 'space') parts = promptText.trim().split(/\s+/).filter(Boolean);
   else if(delim === 'comma') parts = promptText.split(',').map(s=>s.trim()).filter(Boolean);
   else if(delim === 'newline') parts = promptText.split(/\n+/).map(s=>s.trim()).filter(Boolean);
   else if(delim === 'char') parts = promptText.replace(/\s+/g,'').split('').filter(Boolean);
-
-  // if not enough parts, split into words fallback
   if(parts.length === 0) parts = [promptText];
-
-  // choose partsCount
   const maxParts = clamp(parseInt(partsCountEl.value)||3, 2, 12);
   if(randomizePartsEl.checked){
-    // create an array by randomly sampling or repeating words
     const pool = parts.slice();
     const chosen = [];
     for(let i=0;i<maxParts;i++){
@@ -604,10 +630,8 @@ async function renderCompositeFromPrompt(promptText){
     }
     parts = chosen;
   } else {
-    // deterministic: if we have >= maxParts, take first maxParts; else, break words further or repeat with suffix
     if(parts.length >= maxParts) parts = parts.slice(0, maxParts);
     else {
-      // if too few, pad with variants
       const padded = parts.slice();
       let i=0;
       while(padded.length < maxParts){
@@ -618,17 +642,17 @@ async function renderCompositeFromPrompt(promptText){
     }
   }
 
-  // build composite
   const baseSettings = readSettingsFromUI();
   const mode = composeModeEl.value || 'grid';
-  // build composite and show
   previewBox.innerHTML = `<div style="color:var(--muted);text-align:center">Rendering composite...</div>`;
   try{
     const compositeSvg = await buildCompositeFromSeeds(parts, Object.assign({}, baseSettings, { size: parseInt(baseSettings.size) }), mode);
     previewBox.innerHTML = compositeSvg;
     previewMeta.textContent = `Composite (${mode}) • ${parts.length} parts`;
     settingsOut.textContent = JSON.stringify({ multiSeeds: parts, base: baseSettings }, null, 2);
-    // add to history
+
+    updateAutoDescriptionForComposite(parts, baseSettings, mode, compositeSvg);
+
     history.unshift({ settings: { seed: 'composite', style: baseSettings.style, size: baseSettings.size }, svg: compositeSvg });
     if(history.length>28) history.pop();
     renderHistory();
@@ -637,6 +661,77 @@ async function renderCompositeFromPrompt(promptText){
     console.error('Composite error', e);
     previewBox.innerHTML = `<div style="color:#ff6b6b;font-weight:700">Error creating composite</div>`;
   }
+}
+
+/* ---------- Auto description generator ---------- */
+function computeRarity(seedString){
+  const h = hashString(seedString).toString();
+  const v = parseInt(h.slice(-2), 10) || 0;
+  if(v > 240) return 'Legendary';
+  if(v > 200) return 'Epic';
+  if(v > 140) return 'Rare';
+  if(v > 80) return 'Uncommon';
+  return 'Common';
+}
+function titleCase(s){
+  return s.replace(/[-_]/g,' ').split(/\s+/).map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' ');
+}
+function shortHex(seed){
+  return (hashString(seed)>>>0).toString(16).slice(0,4).toUpperCase();
+}
+function generateAttributes(settings, seeds){
+  return [
+    { trait_type: 'Style', value: settings.style },
+    { trait_type: 'Background', value: settings.bgType },
+    { trait_type: 'BgColor', value: settings.bgColor },
+    { trait_type: 'Scale', value: `${settings.scale}%` },
+    { trait_type: 'Rotation', value: `${settings.rotation}°` },
+    { trait_type: 'Seeds', value: seeds.join(', ') },
+    { trait_type: 'Rarity', value: computeRarity(seeds.join('|')) }
+  ];
+}
+function generateAutoDescription(settings, promptText, seeds){
+  const mainSeed = seeds && seeds.length ? seeds[0] : (settings.seed || 'anon');
+  const name = `${titleCase(mainSeed.toString().slice(0,16))} #${shortHex(seeds.join('|')|| mainSeed)}`;
+  const rarity = computeRarity(seeds.join('|') || mainSeed);
+  const adjectives = ['glowing','playful','enigmatic','vibrant','serene','bold','whimsical','sleek','crisp','dreamy','electric','retro'];
+  const mood = pickDeterministic(adjectives, seeds.join('|') + settings.style);
+  const promptNote = promptText ? ` Inspired by "${promptText.trim().slice(0,120)}".` : '';
+  const blurb = `${name} is a ${mood} avatar rendered in the ${settings.style} style with a ${settings.bgType} background${promptNote} It showcases layered geometry and balanced composition — perfect for avatars, profiles, and collectibles.`;
+  const attributes = generateAttributes(settings, seeds);
+  const traitsText = attributes.map(a => `${a.trait_type}: ${a.value}`).join(' • ');
+
+  const hashtags = ['#Monadicons', '#Avatar', '#SVG', `#${rarity}`].join(' ');
+  const description = `${blurb}\n\nAttributes\n${traitsText}\n\nRarity: ${rarity}\n\n${hashtags}`;
+  return { name, description, attributes, rarity };
+}
+
+/* Update the auto description area after rendering */
+function updateAutoDescriptionFromRendered(svgText, settings){
+  // single-seed rendering: use settings.seed
+  const seed = settings.seed ? settings.seed.toString() : 'anon';
+  const promptText = (promptEl.value || '').trim();
+  const meta = generateAutoDescription(settings, promptText, [seed]);
+  autoDescEl.textContent = meta.description;
+  // thumbnail: use svgText (insert small image)
+  const thumbSvg = svgText;
+  const thumbData = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(thumbSvg)));
+  descThumb.innerHTML = `<img src="${thumbData}" alt="thumb" style="width:100%;height:100%;object-fit:cover" />`;
+  // attach metadata to buttons
+  regenDescBtn._meta = { meta, svg: svgText, settings };
+  copyDescBtn._meta = regenDescBtn._meta;
+  downloadMetaBtn._meta = regenDescBtn._meta;
+}
+function updateAutoDescriptionForComposite(parts, baseSettings, mode, compositeSvg){
+  const promptText = (promptEl.value || '').trim();
+  const meta = generateAutoDescription(baseSettings, promptText, parts);
+  meta.name = `${meta.name} (${mode})`;
+  autoDescEl.textContent = meta.description;
+  const thumbData = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(compositeSvg)));
+  descThumb.innerHTML = `<img src="${thumbData}" alt="thumb" style="width:100%;height:100%;object-fit:cover" />`;
+  regenDescBtn._meta = { meta, svg: compositeSvg, settings: baseSettings, parts, mode };
+  copyDescBtn._meta = regenDescBtn._meta;
+  downloadMetaBtn._meta = regenDescBtn._meta;
 }
 
 /* ---------- Download helpers ---------- */
@@ -666,7 +761,7 @@ function renderHistory(){
     const img = document.createElement('img'); img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover';
     img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(item.svg)));
     thumb.appendChild(img);
-    thumb.onclick = ()=> { loadSettings(item.settings); previewBox.innerHTML = item.svg; };
+    thumb.onclick = ()=> { loadSettings(item.settings); previewBox.innerHTML = item.svg; updateAutoDescriptionFromRendered(item.svg, item.settings); };
     historyEl.appendChild(thumb);
   }
 }
@@ -747,16 +842,13 @@ promptEl.addEventListener('input', ()=>{
 
 /* Downloads & shares */
 downloadSvgBtn.addEventListener('click', async ()=>{
-  // uses current preview - if preview contains an svg inner markup, use that; else rebuild
   try{
-    // try to extract current svg markup from previewBox
     const curSvg = previewBox.querySelector('svg');
     if(curSvg){
       const svgText = new XMLSerializer().serializeToString(curSvg);
       downloadSVGfromString(svgText, `${(seedEl.value||'monadicon')}.svg`);
       return;
     }
-    // fallback: rebuild from settings
     const s = readSettingsFromUI();
     const svg = await buildFinalSvg(s);
     downloadSVGfromString(svg, `${(s.seed||'monadicon')}.svg`);
@@ -845,7 +937,6 @@ if(exportJSON){
     try {
       const settings = readSettingsFromUI();
       const jsonText = JSON.stringify(settings, null, 2);
-      // Download
       const filename = `monadicon-settings-${Date.now()}.json`;
       const blob = new Blob([jsonText], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
@@ -856,9 +947,7 @@ if(exportJSON){
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      // Copy to clipboard (best-effort)
       navigator.clipboard?.writeText(jsonText).catch(()=>{/* ignore copy errors */});
-      // Notify user
       alert(`Settings exported as ${filename} and copied to clipboard.`);
     } catch (err) {
       console.error('Export failed', err);
@@ -884,9 +973,42 @@ function setTheme(light){
 toggleThemeBtn.addEventListener('click', ()=> setTheme(!isLight));
 try{ const p = localStorage.getItem('monadicons:theme'); setTheme(p === 'light'); }catch(e){ setTheme(false); }
 
-/* Confetti & particles (unchanged) */
+/* Confetti & particles */
 function confetti(){ const canvas=document.createElement('canvas'); canvas.style.position='fixed'; canvas.style.left='0'; canvas.style.top='0'; canvas.style.pointerEvents='none'; canvas.width=innerWidth; canvas.height=innerHeight; document.body.appendChild(canvas); const ctx=canvas.getContext('2d'); const pieces=Array.from({length:80}, ()=>({x:innerWidth/2+(Math.random()-0.5)*200,y:innerHeight/2+(Math.random()-0.5)*60,vx:(Math.random()-0.5)*8,vy:Math.random()*-10-2,r:Math.random()*6+3,c:`hsl(${Math.random()*360},80%,60%)`,rot:Math.random()*Math.PI})); (function anim(){ ctx.clearRect(0,0,canvas.width,canvas.height); pieces.forEach((p,i)=>{ p.x+=p.vx; p.y+=p.vy; p.vy+=0.4; p.rot+=0.2; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.c; ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r); ctx.restore(); if(p.y>canvas.height+50) pieces.splice(i,1); }); if(pieces.length) requestAnimationFrame(anim); else canvas.remove(); })(); }
 (function initParticles(){ const can=document.createElement('canvas'); can.id='particles-canvas'; can.style.position='fixed'; can.style.top='0'; can.style.left='0'; can.style.width='100%'; can.style.height='100%'; can.style.pointerEvents='none'; can.style.zIndex='-1'; document.body.appendChild(can); const ctx = can.getContext('2d'); function resize(){ can.width = innerWidth; can.height = innerHeight; } window.addEventListener('resize', resize); resize(); const parts = Array.from({length:90}, ()=>({x:Math.random()*can.width,y:Math.random()*can.height,r:Math.random()*1.8+0.6,vx:(Math.random()-.5)*0.4,vy:(Math.random()-.5)*0.4})); (function draw(){ ctx.clearRect(0,0,can.width,can.height); parts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>can.width)p.vx*=-1; if(p.y<0||p.y>can.height)p.vy*=-1; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle='rgba(124,58,237,0.06)'; ctx.fill(); }); requestAnimationFrame(draw); })(); })();
+
+/* ---------- Auto desc controls ---------- */
+regenDescBtn.addEventListener('click', ()=>{
+  const meta = regenDescBtn._meta;
+  if(!meta){ alert('Generate an icon first'); return; }
+  // regenerate deterministic description (we keep same seeds/settings, so it's deterministic)
+  if(meta.parts){
+    updateAutoDescriptionForComposite(meta.parts, meta.settings, meta.mode, meta.svg);
+  } else {
+    updateAutoDescriptionFromRendered(meta.svg, meta.settings);
+  }
+});
+copyDescBtn.addEventListener('click', ()=>{
+  const meta = copyDescBtn._meta;
+  if(!meta){ alert('Generate an icon first'); return; }
+  copyToClipboard(meta.meta.description);
+  alert('Description copied to clipboard');
+});
+downloadMetaBtn.addEventListener('click', ()=>{
+  const meta = downloadMetaBtn._meta;
+  if(!meta){ alert('Generate an icon first'); return; }
+  const metadata = {
+    name: meta.meta.name,
+    description: meta.meta.description,
+    attributes: meta.meta.attributes,
+    image: 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(meta.svg)))
+  };
+  const txt = JSON.stringify(metadata, null, 2);
+  const blob = new Blob([txt], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = `${meta.meta.name.replace(/\s+/g,'_')}-metadata.json`; a.click();
+  URL.revokeObjectURL(url);
+});
 
 /* init */
 settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
