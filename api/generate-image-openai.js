@@ -1,71 +1,76 @@
-// generate-image-openai.js
+// Place this file at: /api/generate-image-openai.js (root of your Vercel project)
+//
+// Uses the environment variable: Monadicons_Key
+// Returns JSON: { image: "data:image/png;base64,...." }
 
-/**
- * Generate images using OpenAI's DALL-E API
- * 
- * @param {Object} params - Generation parameters
- * @param {string} params.apiKey - OpenAI API key
- * @param {string} params.prompt - Image generation prompt
- * @param {number} [params.n=1] - Number of images to generate (1-4)
- * @param {string} [params.size="512x512"] - Image size
- * @param {string} [params.quality="standard"] - Image quality (standard/hd)
- * @param {string} [params.style="natural"] - Image style (vivid/natural)
- * @param {string} [params.model="dall-e-2"] - Model to use (dall-e-2/dall-e-3)
- * @returns {Promise<Array>} Array of image URLs
- */
-async function generateImagesWithOpenAI(params) {
-    // Validate parameters
-    if (!params.apiKey) throw new Error('API key is required');
-    if (!params.prompt) throw new Error('Prompt is required');
-    
-    // Set defaults
-    const n = params.n || 1;
-    const size = params.size || "512x512";
-    const quality = params.quality || "standard";
-    const style = params.style || "natural";
-    const model = params.model || "dall-e-2";
-    
-    // Validate input ranges
-    if (n < 1 || n > 4) throw new Error('Number of images must be between 1 and 4');
-    
-    // Build request body
-    const requestBody = {
-        model: model,
-        prompt: params.prompt,
-        n: n,
-        size: size,
-        response_format: "url"
-    };
-    
-    // Add DALL-E 3 specific parameters
-    if (model === "dall-e-3") {
-        requestBody.quality = quality;
-        requestBody.style = style;
+const { TextDecoder } = require("util");
+
+module.exports = async (req, res) => {
+  try {
+    // Only allow POST
+    if (req.method !== "POST") {
+      res.setHeader("Allow", "POST");
+      return res.status(405).json({ error: "Method not allowed. Use POST." });
     }
-    
-    try {
-        const response = await fetch('https://api.openai.com/v1/images/generations', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${params.apiKey}`
-            },
-            body: JSON.stringify(requestBody)
+
+    // Ensure body parsed (Vercel auto-parses JSON, but guard anyway)
+    let body = req.body;
+    if (!body) {
+      // try parse raw
+      try {
+        const raw = await new Promise((resolve) => {
+          let data = "";
+          req.on("data", (chunk) => (data += chunk));
+          req.on("end", () => resolve(data));
         });
-        
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(`OpenAI API error: ${errorData.error?.message || response.statusText}`);
-        }
-        
-        const data = await response.json();
-        return data.data.map(img => img.url);
-    } catch (error) {
-        throw new Error(`API request failed: ${error.message}`);
+        body = raw ? JSON.parse(raw) : {};
+      } catch (e) {
+        body = {};
+      }
     }
-}
 
-// Export for Node.js environment if needed
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = generateImagesWithOpenAI;
-}
+    const prompt = (body.prompt || "").toString().trim();
+    const size = body.size || "512x512";
+
+    if (!prompt) return res.status(400).json({ error: "Missing `prompt` in request body." });
+
+    const OPENAI_KEY = process.env.Monadicons_Key;
+    if (!OPENAI_KEY) return res.status(500).json({ error: "OpenAI key not configured (Monadicons_Key)." });
+
+    // Call OpenAI Images endpoint and ask for base64 response
+    const openaiResp = await fetch("https://api.openai.com/v1/images/generations", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${OPENAI_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-image-1",
+        prompt: prompt,
+        size: size,
+        response_format: "b64_json", // request base64 for easy browser preview
+      }),
+    });
+
+    const data = await openaiResp.json();
+
+    if (!openaiResp.ok) {
+      // Forward OpenAI error info for debugging
+      console.error("OpenAI error:", data);
+      return res.status(openaiResp.status || 500).json({ error: "OpenAI API error", details: data });
+    }
+
+    // Extract base64 result
+    const b64 = data?.data?.[0]?.b64_json;
+    if (!b64) {
+      console.error("Unexpected OpenAI response:", data);
+      return res.status(500).json({ error: "No image returned from OpenAI", details: data });
+    }
+
+    const dataUrl = `data:image/png;base64,${b64}`;
+    return res.status(200).json({ image: dataUrl });
+  } catch (err) {
+    console.error("Server error in /api/generate-image-openai:", err);
+    return res.status(500).json({ error: "Server error", details: String(err) });
+  }
+};
