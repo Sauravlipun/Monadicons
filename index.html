@@ -62,6 +62,15 @@ h1{margin:0;font-size:20px}
 .desc-title{font-weight:700;margin-bottom:6px}
 .desc-text{background:transparent;border-radius:8px;padding:10px;border:1px dashed rgba(255,255,255,0.04);color:var(--muted);font-size:14px;white-space:pre-wrap}
 
+/* Tooltip */
+.tooltip{position:relative;display:inline-block}
+.tooltip .tiptext{visibility:hidden;width:220px;background:#111;padding:8px;border-radius:8px;color:#fff;text-align:left;font-size:13px;position:absolute;z-index:10;bottom:125%;left:50%;transform:translateX(-50%);opacity:0;transition:opacity .12s ease,transform .12s ease}
+.tooltip:hover .tiptext{visibility:visible;opacity:1;transform:translateX(-50%) translateY(-6px)}
+
+/* Toast */
+#toast{position:fixed;right:18px;bottom:18px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast{background:rgba(0,0,0,0.75);color:#fff;padding:10px 14px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.4);font-weight:600;min-width:180px}
+
 /* LIGHT THEME OVERRIDES */
 body.light{
   color: #1f2937;
@@ -142,7 +151,12 @@ body.light .preview-box { background: linear-gradient(180deg, rgba(0,0,0,0.02), 
           </div>
         </div>
         <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
-          <label style="font-size:13px;color:var(--muted)"><input id="randomizeParts" type="checkbox" style="margin-right:6px">Randomize parts</label>
+          <label style="font-size:13px;color:var(--muted);display:flex;align-items:center">
+            <input id="randomizeParts" type="checkbox" style="margin-right:6px">
+            Randomize parts <span style="margin-left:8px" class="tooltip">ℹ
+              <span class="tiptext">When deterministic Randomize is ON, parts are generated deterministically from the prompt — same prompt + settings will produce the same composition. Toggle OFF to simply split/pad parts.</span>
+            </span>
+          </label>
           <div style="flex:1"></div>
           <small style="color:var(--muted)">Creates multiple seeds from the prompt and combines them.</small>
         </div>
@@ -210,6 +224,7 @@ body.light .preview-box { background: linear-gradient(180deg, rgba(0,0,0,0.02), 
         <button id="downloadPng" class="ghost">Download PNG</button>
         <button id="copyEmbed" class="ghost">Copy Embed</button>
         <button id="shareX" class="ghost">Share X</button>
+        <button id="shareDiscord" class="ghost">Share Discord</button>
       </div>
 
       <div style="margin-top:12px">
@@ -288,11 +303,25 @@ body.light .preview-box { background: linear-gradient(180deg, rgba(0,0,0,0.02), 
   <div class="footer-note">Powered by Monadicons • ©2025</div>
 </div>
 
+<!-- Toast container -->
+<div id="toast" aria-live="polite" aria-atomic="true"></div>
+
 <script>
 /* ---------- Utilities ---------- */
 const qs = (sel, root=document) => root.querySelector(sel);
 const qsa = (sel, root=document) => Array.from(root.querySelectorAll(sel));
 const clamp = (v,min,max)=>Math.max(min,Math.min(max,v));
+
+function showToast(msg, ms=2200){
+  try{
+    const c = qs('#toast');
+    const t = document.createElement('div');
+    t.className = 'toast';
+    t.textContent = msg;
+    c.appendChild(t);
+    setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity .25s ease'; setTimeout(()=>t.remove(),250); }, ms);
+  }catch(e){ console.log('toast error', e); }
+}
 
 function hexToRgb(hex){
   hex = (hex||'#ffffff').replace('#','');
@@ -314,8 +343,19 @@ function hashString(s){
   for(let i=0;i<s.length;i++){ h = Math.imul(h ^ s.charCodeAt(i), 16777619)>>>0; }
   return h;
 }
-function pickDeterministic(arr, seed){
-  return arr[Math.abs(hashString(seed+'|pick')) % arr.length];
+function seededRandomFromSeed(seed){
+  let h = hashString(seed) >>> 0;
+  return function(){
+    h ^= h << 13; h >>>= 0;
+    h ^= h >>> 17; h >>>= 0;
+    h ^= h << 5;  h >>>= 0;
+    return (h >>> 0) / 4294967296;
+  };
+}
+function pickDeterministic(arr, seed, idx=0){
+  if(!Array.isArray(arr) || arr.length===0) return null;
+  const rnd = seededRandomFromSeed(seed + '|' + idx);
+  return arr[Math.floor(rnd() * arr.length)];
 }
 
 /* ---------- Elements ---------- */
@@ -518,7 +558,7 @@ async function buildFinalSvg(settings){
   return svg;
 }
 
-/* ---------- Composite builder for multi-seed ---------- */
+/* ---------- Composite builder for multi-seed (uses seeded randomness) ---------- */
 async function buildCompositeFromSeeds(seeds, baseSettings, mode='grid'){
   const outSize = clamp(parseInt(baseSettings.size)||512, 64, 4096);
   if(mode === 'grid'){
@@ -598,44 +638,65 @@ async function renderPreview(settings, { addToHistory=false } = {}){
       if(history.length>28) history.pop();
       renderHistory();
       confetti();
+      showToast('Generated and added to history');
+    } else {
+      showToast('Preview applied');
     }
   }catch(e){
     previewBox.innerHTML = `<div style="color:#ff6b6b;font-weight:700">Error rendering preview</div><div style="color:var(--muted);margin-top:8px">Check console for details.</div>`;
     console.error('Preview error:', e);
+    showToast('Preview error — check console');
   }
 }
 
-/* ---------- Render composite preview (multi-seed) ---------- */
+/* ---------- Render composite preview (multi-seed) with deterministic randomization ---------- */
 async function renderCompositeFromPrompt(promptText){
   const enabled = multiSeedEl.checked;
-  if(!promptText || !enabled) {
-    const s = readSettingsFromUI(); s.seed = promptText || s.seed;
-    await renderPreview(s, { addToHistory:true });
+  if(!promptText){
+    showToast('Please enter a prompt');
     return;
   }
+  if(!enabled){
+    const s = readSettingsFromUI(); s.seed = promptText; await renderPreview(s, { addToHistory:true }); return;
+  }
+
+  // parse parts deterministically
   let parts = [];
   const delim = delimiterEl.value;
   if(delim === 'space') parts = promptText.trim().split(/\s+/).filter(Boolean);
   else if(delim === 'comma') parts = promptText.split(',').map(s=>s.trim()).filter(Boolean);
   else if(delim === 'newline') parts = promptText.split(/\n+/).map(s=>s.trim()).filter(Boolean);
   else if(delim === 'char') parts = promptText.replace(/\s+/g,'').split('').filter(Boolean);
+
   if(parts.length === 0) parts = [promptText];
+
   const maxParts = clamp(parseInt(partsCountEl.value)||3, 2, 12);
+
   if(randomizePartsEl.checked){
-    const pool = parts.slice();
+    // deterministic pseudo-random sampling using prompt as seed
+    const rnd = seededRandomFromSeed(promptText + '::parts');
     const chosen = [];
+    const pool = parts.slice();
+    // if pool small, augment with characters/words to increase variety deterministically
+    while(pool.length < maxParts){
+      pool.push(parts[pool.length % parts.length] + '-' + ((Math.abs(hashString(promptText + 'pad' + pool.length)) % 9000) + 1000));
+    }
     for(let i=0;i<maxParts;i++){
-      const pick = pool[Math.floor(Math.random()*pool.length)];
-      chosen.push(pick + '-' + Math.floor(Math.random()*9000));
+      const idx = Math.floor(rnd() * pool.length);
+      // create deterministic variant suffix to avoid exact duplicates
+      const suffix = '-' + ((Math.abs(hashString(promptText + 'suf' + i)) % 9000) + 1000);
+      chosen.push(pool[idx] + suffix);
     }
     parts = chosen;
   } else {
+    // deterministic padding if too few
     if(parts.length >= maxParts) parts = parts.slice(0, maxParts);
     else {
       const padded = parts.slice();
       let i=0;
       while(padded.length < maxParts){
-        padded.push((parts[i % parts.length] || promptText) + '-' + (1000 + padded.length));
+        // deterministic suffix
+        padded.push((parts[i % parts.length] || promptText) + '-' + ((Math.abs(hashString(promptText + '-pad-' + i)) % 9000) + 1000));
         i++;
       }
       parts = padded;
@@ -657,9 +718,11 @@ async function renderCompositeFromPrompt(promptText){
     if(history.length>28) history.pop();
     renderHistory();
     confetti();
+    showToast('Composite generated and added to history');
   } catch(e){
     console.error('Composite error', e);
     previewBox.innerHTML = `<div style="color:#ff6b6b;font-weight:700">Error creating composite</div>`;
+    showToast('Error creating composite — check console');
   }
 }
 
@@ -690,17 +753,19 @@ function generateAttributes(settings, seeds){
     { trait_type: 'Rarity', value: computeRarity(seeds.join('|')) }
   ];
 }
+function pickDeterministicAdjective(seed){
+  const adjectives = ['glowing','playful','enigmatic','vibrant','serene','bold','whimsical','sleek','crisp','dreamy','electric','retro'];
+  return pickDeterministic(adjectives, seed);
+}
 function generateAutoDescription(settings, promptText, seeds){
   const mainSeed = seeds && seeds.length ? seeds[0] : (settings.seed || 'anon');
   const name = `${titleCase(mainSeed.toString().slice(0,16))} #${shortHex(seeds.join('|')|| mainSeed)}`;
   const rarity = computeRarity(seeds.join('|') || mainSeed);
-  const adjectives = ['glowing','playful','enigmatic','vibrant','serene','bold','whimsical','sleek','crisp','dreamy','electric','retro'];
-  const mood = pickDeterministic(adjectives, seeds.join('|') + settings.style);
+  const mood = pickDeterministicAdjective(seeds.join('|') + '|' + settings.style);
   const promptNote = promptText ? ` Inspired by "${promptText.trim().slice(0,120)}".` : '';
-  const blurb = `${name} is a ${mood} avatar rendered in the ${settings.style} style with a ${settings.bgType} background${promptNote} It showcases layered geometry and balanced composition — perfect for avatars, profiles, and collectibles.`;
+  const blurb = `${name} is a ${mood} avatar rendered in the ${settings.style} style with a ${settings.bgType} background.${promptNote} It showcases layered geometry and balanced composition — perfect for avatars, profiles, and collectibles.`;
   const attributes = generateAttributes(settings, seeds);
   const traitsText = attributes.map(a => `${a.trait_type}: ${a.value}`).join(' • ');
-
   const hashtags = ['#Monadicons', '#Avatar', '#SVG', `#${rarity}`].join(' ');
   const description = `${blurb}\n\nAttributes\n${traitsText}\n\nRarity: ${rarity}\n\n${hashtags}`;
   return { name, description, attributes, rarity };
@@ -708,30 +773,35 @@ function generateAutoDescription(settings, promptText, seeds){
 
 /* Update the auto description area after rendering */
 function updateAutoDescriptionFromRendered(svgText, settings){
-  // single-seed rendering: use settings.seed
-  const seed = settings.seed ? settings.seed.toString() : 'anon';
-  const promptText = (promptEl.value || '').trim();
-  const meta = generateAutoDescription(settings, promptText, [seed]);
-  autoDescEl.textContent = meta.description;
-  // thumbnail: use svgText (insert small image)
-  const thumbSvg = svgText;
-  const thumbData = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(thumbSvg)));
-  descThumb.innerHTML = `<img src="${thumbData}" alt="thumb" style="width:100%;height:100%;object-fit:cover" />`;
-  // attach metadata to buttons
-  regenDescBtn._meta = { meta, svg: svgText, settings };
-  copyDescBtn._meta = regenDescBtn._meta;
-  downloadMetaBtn._meta = regenDescBtn._meta;
+  try{
+    const seed = settings.seed ? settings.seed.toString() : 'anon';
+    const promptText = (promptEl.value || '').trim();
+    const meta = generateAutoDescription(settings, promptText, [seed]);
+    autoDescEl.textContent = meta.description;
+    const thumbSvg = svgText;
+    const thumbData = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(thumbSvg)));
+    descThumb.innerHTML = `<img src="${thumbData}" alt="thumb" style="width:100%;height:100%;object-fit:cover" />`;
+    regenDescBtn._meta = { meta, svg: svgText, settings };
+    copyDescBtn._meta = regenDescBtn._meta;
+    downloadMetaBtn._meta = regenDescBtn._meta;
+  }catch(e){
+    console.error('updateAutoDescriptionFromRendered error', e);
+  }
 }
 function updateAutoDescriptionForComposite(parts, baseSettings, mode, compositeSvg){
-  const promptText = (promptEl.value || '').trim();
-  const meta = generateAutoDescription(baseSettings, promptText, parts);
-  meta.name = `${meta.name} (${mode})`;
-  autoDescEl.textContent = meta.description;
-  const thumbData = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(compositeSvg)));
-  descThumb.innerHTML = `<img src="${thumbData}" alt="thumb" style="width:100%;height:100%;object-fit:cover" />`;
-  regenDescBtn._meta = { meta, svg: compositeSvg, settings: baseSettings, parts, mode };
-  copyDescBtn._meta = regenDescBtn._meta;
-  downloadMetaBtn._meta = regenDescBtn._meta;
+  try{
+    const promptText = (promptEl.value || '').trim();
+    const meta = generateAutoDescription(baseSettings, promptText, parts);
+    meta.name = `${meta.name} (${mode})`;
+    autoDescEl.textContent = meta.description;
+    const thumbData = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(compositeSvg)));
+    descThumb.innerHTML = `<img src="${thumbData}" alt="thumb" style="width:100%;height:100%;object-fit:cover" />`;
+    regenDescBtn._meta = { meta, svg: compositeSvg, settings: baseSettings, parts, mode };
+    copyDescBtn._meta = regenDescBtn._meta;
+    downloadMetaBtn._meta = regenDescBtn._meta;
+  }catch(e){
+    console.error('updateAutoDescriptionForComposite error', e);
+  }
 }
 
 /* ---------- Download helpers ---------- */
@@ -749,7 +819,7 @@ function downloadPNGfromSvgString(svgString, filename='monadicon.png'){
     const ctx = canvas.getContext('2d'); ctx.drawImage(img,0,0);
     canvas.toBlob((blob)=>{ const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = filename; a.click(); URL.revokeObjectURL(url); }, 'image/png');
   };
-  img.onerror = e => { alert('PNG conversion failed; see console.'); console.error(e); };
+  img.onerror = e => { showToast('PNG conversion failed'); console.error(e); };
   img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
 }
 
@@ -761,13 +831,13 @@ function renderHistory(){
     const img = document.createElement('img'); img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover';
     img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(item.svg)));
     thumb.appendChild(img);
-    thumb.onclick = ()=> { loadSettings(item.settings); previewBox.innerHTML = item.svg; updateAutoDescriptionFromRendered(item.svg, item.settings); };
+    thumb.onclick = ()=> { loadSettings(item.settings); previewBox.innerHTML = item.svg; updateAutoDescriptionFromRendered(item.svg, item.settings); showToast('Loaded from history'); };
     historyEl.appendChild(thumb);
   }
 }
 
 /* ---------- Copy/Export ---------- */
-function copyToClipboard(text){ navigator.clipboard.writeText(text).catch(e=>{ console.error('copy failed', e); alert('Copy failed'); }); }
+function copyToClipboard(text){ navigator.clipboard.writeText(text).then(()=>{}).catch(e=>{ console.error('copy failed', e); showToast('Copy failed'); }); }
 
 /* ---------- Wiring & events ---------- */
 function readSettingsFromUI(){
@@ -805,7 +875,7 @@ applyPreviewBtn.addEventListener('click', async ()=>{
 /* Prompt handlers */
 applyPromptBtn.addEventListener('click', ()=>{
   const p = (promptEl.value || '').trim();
-  if(!p){ alert('Please enter a prompt'); return; }
+  if(!p){ showToast('Please enter a prompt'); return; }
   seedEl.value = p;
   settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
   if(promptUseAsSeedEl.checked && liveToggle.checked){
@@ -814,12 +884,12 @@ applyPromptBtn.addEventListener('click', ()=>{
 });
 generateFromPromptBtn.addEventListener('click', async ()=>{
   const p = (promptEl.value || '').trim();
-  if(!p){ alert('Please enter a prompt'); return; }
+  if(!p){ showToast('Please enter a prompt'); return; }
   if(multiSeedEl.checked){
     await renderCompositeFromPrompt(p);
   } else {
     const s = readSettingsFromUI();
-    s.seed = p;
+    s.seed = p; // directly use the prompt as the seed (no mutation)
     await renderPreview(s, { addToHistory:true });
   }
 });
@@ -847,12 +917,14 @@ downloadSvgBtn.addEventListener('click', async ()=>{
     if(curSvg){
       const svgText = new XMLSerializer().serializeToString(curSvg);
       downloadSVGfromString(svgText, `${(seedEl.value||'monadicon')}.svg`);
+      showToast('SVG downloaded');
       return;
     }
     const s = readSettingsFromUI();
     const svg = await buildFinalSvg(s);
     downloadSVGfromString(svg, `${(s.seed||'monadicon')}.svg`);
-  }catch(e){ alert('SVG download failed'); console.error(e); }
+    showToast('SVG downloaded');
+  }catch(e){ showToast('SVG download failed'); console.error(e); }
 });
 downloadPngBtn.addEventListener('click', async ()=>{
   try{
@@ -860,25 +932,27 @@ downloadPngBtn.addEventListener('click', async ()=>{
     if(curSvg){
       const svgText = new XMLSerializer().serializeToString(curSvg);
       downloadPNGfromSvgString(svgText, `${(seedEl.value||'monadicon')}.png`);
+      showToast('PNG download started');
       return;
     }
     const s = readSettingsFromUI();
     const svg = await buildFinalSvg(s);
     downloadPNGfromSvgString(svg, `${(s.seed||'monadicon')}.png`);
-  }catch(e){ alert('PNG creation failed'); console.error(e); }
+    showToast('PNG download started');
+  }catch(e){ showToast('PNG creation failed'); console.error(e); }
 });
 copyEmbedBtn.addEventListener('click', async ()=>{
   const curSvg = previewBox.querySelector('svg');
   if(curSvg){
     const svgText = new XMLSerializer().serializeToString(curSvg);
     copyToClipboard(svgText);
-    alert('SVG embed copied to clipboard (full SVG markup)');
+    showToast('SVG embed copied to clipboard');
     return;
   }
   const s = readSettingsFromUI();
   const svg = await buildFinalSvg(s);
   copyToClipboard(svg);
-  alert('SVG embed copied to clipboard (full SVG markup)');
+  showToast('SVG embed copied to clipboard');
 });
 
 /* Random / presets */
@@ -948,20 +1022,20 @@ if(exportJSON){
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
       navigator.clipboard?.writeText(jsonText).catch(()=>{/* ignore copy errors */});
-      alert(`Settings exported as ${filename} and copied to clipboard.`);
+      showToast(`Settings exported and copied`);
     } catch (err) {
       console.error('Export failed', err);
-      alert('Export failed — see console for details.');
+      showToast('Export failed — see console');
     }
   });
 }
 
 /* Export other UI handlers */
-qs('#copyJSON').addEventListener('click', ()=>{ copyToClipboard(JSON.stringify(readSettingsFromUI(), null, 2)); alert('Settings JSON copied'); });
-qs('#downloadJSON').addEventListener('click', ()=>{ const txt = JSON.stringify(readSettingsFromUI(), null, 2); const blob = new Blob([txt], {type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='monadicon-settings.json'; a.click(); });
+qs('#copyJSON').addEventListener('click', ()=>{ copyToClipboard(JSON.stringify(readSettingsFromUI(), null, 2)); showToast('Settings JSON copied'); });
+qs('#downloadJSON').addEventListener('click', ()=>{ const txt = JSON.stringify(readSettingsFromUI(), null, 2); const blob = new Blob([txt], {type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='monadicon-settings.json'; a.click(); showToast('Settings JSON downloaded'); });
 
 /* History clear */
-qs('#clearHistory').addEventListener('click', ()=>{ history=[]; renderHistory(); });
+qs('#clearHistory').addEventListener('click', ()=>{ history=[]; renderHistory(); showToast('History cleared'); });
 
 /* Theme toggle + persistence */
 function setTheme(light){
@@ -977,26 +1051,50 @@ try{ const p = localStorage.getItem('monadicons:theme'); setTheme(p === 'light')
 function confetti(){ const canvas=document.createElement('canvas'); canvas.style.position='fixed'; canvas.style.left='0'; canvas.style.top='0'; canvas.style.pointerEvents='none'; canvas.width=innerWidth; canvas.height=innerHeight; document.body.appendChild(canvas); const ctx=canvas.getContext('2d'); const pieces=Array.from({length:80}, ()=>({x:innerWidth/2+(Math.random()-0.5)*200,y:innerHeight/2+(Math.random()-0.5)*60,vx:(Math.random()-0.5)*8,vy:Math.random()*-10-2,r:Math.random()*6+3,c:`hsl(${Math.random()*360},80%,60%)`,rot:Math.random()*Math.PI})); (function anim(){ ctx.clearRect(0,0,canvas.width,canvas.height); pieces.forEach((p,i)=>{ p.x+=p.vx; p.y+=p.vy; p.vy+=0.4; p.rot+=0.2; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.c; ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r); ctx.restore(); if(p.y>canvas.height+50) pieces.splice(i,1); }); if(pieces.length) requestAnimationFrame(anim); else canvas.remove(); })(); }
 (function initParticles(){ const can=document.createElement('canvas'); can.id='particles-canvas'; can.style.position='fixed'; can.style.top='0'; can.style.left='0'; can.style.width='100%'; can.style.height='100%'; can.style.pointerEvents='none'; can.style.zIndex='-1'; document.body.appendChild(can); const ctx = can.getContext('2d'); function resize(){ can.width = innerWidth; can.height = innerHeight; } window.addEventListener('resize', resize); resize(); const parts = Array.from({length:90}, ()=>({x:Math.random()*can.width,y:Math.random()*can.height,r:Math.random()*1.8+0.6,vx:(Math.random()-.5)*0.4,vy:(Math.random()-.5)*0.4})); (function draw(){ ctx.clearRect(0,0,can.width,can.height); parts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>can.width)p.vx*=-1; if(p.y<0||p.y>can.height)p.vy*=-1; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle='rgba(124,58,237,0.06)'; ctx.fill(); }); requestAnimationFrame(draw); })(); })();
 
-/* ---------- Auto desc controls ---------- */
-regenDescBtn.addEventListener('click', ()=>{
+/* ---------- Auto desc controls (toast feedback) ---------- */
+regenDescBtn.addEventListener('click', async ()=>{
   const meta = regenDescBtn._meta;
-  if(!meta){ alert('Generate an icon first'); return; }
-  // regenerate deterministic description (we keep same seeds/settings, so it's deterministic)
-  if(meta.parts){
-    updateAutoDescriptionForComposite(meta.parts, meta.settings, meta.mode, meta.svg);
-  } else {
-    updateAutoDescriptionFromRendered(meta.svg, meta.settings);
+  if(meta){
+    if(meta.parts){
+      updateAutoDescriptionForComposite(meta.parts, meta.settings, meta.mode, meta.svg);
+      showToast('Description regenerated');
+      return;
+    } else {
+      updateAutoDescriptionFromRendered(meta.svg, meta.settings);
+      showToast('Description regenerated');
+      return;
+    }
+  }
+  const curSvgNode = previewBox.querySelector('svg');
+  if(curSvgNode){
+    const svgText = new XMLSerializer().serializeToString(curSvgNode);
+    const settings = readSettingsFromUI();
+    updateAutoDescriptionFromRendered(svgText, settings);
+    showToast('Description regenerated from preview');
+    return;
+  }
+  try{
+    const s = readSettingsFromUI();
+    const svg = await buildFinalSvg(s);
+    updateAutoDescriptionFromRendered(svg, s);
+    showToast('Description regenerated (rebuilt from settings)');
+  }catch(e){
+    console.error('Regenerate failed', e);
+    showToast('Regenerate failed — see console');
   }
 });
 copyDescBtn.addEventListener('click', ()=>{
   const meta = copyDescBtn._meta;
-  if(!meta){ alert('Generate an icon first'); return; }
-  copyToClipboard(meta.meta.description);
-  alert('Description copied to clipboard');
+  if(meta && meta.meta && meta.meta.description){
+    copyToClipboard(meta.meta.description); showToast('Description copied'); return;
+  }
+  const txt = autoDescEl.textContent || '';
+  if(txt) { copyToClipboard(txt); showToast('Description copied'); }
+  else showToast('No description available');
 });
 downloadMetaBtn.addEventListener('click', ()=>{
   const meta = downloadMetaBtn._meta;
-  if(!meta){ alert('Generate an icon first'); return; }
+  if(!meta || !meta.meta){ showToast('Generate an icon first'); return; }
   const metadata = {
     name: meta.meta.name,
     description: meta.meta.description,
@@ -1008,9 +1106,10 @@ downloadMetaBtn.addEventListener('click', ()=>{
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a'); a.href = url; a.download = `${meta.meta.name.replace(/\s+/g,'_')}-metadata.json`; a.click();
   URL.revokeObjectURL(url);
+  showToast('Metadata JSON downloaded');
 });
 
-/* init */
+/* ---------- Initialize UI state & attach other handlers ---------- */
 settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
 applyPreviewBtn.click();
 
