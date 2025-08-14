@@ -1,80 +1,71 @@
-// api/generate-image-xai.js
-// Vercel serverless function for xAI integration
+// generate-image-openai.js
 
-export default async function handler(req, res) {
-  try {
-    if (req.method !== 'POST') {
-      res.setHeader('Allow', 'POST');
-      return res.status(405).json({ error: 'Method not allowed' });
+/**
+ * Generate images using OpenAI's DALL-E API
+ * 
+ * @param {Object} params - Generation parameters
+ * @param {string} params.apiKey - OpenAI API key
+ * @param {string} params.prompt - Image generation prompt
+ * @param {number} [params.n=1] - Number of images to generate (1-4)
+ * @param {string} [params.size="512x512"] - Image size
+ * @param {string} [params.quality="standard"] - Image quality (standard/hd)
+ * @param {string} [params.style="natural"] - Image style (vivid/natural)
+ * @param {string} [params.model="dall-e-2"] - Model to use (dall-e-2/dall-e-3)
+ * @returns {Promise<Array>} Array of image URLs
+ */
+async function generateImagesWithOpenAI(params) {
+    // Validate parameters
+    if (!params.apiKey) throw new Error('API key is required');
+    if (!params.prompt) throw new Error('Prompt is required');
+    
+    // Set defaults
+    const n = params.n || 1;
+    const size = params.size || "512x512";
+    const quality = params.quality || "standard";
+    const style = params.style || "natural";
+    const model = params.model || "dall-e-2";
+    
+    // Validate input ranges
+    if (n < 1 || n > 4) throw new Error('Number of images must be between 1 and 4');
+    
+    // Build request body
+    const requestBody = {
+        model: model,
+        prompt: params.prompt,
+        n: n,
+        size: size,
+        response_format: "url"
+    };
+    
+    // Add DALL-E 3 specific parameters
+    if (model === "dall-e-3") {
+        requestBody.quality = quality;
+        requestBody.style = style;
     }
-
-    const body = req.body && typeof req.body === 'object' ? req.body : JSON.parse(req.body || '{}');
-    const prompt = (body.prompt || '').toString().trim();
-    let width = parseInt(body.width || 512, 10) || 512;
     
-    // Validate inputs
-    if (!prompt) return res.status(400).json({ error: 'Prompt is required' });
-    if (width < 256 || width > 1024) width = 512; // Enforce xAI size limits
-
-    const XAI_KEY = process.env.XAI_API_KEY;
-    if (!XAI_KEY) return res.status(500).json({ error: 'Server misconfigured: XAI_API_KEY missing' });
-
-    // ---- xAI Image Generation ----
-    // Note: xAI API endpoint and parameters are different from OpenAI
-    const sizeStr = `${width}x${width}`;
-    
-    const response = await fetch('https://api.x.ai/v1/images/generations', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${XAI_KEY}`,
-        'Content-Type': 'application/json',
-        'x-api-version': '2024-06-01' // Example version, check docs
-      },
-      body: JSON.stringify({
-        prompt: prompt,
-        model: "vision", // Example model name
-        size: sizeStr,
-        quality: "standard",
-        style: "vivid",
-        n: 1,
-        response_format: "b64_json"
-      })
-    });
-
-    // Handle xAI API response
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('xAI API error', response.status, errorText);
-      return res.status(502).json({ 
-        error: 'xAI image generation failed',
-        details: errorText.slice(0, 200) 
-      });
+    try {
+        const response = await fetch('https://api.openai.com/v1/images/generations', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${params.apiKey}`
+            },
+            body: JSON.stringify(requestBody)
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`OpenAI API error: ${errorData.error?.message || response.statusText}`);
+        }
+        
+        const data = await response.json();
+        return data.data.map(img => img.url);
+    } catch (error) {
+        throw new Error(`API request failed: ${error.message}`);
     }
+}
 
-    const responseData = await response.json();
-    
-    // Parse xAI response (structure may differ)
-    const imageData = responseData.data?.[0]?.b64_json || 
-                     responseData.images?.[0]?.b64_data;
-    
-    if (!imageData) {
-      console.error('Invalid xAI response', responseData);
-      return res.status(500).json({ 
-        error: 'Invalid response from xAI API',
-        details: 'Missing image data' 
-      });
-    }
-
-    return res.status(200).json({ 
-      image: imageData, 
-      mime: 'image/png' 
-    });
-
-  } catch (err) {
-    console.error('Server error in generate-image-xai:', err);
-    return res.status(500).json({ 
-      error: 'Server error', 
-      details: err.message || String(err) 
-    });
-  }
+// Export for Node.js environment if needed
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = generateImagesWithOpenAI;
 }
