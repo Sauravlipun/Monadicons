@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monadicons — Avatar Studio</title>
-    <meta name="description" content="Generate avatars with AI. Customize settings, preview, and download SVG/PNG.">
+    <meta name="description" content="Generate unique avatars. Customize settings, preview, and download SVG/PNG.">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%237C3AED'/><text x='50' y='58' font-size='50' text-anchor='middle' fill='white' font-family='Arial'>M</text></svg>">
     <script src="https://cdn.jsdelivr.net/npm/jdenticon@3.2.0/dist/jdenticon.min.js"></script>
     <style>
@@ -332,29 +332,22 @@
             }
         }
 
-        /* AI Loading Indicator */
-        .ai-loading {
+        /* Name Generator */
+        .name-generator {
             display: flex;
-            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
             align-items: center;
-            justify-content: center;
-            gap: 16px;
-            padding: 20px;
+        }
+        
+        .name-display {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            font-weight: 600;
             text-align: center;
-            color: var(--muted);
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 3px solid rgba(124, 58, 237, 0.2);
-            border-top-color: var(--accent);
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -380,15 +373,24 @@
         <div class="grid">
             <!-- LEFT -->
             <div class="card controls">
-                <label for="seed">Seed / Name</label>
-                <input id="seed" class="input" type="text" placeholder="e.g., aurora" value="anon" />
+                <div style="display:flex; gap:8px; align-items:center">
+                    <div style="flex:1">
+                        <label for="seed">Seed / Name</label>
+                        <input id="seed" class="input" type="text" placeholder="e.g., aurora" value="anon" />
+                    </div>
+                    <button id="generateNameBtn" class="ghost" style="margin-top:22px" title="Generate random name">🎲</button>
+                </div>
+
+                <div class="name-generator">
+                    <div class="name-display" id="generatedName">Click to generate name</div>
+                    <button id="useNameBtn" class="ghost">Use</button>
+                </div>
 
                 <label for="prompt">Prompt</label>
                 <textarea id="prompt" rows="3" placeholder="Enter a prompt (e.g., 'friendly blue fox with stars')"></textarea>
                 <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
                     <button id="applyPrompt" class="ghost">Apply Prompt → Seed</button>
                     <button id="generateFromPrompt" class="btn">Generate from Prompt</button>
-                    <button id="generateAI" class="ghost" title="Generate a literal image using xAI">Generate xAI Image</button>
                     <div style="flex:1"></div>
                     <label style="font-size:13px;color:var(--muted)"><input id="promptUseAsSeed" type="checkbox" style="margin-right:6px">Use prompt as seed automatically</label>
                 </div>
@@ -561,7 +563,7 @@
             </div>
         </div>
 
-        <div class="footer-note">Powered by Monadicons & xAI • ©2025</div>
+        <div class="footer-note">Powered by Monadicons • ©2025</div>
     </div>
 
     <div id="toast" aria-live="polite" aria-atomic="true"></div>
@@ -574,7 +576,6 @@
         const promptUseAsSeedEl = document.getElementById('promptUseAsSeed');
         const applyPromptBtn = document.getElementById('applyPrompt');
         const generateFromPromptBtn = document.getElementById('generateFromPrompt');
-        const generateAIBtn = document.getElementById('generateAI');
         const styleEl = document.getElementById('style');
         const sizeEl = document.getElementById('size');
         const scaleEl = document.getElementById('scale');
@@ -603,7 +604,15 @@
         const downloadMetaBtn = document.getElementById('downloadMeta');
         const randomPreset = document.getElementById('randomPreset');
         const clearHistory = document.getElementById('clearHistory');
+        const generateNameBtn = document.getElementById('generateNameBtn');
+        const useNameBtn = document.getElementById('useNameBtn');
+        const generatedName = document.getElementById('generatedName');
 
+        // Name generator components
+        const prefixes = ["Cosmic", "Digital", "Quantum", "Nebula", "Stellar", "Pixel", "Mystic", "Galactic", "Lunar", "Solar"];
+        const suffixes = ["Vortex", "Flare", "Orb", "Pulse", "Spark", "Byte", "Core", "Drift", "Glow", "Sphere"];
+        const animals = ["Fox", "Owl", "Lion", "Dragon", "Phoenix", "Wolf", "Eagle", "Tiger", "Panther", "Hawk"];
+        
         // Sample seeds for random generation
         const sampleSeeds = ['aurora', 'lumen', 'nova', 'zephyr', 'sol', 'aero', 'pixel', 'nebula', 'miso', 'sora', 'echo', 'boreal', 'octopus', 'waffle', 'tiger', 'meteor'];
         
@@ -660,6 +669,22 @@
         
         function clamp(value, min, max) {
             return Math.max(min, Math.min(max, value));
+        }
+        
+        // Generate random name
+        function generateRandomName() {
+            const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+            const suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
+            const animal = animals[Math.floor(Math.random() * animals.length)];
+            const names = [
+                `${prefix}${suffix}`,
+                `${prefix}${animal}`,
+                `${animal}${suffix}`,
+                `The ${prefix} ${animal}`,
+                `${prefix} ${suffix} ${animal}`
+            ];
+            
+            return names[Math.floor(Math.random() * names.length)];
         }
         
         // Background helpers
@@ -845,78 +870,6 @@
             }
         }
         
-        // xAI Integration (wired to your serverless endpoint)
-        async function generateWithxAI(prompt, width = 512) {
-            previewBox.innerHTML = `
-                <div class="ai-loading">
-                    <div class="spinner"></div>
-                    <div>Generating AI image...</div>
-                    <div style="font-size:12px;margin-top:8px">This may take 10-20 seconds</div>
-                </div>
-            `;
-            
-            try {
-                // Call the serverless function that calls OpenAI (server returns base64)
-                const response = await fetch('/api/generate-image-openai', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prompt, width, height: width })
-                });
-                
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`Server error ${response.status}: ${errorText}`);
-                }
-                
-                const result = await response.json();
-                if (!result || !result.image) {
-                    throw new Error('No image returned from server');
-                }
-
-                // result.image is base64 — build data URL
-                const dataUrl = `data:image/png;base64,${result.image}`;
-
-                const img = document.createElement('img');
-                img.src = dataUrl;
-                img.alt = `AI Generated: ${prompt}`;
-                img.style.width = '100%';
-                img.style.height = '100%';
-                img.style.objectFit = 'cover';
-                
-                previewBox.innerHTML = '';
-                previewBox.appendChild(img);
-                previewMeta.textContent = `AI • ${prompt} • ${width}px`;
-                
-                const svgWrapper = `
-<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${width}">
-    <image href="${dataUrl}" width="${width}" height="${width}" />
-</svg>`;
-
-                history.unshift({ 
-                    settings: { seed: prompt, style: 'xai-image', size: width }, 
-                    svg: svgWrapper 
-                });
-                
-                if (history.length > 28) history.pop();
-                renderHistory();
-                
-                updateAutoDescriptionForAI(prompt, width, svgWrapper);
-                
-                showToast('AI image generated successfully!');
-                return svgWrapper;
-            } catch (error) {
-                console.error('AI generation error:', error);
-                previewBox.innerHTML = `
-                    <div style="text-align:center;color:#ff6b6b">
-                        <div style="font-weight:700;margin-bottom:8px">AI Generation Failed</div>
-                        <div style="font-size:14px">${error.message || 'Please try again'}</div>
-                    </div>
-                `;
-                showToast('AI generation failed — see console');
-                return null;
-            }
-        }
-        
         // Auto description
         function computeRarity(seedString) { 
             const h = hashString(seedString).toString(); 
@@ -983,34 +936,6 @@
             }
         }
         
-        function updateAutoDescriptionForAI(prompt, width, svgText) {
-            try {
-                const name = `AI: ${titleCase(prompt.slice(0, 20))}`;
-                const description = `${name}\n\nThis image was generated using xAI based on the prompt: "${prompt}".\n\nResolution: ${width}x${width}px\n\n#AI #xAI #GeneratedArt`;
-                
-                autoDescEl.textContent = description;
-                const thumbData = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgText)));
-                descThumb.innerHTML = `<img src="${thumbData}" alt="thumb" style="width:100%;height:100%;object-fit:cover" />`;
-                
-                const meta = {
-                    name,
-                    description,
-                    attributes: [
-                        { trait_type: 'Generator', value: 'xAI' },
-                        { trait_type: 'Prompt', value: prompt },
-                        { trait_type: 'Resolution', value: `${width}x${width}` }
-                    ],
-                    rarity: 'Unique'
-                };
-                
-                regenDescBtn._meta = { meta, svg: svgText };
-                copyDescBtn._meta = regenDescBtn._meta;
-                downloadMetaBtn._meta = regenDescBtn._meta;
-            } catch (e) { 
-                console.error('updateAutoDescriptionForAI error', e); 
-            }
-        }
-        
         // Download functions
         function downloadSVGfromString(svgString, filename = 'monadicon.svg') { 
             const blob = new Blob([svgString], { type: 'image/svg+xml' }); 
@@ -1057,24 +982,13 @@
                 img.style.height = '100%'; 
                 img.style.objectFit = 'cover'; 
                 
-                if (item.settings.style === 'xai-image') {
-                    const parser = new DOMParser();
-                    const svgDoc = parser.parseFromString(item.svg, 'image/svg+xml');
-                    const image = svgDoc.querySelector('image');
-                    img.src = image ? image.getAttribute('href') : '';
-                } else {
-                    img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(item.svg)));
-                }
+                img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(item.svg)));
                 
                 thumb.appendChild(img); 
                 thumb.onclick = () => { 
                     loadSettings(item.settings); 
                     previewBox.innerHTML = item.svg; 
-                    if (item.settings.style === 'xai-image') {
-                        updateAutoDescriptionForAI(item.settings.seed, item.settings.size, item.svg);
-                    } else {
-                        updateAutoDescriptionFromRendered(item.svg, item.settings); 
-                    }
+                    updateAutoDescriptionFromRendered(item.svg, item.settings); 
                     showToast('Loaded from history'); 
                 }; 
                 historyEl.appendChild(thumb); 
@@ -1200,17 +1114,6 @@
             await renderPreview(s, true); 
         });
         
-        // Hook AI button to generateWithxAI
-        generateAIBtn.addEventListener('click', async () => { 
-            const prompt = (promptEl.value || '').trim(); 
-            if (!prompt) { 
-                showToast('Please enter a prompt'); 
-                return; 
-            } 
-            const width = parseInt(sizeEl.value) || 512; 
-            await generateWithxAI(prompt, width); 
-        });
-        
         promptUseAsSeedEl.addEventListener('change', () => { 
             if (promptUseAsSeedEl.checked) { 
                 const p = (promptEl.value || '').trim(); 
@@ -1314,122 +1217,146 @@
                 const blob = new Blob([jsonText], { type: 'application/json' }); 
                 const url = URL.createObjectURL(blob); 
                 const a = document.createElement('a'); 
-                a.href = url; 
-                a.download = filename; 
-                a.click(); 
-                URL.revokeObjectURL(url); 
-                navigator.clipboard?.writeText(jsonText).catch(() => { }); 
-                showToast(`Settings exported and copied`); 
-            } catch (e) { 
-                console.error(e); 
-                showToast('Export failed'); 
-            } 
-        });
-        
-        copyJSON.addEventListener('click', () => { 
-            navigator.clipboard.writeText(JSON.stringify(readSettingsFromUI(), null, 2)); 
-            showToast('Settings JSON copied'); 
-        });
-        
-        downloadJSON.addEventListener('click', () => { 
-            const txt = JSON.stringify(readSettingsFromUI(), null, 2); 
-            const blob = new Blob([txt], { type: 'application/json' }); 
-            const a = document.createElement('a'); 
-            a.href = URL.createObjectURL(blob); 
-            a.download = 'monadicon-settings.json'; 
-            a.click(); 
-            showToast('Settings JSON downloaded'); 
-        });
-        
-        clearHistory.addEventListener('click', () => { 
-            history = []; 
-            renderHistory(); 
-            showToast('History cleared'); 
-        });
-        
-        toggleThemeBtn.addEventListener('click', () => setTheme(!isLight));
-        
-        regenDescBtn.addEventListener('click', async () => { 
-            try { 
-                const curSvgNode = previewBox.querySelector('svg'); 
-                if (curSvgNode) { 
-                    const svgText = new XMLSerializer().serializeToString(curSvgNode); 
-                    const settings = readSettingsFromUI(); 
-                    updateAutoDescriptionFromRendered(svgText, settings); 
-                    showToast('Description regenerated from preview'); 
-                    return; 
-                } 
-                const s = readSettingsFromUI(); 
-                const svg = await buildFinalSvg(s); 
-                updateAutoDescriptionFromRendered(svg, s); 
-                showToast('Description regenerated (rebuilt)'); 
-            } catch (e) { 
-                console.error('Regenerate failed', e); 
-                showToast('Regenerate failed — see console'); 
-            } 
-        });
-        
-        copyDescBtn.addEventListener('click', () => { 
-            const meta = copyDescBtn._meta; 
-            if (meta && meta.meta && meta.meta.description) { 
-                navigator.clipboard.writeText(meta.meta.description); 
-                showToast('Description copied'); 
-                return; 
-            } 
-            const txt = autoDescEl.textContent || ''; 
-            if (txt) { 
-                navigator.clipboard.writeText(txt); 
-                showToast('Description copied'); 
-            } else showToast('No description available'); 
-        });
-        
-        downloadMetaBtn.addEventListener('click', () => { 
-            const meta = downloadMetaBtn._meta; 
-            if (!meta || !meta.meta) { 
-                showToast('Generate an icon first'); 
-                return; 
-            } 
-            const metadata = { 
-                name: meta.meta.name, 
-                description: meta.meta.description, 
-                attributes: meta.meta.attributes, 
-                image: 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(meta.svg))) 
-            }; 
-            const txt = JSON.stringify(metadata, null, 2); 
-            const blob = new Blob([txt], { type: 'application/json' }); 
-            const url = URL.createObjectURL(blob); 
-            const a = document.createElement('a'); 
             a.href = url; 
-            a.download = `${meta.meta.name.replace(/\s+/g, '_')}-metadata.json`; 
+            a.download = filename; 
             a.click(); 
             URL.revokeObjectURL(url); 
-            showToast('Metadata JSON downloaded'); 
-        });
-        
-        // Live preview setup
-        function setupLivePreview() { 
-            const inputs = [seedEl, styleEl, sizeEl, scaleEl, rotationEl, bgTypeEl, bgColorEl]; 
-            inputs.forEach(inp => { 
-                inp.addEventListener('input', () => { 
-                    settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2); 
-                    if (liveToggle.checked) { 
-                        if (window._liveTimeout) clearTimeout(window._liveTimeout); 
-                        window._liveTimeout = setTimeout(() => { applyPreviewBtn.click(); }, 300); 
-                    } 
-                }); 
-            }); 
-        }
-        
-        // Initialize
-        setupLivePreview();
-        try { 
-            const p = localStorage.getItem('monadicons:theme'); 
-            setTheme(p === 'light'); 
+            navigator.clipboard?.writeText(jsonText).catch(() => { }); 
+            showToast(`Settings exported and copied`); 
         } catch (e) { 
-            setTheme(false); 
+            console.error(e); 
+            showToast('Export failed'); 
+        } 
+    });
+    
+    copyJSON.addEventListener('click', () => { 
+        navigator.clipboard.writeText(JSON.stringify(readSettingsFromUI(), null, 2)); 
+        showToast('Settings JSON copied'); 
+    });
+    
+    downloadJSON.addEventListener('click', () => { 
+        const txt = JSON.stringify(readSettingsFromUI(), null, 2); 
+        const blob = new Blob([txt], { type: 'application/json' }); 
+        const a = document.createElement('a'); 
+        a.href = URL.createObjectURL(blob); 
+        a.download = 'monadicon-settings.json'; 
+        a.click(); 
+        showToast('Settings JSON downloaded'); 
+    });
+    
+    clearHistory.addEventListener('click', () => { 
+        history = []; 
+        renderHistory(); 
+        showToast('History cleared'); 
+    });
+    
+    toggleThemeBtn.addEventListener('click', () => setTheme(!isLight));
+    
+    regenDescBtn.addEventListener('click', async () => { 
+        try { 
+            const curSvgNode = previewBox.querySelector('svg'); 
+            if (curSvgNode) { 
+                const svgText = new XMLSerializer().serializeToString(curSvgNode); 
+                const settings = readSettingsFromUI(); 
+                updateAutoDescriptionFromRendered(svgText, settings); 
+                showToast('Description regenerated from preview'); 
+                return; 
+            } 
+            const s = readSettingsFromUI(); 
+            const svg = await buildFinalSvg(s); 
+            updateAutoDescriptionFromRendered(svg, s); 
+            showToast('Description regenerated (rebuilt)'); 
+        } catch (e) { 
+            console.error('Regenerate failed', e); 
+            showToast('Regenerate failed — see console'); 
+        } 
+    });
+    
+    copyDescBtn.addEventListener('click', () => { 
+        const meta = copyDescBtn._meta; 
+        if (meta && meta.meta && meta.meta.description) { 
+            navigator.clipboard.writeText(meta.meta.description); 
+            showToast('Description copied'); 
+            return; 
+        } 
+        const txt = autoDescEl.textContent || ''; 
+        if (txt) { 
+            navigator.clipboard.writeText(txt); 
+            showToast('Description copied'); 
+        } else showToast('No description available'); 
+    });
+    
+    downloadMetaBtn.addEventListener('click', () => { 
+        const meta = downloadMetaBtn._meta; 
+        if (!meta || !meta.meta) { 
+            showToast('Generate an icon first'); 
+            return; 
+        } 
+        const metadata = { 
+            name: meta.meta.name, 
+            description: meta.meta.description, 
+            attributes: meta.meta.attributes, 
+            image: 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(meta.svg))) 
+        }; 
+        const txt = JSON.stringify(metadata, null, 2); 
+        const blob = new Blob([txt], { type: 'application/json' }); 
+        const url = URL.createObjectURL(blob); 
+        const a = document.createElement('a'); 
+        a.href = url; 
+        a.download = `${meta.meta.name.replace(/\s+/g, '_')}-metadata.json`; 
+        a.click(); 
+        URL.revokeObjectURL(url); 
+        showToast('Metadata JSON downloaded'); 
+    });
+    
+    // Name generator functionality
+    generateNameBtn.addEventListener('click', () => {
+        const name = generateRandomName();
+        generatedName.textContent = name;
+        showToast('Random name generated');
+    });
+    
+    useNameBtn.addEventListener('click', () => {
+        const name = generatedName.textContent;
+        if (name && name !== 'Click to generate name') {
+            seedEl.value = name;
+            settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
+            if (liveToggle.checked) {
+                applyPreviewBtn.click();
+            }
+            showToast('Name applied to seed');
+        } else {
+            showToast('Generate a name first');
         }
-        settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
-        applyPreviewBtn.click();
-    </script>
+    });
+    
+    // Live preview setup
+    function setupLivePreview() { 
+        const inputs = [seedEl, styleEl, sizeEl, scaleEl, rotationEl, bgTypeEl, bgColorEl]; 
+        inputs.forEach(inp => { 
+            inp.addEventListener('input', () => { 
+                settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2); 
+                if (liveToggle.checked) { 
+                    if (window._liveTimeout) clearTimeout(window._liveTimeout); 
+                    window._liveTimeout = setTimeout(() => { applyPreviewBtn.click(); }, 300); 
+                } 
+            }); 
+        }); 
+    }
+    
+    // Initialize
+    setupLivePreview();
+    try { 
+        const p = localStorage.getItem('monadicons:theme'); 
+        setTheme(p === 'light'); 
+    } catch (e) { 
+        setTheme(false); 
+    }
+    settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
+    applyPreviewBtn.click();
+    
+    // Generate initial name
+    generatedName.textContent = generateRandomName();
+</script>
 </body>
 </html>
