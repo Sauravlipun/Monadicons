@@ -1,926 +1,1439 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Monadicons — Avatar studio</title>
-<meta name="description" content="Generate avatars. Customize settings, preview, and download SVG/PNG. Optional AI image generation (server required)." />
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%237C3AED'/><text x='50' y='58' font-size='50' text-anchor='middle' fill='white' font-family='Arial'>M</text></svg>">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monadicons — Avatar Studio</title>
+    <meta name="description" content="Generate avatars with AI. Customize settings, preview, and download SVG/PNG.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%237C3AED'/><text x='50' y='58' font-size='50' text-anchor='middle' fill='white' font-family='Arial'>M</text></svg>">
+    <script src="https://cdn.jsdelivr.net/npm/jdenticon@3.2.0/dist/jdenticon.min.js"></script>
+    <style>
+        :root {
+            --accent: #7C3AED;
+            --accent-2: #5B21B6;
+            --muted: #9fb0c9;
+            --bg-1: #071124;
+            --bg-2: #071a2b;
+            --card-bg: rgba(255, 255, 255, 0.02);
+            --glass: rgba(255, 255, 255, 0.04);
+            --gap: 18px;
+            --radius: 12px;
+        }
 
-<!-- jdenticon used for local identicons -->
-<script src="https://cdn.jsdelivr.net/npm/jdenticon@3.2.0/dist/jdenticon.min.js"></script>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-<style>
-:root{
-  --accent:#7C3AED; --accent-2:#5B21B6; --muted:#9fb0c9; --bg-1:#071124; --bg-2:#071a2b;
-  --card-bg: rgba(255,255,255,0.02); --glass: rgba(255,255,255,0.04);
-  --gap:18px; --radius:12px;
-}
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0; font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial;
-  color:#e6eef8;
-  background:radial-gradient(1200px 600px at 10% 10%, rgba(124,58,237,0.12), transparent), linear-gradient(180deg,var(--bg-1),var(--bg-2));
-  padding:22px; -webkit-font-smoothing:antialiased;
-}
-.container{max-width:1180px;margin:0 auto}
-.header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
-.brand{display:flex;gap:12px;align-items:center}
-.logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:800;color:white;font-size:20px}
-h1{margin:0;font-size:20px}
-.header-actions{display:flex;gap:8px;align-items:center}
-.btn, .ghost, .small { cursor:pointer; border-radius:10px; padding:8px 12px; font-weight:600; border:none; outline:none }
-.btn{background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:white; box-shadow:0 8px 24px rgba(124,58,237,0.12)}
-.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06); color:var(--muted)}
-.small{padding:6px 8px;background:var(--glass);color:var(--muted);font-weight:600}
-.grid{display:grid;grid-template-columns:1fr 440px;gap:var(--gap);align-items:start}
-.card{background:var(--card-bg);padding:16px;border-radius:var(--radius);border:1px solid rgba(255,255,255,0.03)}
-.controls label{display:block;font-size:13px;color:var(--muted);margin:10px 0 6px}
-.row{display:flex;gap:8px;align-items:center}
-.input, select, input[type="color"], input[type="number"], input[type="text"], textarea{
-  width:100%; padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;font-size:14px;
-  resize:vertical;
-}
-.controls{margin-top:8px;display:flex;flex-wrap:wrap;gap:8px}
-.preview-box{width:100%;height:440px;border-radius:var(--radius);border:1px solid rgba(255,255,255,0.04);background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
-.preview-box > img, .preview-box > svg { width:100%; height:100%; object-fit:cover; display:block }
-.preview-meta{color:var(--muted);font-size:13px;margin-top:8px;text-align:center}
-.history{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.thumb{width:64px;height:64px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);overflow:hidden;cursor:pointer;background:white;display:flex;align-items:center;justify-content:center}
-.switch{display:inline-flex;align-items:center;gap:8px;background:var(--glass);padding:6px;border-radius:999px}
-.switch input{display:none}
-.footer-note{color:var(--muted);font-size:13px;text-align:center;margin-top:18px}
+        html, body {
+            height: 100%;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #e6eef8;
+            background: radial-gradient(1200px 600px at 10% 10%, rgba(124, 58, 237, 0.12), transparent), linear-gradient(180deg, var(--bg-1), var(--bg-2));
+            padding: 22px;
+            -webkit-font-smoothing: antialiased;
+        }
 
-/* Auto-desc styles */
-.desc-card{margin-top:12px;background:linear-gradient(180deg, rgba(255,255,255,0.015), transparent);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
-.desc-title{font-weight:700;margin-bottom:6px}
-.desc-text{background:transparent;border-radius:8px;padding:10px;border:1px dashed rgba(255,255,255,0.04);color:var(--muted);font-size:14px;white-space:pre-wrap}
+        .container {
+            max-width: 1180px;
+            margin: 0 auto;
+        }
 
-/* Toast */
-#toast{position:fixed;right:18px;bottom:18px;z-index:9999;display:flex;flex-direction:column;gap:8px}
-.toast{background:rgba(0,0,0,0.75);color:#fff;padding:10px 14px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.4);font-weight:600;min-width:180px}
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
 
-/* LIGHT THEME OVERRIDES */
-body.light{
-  color: #1f2937;
-  background: linear-gradient(180deg,#f0f4f8,#e6eef5);
-}
-body.light .card{ background: white; border-color: rgba(0,0,0,0.06); color: #1f2937 }
-body.light .input, body.light select { background: white; color: #111; border-color: rgba(0,0,0,0.12) }
-body.light .ghost { border-color: rgba(0,0,0,0.08); color: #475569 }
-body.light .preview-box { background: linear-gradient(180deg, rgba(0,0,0,0.02), transparent) }
+        .brand {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
 
-@media(max-width:1000px){
-  .grid{grid-template-columns:1fr; }
-  .preview-box{height:360px}
-}
-</style>
+        .logo {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: white;
+            font-size: 20px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .btn, .ghost, .small {
+            cursor: pointer;
+            border-radius: 10px;
+            padding: 8px 12px;
+            font-weight: 600;
+            border: none;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn {
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            color: white;
+            box-shadow: 0 8px 24px rgba(124, 58, 237, 0.12);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(124, 58, 237, 0.2);
+        }
+
+        .ghost {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: var(--muted);
+        }
+
+        .ghost:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .small {
+            padding: 6px 8px;
+            background: var(--glass);
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 440px;
+            gap: var(--gap);
+            align-items: start;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 16px;
+            border-radius: var(--radius);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .controls label {
+            display: block;
+            font-size: 13px;
+            color: var(--muted);
+            margin: 10px 0 6px;
+        }
+
+        .row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .input, select, input[type="color"], input[type="number"], input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            background: transparent;
+            color: inherit;
+            font-size: 14px;
+            resize: vertical;
+        }
+
+        .controls {
+            margin-top: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .preview-box {
+            width: 100%;
+            height: 440px;
+            border-radius: var(--radius);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), transparent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .preview-box > img, .preview-box > svg {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .preview-meta {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        .history {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .thumb {
+            width: 64px;
+            height: 64px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            overflow: hidden;
+            cursor: pointer;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .switch {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--glass);
+            padding: 6px;
+            border-radius: 999px;
+        }
+
+        .switch input {
+            display: none;
+        }
+
+        .footer-note {
+            color: var(--muted);
+            font-size: 13px;
+            text-align: center;
+            margin-top: 18px;
+        }
+
+        /* Auto-desc */
+        .desc-card {
+            margin-top: 12px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.015), transparent);
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .desc-title {
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .desc-text {
+            background: transparent;
+            border-radius: 8px;
+            padding: 10px;
+            border: 1px dashed rgba(255, 255, 255, 0.04);
+            color: var(--muted);
+            font-size: 14px;
+            white-space: pre-wrap;
+        }
+
+        /* Toast */
+        #toast {
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast {
+            background: rgba(0, 0, 0, 0.75);
+            color: #fff;
+            padding: 10px 14px;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            font-weight: 600;
+            min-width: 180px;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* LIGHT THEME */
+        body.light {
+            color: #1f2937;
+            background: linear-gradient(180deg, #f0f4f8, #e6eef5);
+        }
+
+        body.light .card {
+            background: white;
+            border-color: rgba(0, 0, 0, 0.06);
+            color: #1f2937;
+        }
+
+        body.light .input, body.light select {
+            background: #fff;
+            color: #111;
+            border-color: rgba(0, 0, 0, 0.12);
+        }
+
+        body.light .ghost {
+            border-color: rgba(0, 0, 0, 0.08);
+            color: #475569;
+        }
+
+        body.light .preview-box {
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.02), transparent);
+        }
+
+        /* Responsive */
+        @media (max-width: 1000px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            .preview-box {
+                height: 360px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .header-actions {
+                width: 100%;
+                margin-top: 12px;
+                justify-content: space-between;
+            }
+            .btn, .ghost, .small {
+                padding: 8px;
+                font-size: 13px;
+            }
+        }
+
+        /* AI Loading Indicator */
+        .ai-loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            padding: 20px;
+            text-align: center;
+            color: var(--muted);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 3px solid rgba(124, 58, 237, 0.2);
+            border-top-color: var(--accent);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
-<div class="container">
+    <div class="container">
+        <div class="header">
+            <div class="brand">
+                <div class="logo">M</div>
+                <div><h1>Monadicons</h1></div>
+            </div>
 
-  <div class="header">
-    <div class="brand">
-      <div class="logo">M</div>
-      <div><h1>Monadicons</h1></div>
-    </div>
-
-    <div class="header-actions">
-      <div class="switch" title="Live preview (updates as you change inputs)">
-        <input id="liveToggle" type="checkbox"><label for="liveToggle" style="color:var(--muted);font-weight:600">Live</label>
-      </div>
-      <button id="randomBtn" class="ghost">Random</button>
-      <button id="exportJSON" class="small">Export Settings</button>
-      <button id="toggleTheme" class="small">Light</button>
-    </div>
-  </div>
-
-  <div class="grid">
-    <!-- LEFT: controls -->
-    <div class="card controls">
-      <label for="seed">Seed / Name</label>
-      <input id="seed" class="input" type="text" placeholder="e.g., aurora" value="anon" />
-
-      <!-- Prompt section -->
-      <label for="prompt">Prompt</label>
-      <textarea id="prompt" rows="3" placeholder="Enter a prompt (e.g., 'friendly blue fox with stars')"></textarea>
-      <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
-        <button id="applyPrompt" class="ghost">Apply Prompt → Seed</button>
-        <button id="generateFromPrompt" class="btn">Generate from Prompt</button>
-        <button id="generateAI" class="ghost" title="Generate a literal image using AI (server endpoint required)">Generate AI Image</button>
-        <div style="flex:1"></div>
-        <label style="font-size:13px;color:var(--muted)"><input id="promptUseAsSeed" type="checkbox" style="margin-right:6px">Use prompt as seed automatically</label>
-      </div>
-
-      <!-- Multi-seed controls -->
-      <div style="margin-top:10px;border-radius:8px;padding:10px;background:rgba(255,255,255,0.01);border:1px solid rgba(255,255,255,0.02)">
-        <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
-          <div style="font-weight:700">Multi-seed</div>
-          <label style="font-size:13px;color:var(--muted)"><input id="multiSeed" type="checkbox" style="margin-right:6px">Enable</label>
+            <div class="header-actions">
+                <div class="switch" title="Live preview (updates as you change inputs)">
+                    <input id="liveToggle" type="checkbox" checked>
+                    <label for="liveToggle" style="color:var(--muted);font-weight:600">Live</label>
+                </div>
+                <button id="randomBtn" class="ghost">Random</button>
+                <button id="exportJSON" class="small">Export Settings</button>
+                <button id="toggleTheme" class="small">Light</button>
+            </div>
         </div>
-        <div style="display:flex;gap:8px;margin-top:8px">
-          <div style="flex:1">
-            <label for="delimiter">Delimiter</label>
-            <select id="delimiter" class="input">
-              <option value="space">Space</option>
-              <option value="comma">Comma</option>
-              <option value="newline">Newline</option>
-              <option value="char">Each char</option>
-            </select>
-          </div>
-          <div style="width:120px">
-            <label for="partsCount">Parts</label>
-            <input id="partsCount" class="input" type="number" min="2" max="12" value="3" />
-          </div>
-          <div style="width:150px">
-            <label for="composeMode">Compose</label>
-            <select id="composeMode" class="input">
-              <option value="grid">Grid</option>
-              <option value="layer">Layered</option>
-            </select>
-          </div>
-        </div>
-        <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
-          <label style="font-size:13px;color:var(--muted);display:flex;align-items:center">
-            <input id="randomizeParts" type="checkbox" style="margin-right:6px">
-            Randomize parts <span style="margin-left:8px;color:var(--muted)">• deterministic</span>
-          </label>
-          <div style="flex:1"></div>
-          <small style="color:var(--muted)">Creates multiple seeds from the prompt and combines them.</small>
-        </div>
-      </div>
-      <!-- END Multi-seed -->
 
-      <label for="style" style="margin-top:10px">Style</label>
-      <select id="style" class="input">
-        <optgroup label="DiceBear">
-          <option value="adventurer">adventurer</option>
-          <option value="avataaars">avataaars</option>
-          <option value="big-ears">big-ears</option>
-          <option value="bottts">bottts</option>
-          <option value="croodles">croodles</option>
-          <option value="fun-emoji">fun-emoji</option>
-          <option value="icons">icons</option>
-          <option value="identicon">identicon</option>
-          <option value="micah">micah</option>
-          <option value="pixel-art-neutral">pixel-art-neutral</option>
-        </optgroup>
-        <optgroup label="Local">
-          <option value="jdenticon">jdenticon (local)</option>
-        </optgroup>
-      </select>
+        <div class="grid">
+            <!-- LEFT -->
+            <div class="card controls">
+                <label for="seed">Seed / Name</label>
+                <input id="seed" class="input" type="text" placeholder="e.g., aurora" value="anon" />
 
-      <div style="display:flex;gap:8px;margin-top:10px">
-        <div style="flex:1">
-          <label for="size">Size (px)</label>
-          <input id="size" class="input" type="number" min="64" max="4096" value="512" />
-        </div>
-        <div style="width:150px">
-          <label for="scale">Scale (%)</label>
-          <input id="scale" class="input" type="number" min="50" max="200" value="100" />
-        </div>
-        <div style="width:150px">
-          <label for="rotation">Rotation (°)</label>
-          <input id="rotation" class="input" type="number" min="-180" max="180" value="0" />
-        </div>
-      </div>
+                <label for="prompt">Prompt</label>
+                <textarea id="prompt" rows="3" placeholder="Enter a prompt (e.g., 'friendly blue fox with stars')"></textarea>
+                <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
+                    <button id="applyPrompt" class="ghost">Apply Prompt → Seed</button>
+                    <button id="generateFromPrompt" class="btn">Generate from Prompt</button>
+                    <button id="generateAI" class="ghost" title="Generate a literal image using xAI">Generate xAI Image</button>
+                    <div style="flex:1"></div>
+                    <label style="font-size:13px;color:var(--muted)"><input id="promptUseAsSeed" type="checkbox" style="margin-right:6px">Use prompt as seed automatically</label>
+                </div>
 
-      <label for="bgType">Background type</label>
-      <select id="bgType" class="input">
-        <option value="transparent">transparent</option>
-        <option value="solid">solid</option>
-        <option value="gradient">gradient</option>
-        <option value="radial">radial</option>
-        <option value="dots">dots</option>
-        <option value="stripes">stripes</option>
-        <option value="checker">checker</option>
-        <option value="noise">noise</option>
-      </select>
+                <div style="margin-top:10px;border-radius:8px;padding:10px;background:rgba(255,255,255,0.01);border:1px solid rgba(255,255,255,0.02)">
+                    <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                        <div style="font-weight:700">Multi-seed</div>
+                        <label style="font-size:13px;color:var(--muted)"><input id="multiSeed" type="checkbox" style="margin-right:6px">Enable</label>
+                    </div>
+                    <div style="display:flex;gap:8px;margin-top:8px">
+                        <div style="flex:1">
+                            <label for="delimiter">Delimiter</label>
+                            <select id="delimiter" class="input">
+                                <option value="space">Space</option>
+                                <option value="comma">Comma</option>
+                                <option value="newline">Newline</option>
+                                <option value="char">Each char</option>
+                            </select>
+                        </div>
+                        <div style="width:120px">
+                            <label for="partsCount">Parts</label>
+                            <input id="partsCount" class="input" type="number" min="2" max="12" value="3" />
+                        </div>
+                        <div style="width:150px">
+                            <label for="composeMode">Compose</label>
+                            <select id="composeMode" class="input">
+                                <option value="grid">Grid</option>
+                                <option value="layer">Layered</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+                        <label style="font-size:13px;color:var(--muted);display:flex;align-items:center">
+                            <input id="randomizeParts" type="checkbox" style="margin-right:6px">
+                            Randomize parts <span style="margin-left:8px;color:var(--muted)">• deterministic</span>
+                        </label>
+                        <div style="flex:1"></div>
+                        <small style="color:var(--muted)">Creates multiple seeds from the prompt and combines them.</small>
+                    </div>
+                </div>
 
-      <label for="bgColor">Background color</label>
-      <input id="bgColor" type="color" value="#7C3AED" class="input" />
+                <label for="style" style="margin-top:10px">Style</label>
+                <select id="style" class="input">
+                    <optgroup label="Avatar styles">
+                        <option value="adventurer">adventurer</option>
+                        <option value="avataaars">avataaars</option>
+                        <option value="big-ears">big-ears</option>
+                        <option value="bottts">bottts</option>
+                        <option value="micah">micah</option>
+                        <option value="pixel-art-neutral">pixel-art-neutral</option>
+                        <option value="identicon">identicon</option>
+                    </optgroup>
+                    <optgroup label="Local">
+                        <option value="jdenticon">jdenticon (local)</option>
+                    </optgroup>
+                </select>
 
-      <div style="display:flex;gap:8px;margin-top:12px;align-items:center">
-        <button id="generateBtn" class="btn">Generate (Add to history)</button>
-        <button id="applyPreviewBtn" class="ghost">Apply Preview</button>
-        <div style="flex:1"></div>
-        <button id="clearHistory" class="small">Clear History</button>
-      </div>
+                <div style="display:flex;gap:8px;margin-top:10px">
+                    <div style="flex:1">
+                        <label for="size">Size (px)</label>
+                        <input id="size" class="input" type="number" min="64" max="4096" value="512" />
+                    </div>
+                    <div style="width:150px">
+                        <label for="scale">Scale (%)</label>
+                        <input id="scale" class="input" type="number" min="50" max="200" value="100" />
+                    </div>
+                    <div style="width:150px">
+                        <label for="rotation">Rotation (°)</label>
+                        <input id="rotation" class="input" type="number" min="-180" max="180" value="0" />
+                    </div>
+                </div>
 
-      <div class="toolbar" style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
-        <button id="downloadSvg" class="ghost">Download SVG</button>
-        <button id="downloadPng" class="ghost">Download PNG</button>
-        <button id="copyEmbed" class="ghost">Copy Embed</button>
-        <button id="shareX" class="ghost">Share X</button>
-        <button id="shareDiscord" class="ghost">Share Discord</button>
-      </div>
+                <label for="bgType">Background type</label>
+                <select id="bgType" class="input">
+                    <option value="transparent">transparent</option>
+                    <option value="solid">solid</option>
+                    <option value="gradient">gradient</option>
+                    <option value="radial">radial</option>
+                    <option value="dots">dots</option>
+                    <option value="stripes">stripes</option>
+                    <option value="checker">checker</option>
+                    <option value="noise">noise</option>
+                </select>
 
-      <div style="margin-top:12px">
-        <label>Presets</label>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
-          <button class="small preset" data-seed="aurora" data-style="adventurer">Aurora</button>
-          <button class="small preset" data-seed="nebula" data-style="pixel-art-neutral">Nebula</button>
-          <button class="small preset" data-seed="octopus" data-style="fun-emoji">Octopus</button>
-          <button class="small preset" data-seed="miso" data-style="jdenticon">Miso</button>
-          <button class="small" id="randomPreset">Surprise me</button>
-        </div>
-      </div>
+                <label for="bgColor">Background color</label>
+                <input id="bgColor" type="color" value="#7C3AED" class="input" />
 
-      <div style="margin-top:12px">
-        <label>History</label>
-        <div class="history" id="history"></div>
-      </div>
+                <div style="display:flex;gap:8px;margin-top:12px;align-items:center">
+                    <button id="generateBtn" class="btn">Generate (Add to history)</button>
+                    <button id="applyPreviewBtn" class="ghost">Apply Preview</button>
+                    <div style="flex:1"></div>
+                    <button id="clearHistory" class="small">Clear History</button>
+                </div>
 
-      <div style="margin-top:12px">
-        <label>Export/Save</label>
-        <div class="row" style="gap:8px;margin-top:8px">
-          <button id="copyJSON" class="small">Copy JSON</button>
-          <button id="downloadJSON" class="small">Download JSON</button>
-        </div>
-      </div>
-    </div>
+                <div class="toolbar" style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+                    <button id="downloadSvg" class="ghost">Download SVG</button>
+                    <button id="downloadPng" class="ghost">Download PNG</button>
+                    <button id="copyEmbed" class="ghost">Copy Embed</button>
+                    <button id="shareX" class="ghost">Share X</button>
+                    <button id="shareDiscord" class="ghost">Share Discord</button>
+                </div>
 
-    <!-- RIGHT: preview -->
-    <div>
-      <div class="card">
-        <div class="preview-box" id="previewBox">
-          <div id="placeholder" style="text-align:center;color:var(--muted)">
-            <div style="font-size:18px;margin-bottom:6px">Preview</div>
-            <div style="font-size:13px">Configure settings on the left, then click Generate (or toggle Live)</div>
-          </div>
-        </div>
-        <div class="preview-meta" id="previewMeta">—</div>
-      </div>
+                <div style="margin-top:12px">
+                    <label>Presets</label>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+                        <button class="small preset" data-seed="aurora" data-style="adventurer">Aurora</button>
+                        <button class="small preset" data-seed="nebula" data-style="pixel-art-neutral">Nebula</button>
+                        <button class="small preset" data-seed="octopus" data-style="micah">Octopus</button>
+                        <button class="small preset" data-seed="miso" data-style="jdenticon">Miso</button>
+                        <button class="small" id="randomPreset">Surprise me</button>
+                    </div>
+                </div>
 
-      <div style="height:12px"></div>
+                <div style="margin-top:12px">
+                    <label>History</label>
+                    <div class="history" id="history"></div>
+                </div>
 
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div style="font-weight:700">Options snapshot</div>
-          <div style="color:var(--muted);font-size:13px">Copy / Share below</div>
-        </div>
-        <pre id="settingsOut" style="white-space:pre-wrap;word-break:break-word;background:transparent;border:none;color:var(--muted);margin-top:8px"></pre>
+                <div style="margin-top:12px">
+                    <label>Export/Save</label>
+                    <div class="row" style="gap:8px;margin-top:8px">
+                        <button id="copyJSON" class="small">Copy JSON</button>
+                        <button id="downloadJSON" class="small">Download JSON</button>
+                    </div>
+                </div>
+            </div>
 
-        <!-- Auto description card -->
-        <div class="desc-card" id="descCard">
-          <div style="display:flex;justify-content:space-between;align-items:center">
+            <!-- RIGHT -->
             <div>
-              <div class="desc-title">Auto Description</div>
-              <div style="color:var(--muted);font-size:13px">A short NFT-style description and attributes generated from your settings.</div>
+                <div class="card">
+                    <div class="preview-box" id="previewBox">
+                        <div id="placeholder" style="text-align:center;color:var(--muted)">
+                            <div style="font-size:18px;margin-bottom:6px">Preview</div>
+                            <div style="font-size:13px">Configure settings on the left, then click Generate (or toggle Live)</div>
+                        </div>
+                    </div>
+                    <div class="preview-meta" id="previewMeta">—</div>
+                </div>
+
+                <div style="height:12px"></div>
+
+                <div class="card">
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                        <div style="font-weight:700">Options snapshot</div>
+                        <div style="color:var(--muted);font-size:13px">Copy / Share below</div>
+                    </div>
+                    <pre id="settingsOut" style="white-space:pre-wrap;word-break:break-word;background:transparent;border:none;color:var(--muted);margin-top:8px"></pre>
+
+                    <div class="desc-card" id="descCard">
+                        <div style="display:flex;justify-content:space-between;align-items:center">
+                            <div>
+                                <div class="desc-title">Auto Description</div>
+                                <div style="color:var(--muted);font-size:13px">A short NFT-style description and attributes generated from your settings.</div>
+                            </div>
+                            <div style="display:flex;gap:8px">
+                                <button id="regenDesc" class="small">Regenerate</button>
+                                <button id="copyDesc" class="small">Copy</button>
+                                <button id="downloadMeta" class="small">Download JSON</button>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:10px;margin-top:10px;align-items:flex-start">
+                            <div style="width:96px;height:96px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center" id="descThumb">
+                            </div>
+                            <div style="flex:1">
+                                <div id="autoDesc" class="desc-text">Generate an icon to view the auto-description here.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div style="display:flex;gap:8px">
-              <button id="regenDesc" class="small">Regenerate</button>
-              <button id="copyDesc" class="small">Copy</button>
-              <button id="downloadMeta" class="small">Download JSON</button>
-            </div>
-          </div>
-          <div style="display:flex;gap:10px;margin-top:10px;align-items:flex-start">
-            <div style="width:96px;height:96px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center" id="descThumb">
-            </div>
-            <div style="flex:1">
-              <div id="autoDesc" class="desc-text">Generate an icon to view the auto-description here.</div>
-            </div>
-          </div>
         </div>
-        <!-- end auto desc -->
-      </div>
+
+        <div class="footer-note">Powered by Monadicons & xAI • ©2025</div>
     </div>
-  </div>
 
-  <div class="footer-note">Powered by Monadicons • ©2025</div>
-</div>
+    <div id="toast" aria-live="polite" aria-atomic="true"></div>
 
-<!-- Toast container -->
-<div id="toast" aria-live="polite" aria-atomic="true"></div>
+    <script>
+        // DOM references
+        const liveToggle = document.getElementById('liveToggle');
+        const seedEl = document.getElementById('seed');
+        const promptEl = document.getElementById('prompt');
+        const promptUseAsSeedEl = document.getElementById('promptUseAsSeed');
+        const applyPromptBtn = document.getElementById('applyPrompt');
+        const generateFromPromptBtn = document.getElementById('generateFromPrompt');
+        const generateAIBtn = document.getElementById('generateAI');
+        const styleEl = document.getElementById('style');
+        const sizeEl = document.getElementById('size');
+        const scaleEl = document.getElementById('scale');
+        const rotationEl = document.getElementById('rotation');
+        const bgTypeEl = document.getElementById('bgType');
+        const bgColorEl = document.getElementById('bgColor');
+        const generateBtn = document.getElementById('generateBtn');
+        const applyPreviewBtn = document.getElementById('applyPreviewBtn');
+        const randomBtn = document.getElementById('randomBtn');
+        const previewBox = document.getElementById('previewBox');
+        const previewMeta = document.getElementById('previewMeta');
+        const placeholder = document.getElementById('placeholder');
+        const downloadSvgBtn = document.getElementById('downloadSvg');
+        const downloadPngBtn = document.getElementById('downloadPng');
+        const copyEmbedBtn = document.getElementById('copyEmbed');
+        const historyEl = document.getElementById('history');
+        const copyJSON = document.getElementById('copyJSON');
+        const downloadJSON = document.getElementById('downloadJSON');
+        const exportJSON = document.getElementById('exportJSON');
+        const settingsOut = document.getElementById('settingsOut');
+        const toggleThemeBtn = document.getElementById('toggleTheme');
+        const autoDescEl = document.getElementById('autoDesc');
+        const descThumb = document.getElementById('descThumb');
+        const regenDescBtn = document.getElementById('regenDesc');
+        const copyDescBtn = document.getElementById('copyDesc');
+        const downloadMetaBtn = document.getElementById('downloadMeta');
+        const randomPreset = document.getElementById('randomPreset');
+        const clearHistory = document.getElementById('clearHistory');
 
-<script>
-/* -----------------------------------------------------------------------
-  IMPORTANT NOTE ABOUT AI (xAI) INTEGRATION
-  - This frontend calls a server endpoint at /api/generate-image-xai.
-  - You MUST deploy the provided serverless function (api/generate-image-xai.js)
-    on Vercel with your xAI API key set as an environment variable (XAI_API_KEY).
-  - Replace the fetch URL in generateAIBtn with your deployed Vercel URL
-    (e.g., https://your-project-name.vercel.app/api/generate-image-xai).
-  -----------------------------------------------------------------------*/
+        // Sample seeds for random generation
+        const sampleSeeds = ['aurora', 'lumen', 'nova', 'zephyr', 'sol', 'aero', 'pixel', 'nebula', 'miso', 'sora', 'echo', 'boreal', 'octopus', 'waffle', 'tiger', 'meteor'];
+        
+        // History storage
+        let history = [];
+        
+        // Utility functions
+        function showToast(msg, ms=2200) { 
+            const toastContainer = document.getElementById('toast'); 
+            const toast = document.createElement('div'); 
+            toast.className = 'toast'; 
+            toast.textContent = msg; 
+            toastContainer.appendChild(toast); 
+            setTimeout(() => { 
+                toast.style.opacity = '0'; 
+                toast.style.transition = 'opacity .25s'; 
+                setTimeout(() => toast.remove(), 250); 
+            }, ms); 
+        }
+        
+        function hashString(s) { 
+            let h = 2166136261; 
+            for (let i = 0; i < s.length; i++) { 
+                h = Math.imul(h ^ s.charCodeAt(i), 16777619); 
+            } 
+            return h; 
+        }
+        
+        function slugifyPrompt(s) { 
+            const trimmed = (s || '').trim(); 
+            const slug = trimmed.toLowerCase()
+                .replace(/[^\w\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .slice(0, 70) || 'anon'; 
+            const h = Math.abs(hashString(trimmed || slug)).toString(16).slice(0, 5); 
+            return `${slug}-${h}`; 
+        }
+        
+        function seededRandomFromSeed(seed) { 
+            let h = hashString(seed); 
+            return function() { 
+                h ^= h << 13; 
+                h ^= h >> 17; 
+                h ^= h << 5; 
+                return (h >>> 0) / 4294967296; 
+            }; 
+        }
+        
+        function pickDeterministic(arr, seed, idx=0) { 
+            if (!arr || !arr.length) return null; 
+            const rnd = seededRandomFromSeed(seed + '|' + idx); 
+            return arr[Math.floor(rnd() * arr.length)]; 
+        }
+        
+        function clamp(value, min, max) {
+            return Math.max(min, Math.min(max, value));
+        }
+        
+        // Background helpers
+        function hexToRgb(hex) { 
+            hex = (hex || '#ffffff').replace('#', ''); 
+            if (hex.length === 3) {
+                hex = hex.split('').map(c => c + c).join(''); 
+            }
+            return { 
+                r: parseInt(hex.slice(0, 2), 16), 
+                g: parseInt(hex.slice(2, 4), 16), 
+                b: parseInt(hex.slice(4, 6), 16) 
+            }; 
+        }
+        
+        function mixWithWhite(hex, pct=0.6) { 
+            const c = hexToRgb(hex); 
+            const r = Math.round(c.r + (255 - c.r) * pct); 
+            const g = Math.round(c.g + (255 - c.g) * pct); 
+            const b = Math.round(c.b + (255 - c.b) * pct); 
+            return `rgb(${r}, ${g}, ${b})`; 
+        }
+        
+        function buildDefsAndRect(bgType, color, outSize) {
+            const idPrefix = 'mb_' + Math.random().toString(36).slice(2, 8);
+            let defs = '', rectFill = color || 'transparent', noiseFilterId = null;
+            
+            if (bgType === 'transparent') { 
+                rectFill = 'none'; 
+            } else if (bgType === 'solid') { 
+                rectFill = color; 
+            } else if (bgType === 'gradient') { 
+                const gradId = idPrefix + '_g'; 
+                const lighter = mixWithWhite(color, 0.55); 
+                defs = `<linearGradient id="${gradId}" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${color}" /><stop offset="100%" stop-color="${lighter}" stop-opacity="0.9" /></linearGradient>`; 
+                rectFill = `url(#${gradId})`; 
+            } else if (bgType === 'radial') { 
+                const rid = idPrefix + '_r'; 
+                const lighter = mixWithWhite(color, 0.6); 
+                defs = `<radialGradient id="${rid}" cx="30%" cy="30%" r="80%"><stop offset="0%" stop-color="${lighter}" /><stop offset="100%" stop-color="${color}" /></radialGradient>`; 
+                rectFill = `url(#${rid})`; 
+            } else if (bgType === 'dots') { 
+                const patId = idPrefix + '_p'; 
+                defs = `<pattern id="${patId}" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="${mixWithWhite(color, 0.85)}"/><circle cx="6" cy="6" r="2" fill="${color}"/></pattern>`; 
+                rectFill = `url(#${patId})`; 
+            } else if (bgType === 'stripes') { 
+                const patId = idPrefix + '_s'; 
+                defs = `<pattern id="${patId}" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="5" height="10" fill="${color}" /><rect x="5" width="5" height="10" fill="transparent" /></pattern>`; 
+                rectFill = `url(#${patId})`; 
+            } else if (bgType === 'checker') { 
+                const patId = idPrefix + '_c'; 
+                const lighter = mixWithWhite(color, 0.7); 
+                defs = `<pattern id="${patId}" width="20" height="20" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="${color}"/><rect x="10" y="10" width="10" height="10" fill="${color}"/><rect width="10" height="10" fill="${lighter}"/><rect x="10" y="10" width="10" height="10" fill="${lighter}"/></pattern>`; 
+                rectFill = `url(#${patId})`; 
+            } else if (bgType === 'noise') { 
+                const filterId = idPrefix + '_f'; 
+                defs = `<filter id="${filterId}"><feTurbulence baseFrequency="0.8" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0.2"/><feBlend mode="overlay" in2="SourceGraphic"/></filter>`; 
+                rectFill = color; 
+                noiseFilterId = filterId; 
+            }
+            
+            return { defs, rectFill, noiseFilterId };
+        }
+        
+        // SVG extraction
+        function extractInnerSvgInfo(svgText, defaultSize) {
+            if (!svgText) return { innerSvg: '', w: defaultSize, h: defaultSize };
+            
+            svgText = svgText.replace(/^<\?xml[\s\S]*?\?>\s*/i, '');
+            const vb = svgText.match(/viewBox=["']?([\d\.\-\s,]+)["']?/i);
+            
+            if (vb) { 
+                const parts = vb[1].trim().split(/[\s,]+/).map(Number); 
+                if (parts.length >= 4 && parts[2] && parts[3]) { 
+                    const inner = svgText.replace(/^<svg[^>]*>/i, '').replace(/<\/svg>$/i, ''); 
+                    return { innerSvg: inner, w: Math.abs(parts[2]), h: Math.abs(parts[3]) }; 
+                } 
+            }
+            
+            const wAttr = svgText.match(/<svg[^>]*\bwidth=["']?(\d+(?:\.\d+)?)["']?/i);
+            const hAttr = svgText.match(/<svg[^>]*\bheight=["']?(\d+(?:\.\d+)?)["']?/i);
+            
+            if (wAttr || hAttr) { 
+                const innerW = wAttr ? Math.round(Number(wAttr[1])) : defaultSize; 
+                const innerH = hAttr ? Math.round(Number(hAttr[1])) : defaultSize; 
+                const inner = svgText.replace(/^<svg[^>]*>/i, '').replace(/<\/svg>$/i, ''); 
+                return { innerSvg: inner, w: innerW, h: innerH }; 
+            }
+            
+            const inner = svgText.replace(/^<svg[^>]*>/i, '').replace(/<\/svg>$/i, '');
+            return { innerSvg: inner, w: defaultSize, h: defaultSize };
+        }
+        
+        // Build final SVG
+        async function buildFinalSvg(settings) {
+            const outSize = clamp(parseInt(settings.size) || 512, 64, 4096);
+            const userScale = clamp(parseFloat(settings.scale) || 100, 50, 200) / 100;
+            const rotation = clamp(parseFloat(settings.rotation) || 0, -360, 360);
+            const bgType = settings.bgType;
+            const bgColor = settings.bgColor || '#ffffff';
+            const style = settings.style;
+            const seed = (settings.seed || 'anon').toString();
 
-/* ---------- small utilities ---------- */
-const qs = (sel, root=document) => root.querySelector(sel);
-const qsa = (sel, root=document) => Array.from(root.querySelectorAll(sel));
-const clamp = (v,min,max)=>Math.max(min,Math.min(max,v));
+            const { defs, rectFill, noiseFilterId } = buildDefsAndRect(bgType, bgColor, outSize);
+            let innerSvg = '', innerW = outSize, innerH = outSize;
 
-function showToast(msg, ms=2200){
-  const c = qs('#toast');
-  const t = document.createElement('div'); t.className='toast'; t.textContent = msg;
-  c.appendChild(t);
-  setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity .25s ease'; setTimeout(()=>t.remove(),250); }, ms);
-}
+            if (style === 'jdenticon') {
+                const svgText = jdenticon.toSvg(seed, outSize);
+                const info = extractInnerSvgInfo(svgText, outSize);
+                innerSvg = info.innerSvg;
+                innerW = info.w;
+                innerH = info.h;
+            } else {
+                const tryUrls = [
+                    `https://api.dicebear.com/9.x/${style}/svg?seed=${encodeURIComponent(seed)}&size=${outSize}`,
+                    `https://avatars.dicebear.com/api/${style}/${encodeURIComponent(seed)}.svg?size=${outSize}`
+                ];
+                
+                let fetchedText = null;
+                for (const url of tryUrls) {
+                    try {
+                        const res = await fetch(url, { cache: 'no-store' });
+                        if (res.ok) {
+                            fetchedText = await res.text();
+                            break;
+                        }
+                    } catch (e) { 
+                        console.error('Fetch error:', e);
+                    }
+                }
+                
+                if (!fetchedText) throw new Error('Failed to fetch SVG');
+                const info = extractInnerSvgInfo(fetchedText, outSize);
+                innerSvg = info.innerSvg;
+                innerW = info.w;
+                innerH = info.h;
+            }
 
-function hashString(s){ let h=2166136261>>>0; for(let i=0;i<s.length;i++){ h = Math.imul(h ^ s.charCodeAt(i), 16777619)>>>0; } return h; }
-function slugifyPrompt(s){ const trimmed=(s||'').trim(); const slug=trimmed.toLowerCase().replace(/[^\w\s\-]/g,'').replace(/\s+/g,'-').slice(0,70)||'anon'; const h = Math.abs(hashString(trimmed||slug)).toString(16).slice(0,5); return `${slug}-${h}`; }
-function seededRandomFromSeed(seed){ let h = hashString(seed) >>> 0; return function(){ h ^= h << 13; h >>>= 0; h ^= h >>> 17; h >>>= 0; h ^= h << 5; h >>>= 0; return (h >>> 0) / 4294967296; }; }
-function pickDeterministic(arr, seed, idx=0){ if(!arr || !arr.length) return null; const rnd = seededRandomFromSeed(seed + '|' + idx); return arr[Math.floor(rnd() * arr.length)]; }
+            const maxInner = Math.max(innerW, innerH) || outSize;
+            const fillScale = outSize / maxInner;
+            const totalScale = fillScale * userScale;
 
-/* ---------- DOM elements ---------- */
-const liveToggle = qs('#liveToggle');
-const seedEl = qs('#seed');
-const promptEl = qs('#prompt');
-const promptUseAsSeedEl = qs('#promptUseAsSeed');
-const applyPromptBtn = qs('#applyPrompt');
-const generateFromPromptBtn = qs('#generateFromPrompt');
-const generateAIBtn = qs('#generateAI');
+            const cx = outSize / 2, cy = outSize / 2;
+            const transform = `translate(${cx}, ${cy}) rotate(${rotation}) scale(${totalScale}) translate(${-innerW / 2}, ${-innerH / 2})`;
+            const rectFilterAttr = noiseFilterId ? ` filter="url(#${noiseFilterId})"` : '';
 
-const multiSeedEl = qs('#multiSeed');
-const delimiterEl = qs('#delimiter');
-const partsCountEl = qs('#partsCount');
-const composeModeEl = qs('#composeMode');
-const randomizePartsEl = qs('#randomizeParts');
-
-const styleEl = qs('#style');
-const sizeEl = qs('#size');
-const scaleEl = qs('#scale');
-const rotationEl = qs('#rotation');
-const bgTypeEl = qs('#bgType');
-const bgColorEl = qs('#bgColor');
-
-const generateBtn = qs('#generateBtn');
-const applyPreviewBtn = qs('#applyPreviewBtn');
-const randomBtn = qs('#randomBtn');
-const randomPreset = qs('#randomPreset');
-
-const previewBox = qs('#previewBox');
-const previewMeta = qs('#previewMeta');
-const placeholder = qs('#placeholder');
-
-const downloadSvgBtn = qs('#downloadSvg');
-const downloadPngBtn = qs('#downloadPng');
-const copyEmbedBtn = qs('#copyEmbed');
-
-const historyEl = qs('#history');
-const copyJSON = qs('#copyJSON');
-const downloadJSON = qs('#downloadJSON');
-const exportJSON = qs('#exportJSON');
-const settingsOut = qs('#settingsOut');
-const toggleThemeBtn = qs('#toggleTheme');
-
-const autoDescEl = qs('#autoDesc');
-const descThumb = qs('#descThumb');
-const regenDescBtn = qs('#regenDesc');
-const copyDescBtn = qs('#copyDesc');
-const downloadMetaBtn = qs('#downloadMeta');
-
-let history = [];
-const sampleSeeds = ['aurora','lumen','nova','zephyr','sol','aero','pixel','nebula','miso','sora','echo','boreal','octopus','waffle','tiger','meteor'];
-
-const PRIMARY_DICEBEAR = 'https://api.dicebear.com/9.x';
-const FALLBACK_DICEBEAR = 'https://avatars.dicebear.com/api';
-
-/* ---------- background helpers ---------- */
-function hexToRgb(hex){ hex = (hex||'#ffffff').replace('#',''); if(hex.length===3) hex = hex.split('').map(c=>c+c).join(''); return { r: parseInt(hex.slice(0,2),16), g: parseInt(hex.slice(2,4),16), b: parseInt(hex.slice(4,6),16) }; }
-function mixWithWhite(hex, pct=0.6){ const c = hexToRgb(hex); const r = Math.round(c.r + (255-c.r)*pct); const g = Math.round(c.g + (255-c.g)*pct); const b = Math.round(c.b + (255-c.b)*pct); return `rgb(${r},${g},${b})`; }
-
-function buildDefsAndRect(bgType, color, outSize){
-  const idPrefix = 'mb_' + Math.random().toString(36).slice(2,8);
-  let defs = '', rectFill = color || 'transparent', noiseFilterId = null;
-  if(bgType === 'transparent'){ rectFill = 'none'; }
-  else if(bgType === 'solid'){ rectFill = color; }
-  else if(bgType === 'gradient'){
-    const gradId = idPrefix + '_g';
-    const lighter = mixWithWhite(color,0.55);
-    defs = `<linearGradient id="${gradId}" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${color}" /><stop offset="100%" stop-color="${lighter}" stop-opacity="0.9" /></linearGradient>`;
-    rectFill = `url(#${gradId})`;
-  } else if(bgType === 'radial'){
-    const rid = idPrefix + '_r';
-    const lighter = mixWithWhite(color,0.6);
-    defs = `<radialGradient id="${rid}" cx="30%" cy="30%" r="80%"><stop offset="0%" stop-color="${lighter}" /><stop offset="100%" stop-color="${color}" /></radialGradient>`;
-    rectFill = `url(#${rid})`;
-  } else if(bgType === 'dots'){
-    const patId = idPrefix + '_p';
-    defs = `<pattern id="${patId}" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="${mixWithWhite(color,0.85)}"/><circle cx="6" cy="6" r="2" fill="${color}"/></pattern>`;
-    rectFill = `url(#${patId})`;
-  } else if(bgType === 'stripes'){
-    const patId = idPrefix + '_s';
-    defs = `<pattern id="${patId}" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="5" height="10" fill="${color}" /><rect x="5" width="5" height="10" fill="transparent" /></pattern>`;
-    rectFill = `url(#${patId})`;
-  } else if(bgType === 'checker'){
-    const patId = idPrefix + '_c';
-    const lighter = mixWithWhite(color,0.7);
-    defs = `<pattern id="${patId}" width="20" height="20" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="${color}"/><rect x="10" y="10" width="10" height="10" fill="${color}"/><rect width="10" height="10" fill="${lighter}"/><rect x="10" y="10" width="10" height="10" fill="${lighter}"/></pattern>`;
-    rectFill = `url(#${patId})`;
-  } else if(bgType === 'noise'){
-    const filterId = idPrefix + '_f';
-    defs = `<filter id="${filterId}"><feTurbulence baseFrequency="0.8" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0.2"/><feBlend mode="overlay" in2="SourceGraphic"/></filter>`;
-    rectFill = color;
-    noiseFilterId = filterId;
-  }
-  return { defs, rectFill, noiseFilterId };
-}
-
-/* ---------- SVG extraction helpers ---------- */
-function extractInnerSvgInfo(svgText, defaultSize){
-  if(!svgText) return { innerSvg:'', w: defaultSize, h: defaultSize };
-  svgText = svgText.replace(/^<\?xml[\s\S]*?\?>\s*/i, '');
-  const vb = svgText.match(/viewBox=["']?([\d\.\-\s,]+)["']?/i);
-  if(vb){
-    const parts = vb[1].trim().split(/[\s,]+/).map(Number);
-    if(parts.length >= 4 && parts[2] && parts[3]){
-      const innerW = Math.abs(parts[2]);
-      const innerH = Math.abs(parts[3]);
-      const inner = svgText.replace(/^<svg[^>]*>/i,'').replace(/<\/svg>$/i,'');
-      return { innerSvg: inner, w: innerW, h: innerH };
-    }
-  }
-  const wAttr = svgText.match(/<svg[^>]*\bwidth=["']?(\d+(?:\.\d+)?)["']?/i);
-  const hAttr = svgText.match(/<svg[^>]*\bheight=["']?(\d+(?:\.\d+)?)["']?/i);
-  if(wAttr || hAttr){
-    const innerW = wAttr ? Math.round(Number(wAttr[1])) : defaultSize;
-    const innerH = hAttr ? Math.round(Number(hAttr[1])) : defaultSize;
-    const inner = svgText.replace(/^<svg[^>]*>/i,'').replace(/<\/svg>$/i,'');
-    return { innerSvg: inner, w: innerW, h: innerH };
-  }
-  const inner = svgText.replace(/^<svg[^>]*>/i,'').replace(/<\/svg>$/i,'');
-  return { innerSvg: inner, w: defaultSize, h: defaultSize };
-}
-
-/* ---------- Build final centered SVG ---------- */
-async function buildFinalSvg(settings){
-  const outSize = clamp(parseInt(settings.size)||512, 64, 4096);
-  const userScale = clamp(parseFloat(settings.scale)||100, 50, 200) / 100;
-  const rotation = clamp(parseFloat(settings.rotation)||0, -360, 360);
-  const bgType = settings.bgType;
-  const bgColor = settings.bgColor || '#ffffff';
-  const style = settings.style;
-  const seed = (settings.seed || 'anon').toString();
-
-  const { defs, rectFill, noiseFilterId } = buildDefsAndRect(bgType, bgColor, outSize);
-
-  let innerSvg = '';
-  let innerW = outSize;
-  let innerH = outSize;
-
-  if(style === 'jdenticon'){
-    const svgText = jdenticon.toSvg(seed, outSize);
-    const info = extractInnerSvgInfo(svgText, outSize);
-    innerSvg = info.innerSvg;
-    innerW = info.w;
-    innerH = info.h;
-  } else {
-    const tryUrls = [
-      `${PRIMARY_DICEBEAR}/${style}/svg?seed=${encodeURIComponent(seed)}&size=${outSize}`,
-      `${FALLBACK_DICEBEAR}/${style}/${encodeURIComponent(seed)}.svg?size=${outSize}`
-    ];
-    let fetchedText = null;
-    let lastErr = null;
-    for(const url of tryUrls){
-      try{
-        const res = await fetch(url, {cache:'no-store'});
-        if(!res.ok){ lastErr = new Error('Fetch failed ' + res.status + ' from ' + url); continue; }
-        fetchedText = await res.text();
-        break;
-      }catch(e){ lastErr = e; }
-    }
-    if(!fetchedText) throw new Error('Failed to fetch SVG. ' + (lastErr && lastErr.message));
-    const info = extractInnerSvgInfo(fetchedText, outSize);
-    innerSvg = info.innerSvg;
-    innerW = info.w;
-    innerH = info.h;
-  }
-
-  // compute scale to FILL box while respecting user scale percentage
-  const maxInner = Math.max(innerW, innerH) || outSize;
-  const fillScale = outSize / maxInner;       // scale needed to make inner cover outSize
-  const totalScale = fillScale * userScale;
-
-  const cx = outSize/2, cy = outSize/2;
-  const transform = `translate(${cx},${cy}) rotate(${rotation}) scale(${totalScale}) translate(${-innerW/2},${-innerH/2})`;
-  const rectFilterAttr = noiseFilterId ? ` filter="url(#${noiseFilterId})"` : '';
-
-  const svg =
-`<svg xmlns="http://www.w3.org/2000/svg" width="${outSize}" height="${outSize}" viewBox="0 0 ${outSize} ${outSize}" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Monadicon">
-  <defs>
-    ${defs}
-  </defs>
-  <rect width="${outSize}" height="${outSize}" fill="${rectFill}" ${rectFilterAttr} />
-  <g transform="${transform}">
-    ${innerSvg}
-  </g>
+            const svg = `
+<svg xmlns="http://www.w3.org/2000/svg" width="${outSize}" height="${outSize}" viewBox="0 0 ${outSize} ${outSize}" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Monadicon">
+    <defs>${defs}</defs>
+    <rect width="${outSize}" height="${outSize}" fill="${rectFill}" ${rectFilterAttr} />
+    <g transform="${transform}">${innerSvg}</g>
 </svg>`;
-  return svg;
-}
+            
+            return svg;
+        }
+        
+        // Render preview
+        async function renderPreview(settings, addToHistory = false) {
+            previewBox.innerHTML = `<div style="color:var(--muted);text-align:center">Rendering...</div>`;
+            
+            try {
+                const finalSvg = await buildFinalSvg(settings);
+                previewBox.innerHTML = finalSvg;
+                if (placeholder) placeholder.style.display = 'none';
+                previewMeta.textContent = `${settings.style} • ${settings.seed} • ${settings.size}px`;
+                settingsOut.textContent = JSON.stringify(settings, null, 2);
 
-/* ---------- Composite builder for multi-seed ---------- */
-async function buildCompositeFromSeeds(seeds, baseSettings, mode='grid'){
-  const outSize = clamp(parseInt(baseSettings.size)||512, 64, 4096);
-  if(mode === 'grid'){
-    const count = seeds.length;
-    const cols = Math.ceil(Math.sqrt(count));
-    const rows = Math.ceil(count / cols);
-    const tile = Math.floor(outSize / cols);
-    const tileSvgs = await Promise.all(seeds.map(async (s)=>{
-      const sset = Object.assign({}, baseSettings, { seed: s, size: tile, scale: 100 });
-      return await buildFinalSvg(sset);
-    }));
-    let images = '';
-    let i = 0;
-    for(let r=0;r<rows;r++){
-      for(let c=0;c<cols;c++){
-        if(i >= tileSvgs.length) break;
-        const dataUri = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(tileSvgs[i])));
-        const x = c * tile;
-        const y = r * tile;
-        images += `<image x="${x}" y="${y}" width="${tile}" height="${tile}" href="${dataUri}" />\n`;
-        i++;
-      }
-    }
-    const { defs, rectFill, noiseFilterId } = buildDefsAndRect(baseSettings.bgType, baseSettings.bgColor, outSize);
-    const rectFilterAttr = noiseFilterId ? ` filter="url(#${noiseFilterId})"` : '';
-    const svg =
-`<svg xmlns="http://www.w3.org/2000/svg" width="${outSize}" height="${outSize}" viewBox="0 0 ${outSize} ${outSize}">
-  <defs>${defs}</defs>
-  <rect width="${outSize}" height="${outSize}" fill="${rectFill}" ${rectFilterAttr}/>
-  ${images}
+                updateAutoDescriptionFromRendered(finalSvg, settings);
+
+                if (addToHistory) {
+                    history.unshift({ settings, svg: finalSvg });
+                    if (history.length > 28) history.pop();
+                    renderHistory();
+                    confetti();
+                    showToast('Generated and added to history');
+                } else {
+                    showToast('Preview applied');
+                }
+            } catch (e) {
+                previewBox.innerHTML = `<div style="color:#ff6b6b;font-weight:700">Error rendering preview</div><div style="color:var(--muted);margin-top:8px">Check console for details.</div>`;
+                console.error('Preview error:', e);
+                showToast('Preview error — check console');
+            }
+        }
+        
+        // xAI Integration
+        async function generateWithxAI(prompt, width = 512) {
+            previewBox.innerHTML = `
+                <div class="ai-loading">
+                    <div class="spinner"></div>
+                    <div>Generating AI image with xAI...</div>
+                    <div style="font-size:12px;margin-top:8px">This may take 10-20 seconds</div>
+                </div>
+            `;
+            
+            try {
+                const response = await fetch('/api/generate-image-xai', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        prompt, 
+                        width,
+                        height: width 
+                    })
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`xAI API error: ${response.status} ${errorText}`);
+                }
+                
+                const result = await response.json();
+                
+                if (!result.image) {
+                    throw new Error('Invalid response from xAI API');
+                }
+                
+                const img = document.createElement('img');
+                img.src = `data:image/png;base64,${result.image}`;
+                img.alt = `AI Generated: ${prompt}`;
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.objectFit = 'cover';
+                
+                previewBox.innerHTML = '';
+                previewBox.appendChild(img);
+                previewMeta.textContent = `xAI • ${prompt} • ${width}px`;
+                
+                const svgWrapper = `
+<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${width}">
+    <image href="data:image/png;base64,${result.image}" width="${width}" height="${width}" />
 </svg>`;
-    return svg;
-  } else {
-    // layered composition
-    const layers = await Promise.all(seeds.map(async (s)=> {
-      const sset = Object.assign({}, baseSettings, { seed: s, size: outSize, scale: 100 });
-      return await buildFinalSvg(sset);
-    }));
-    const transforms = seeds.map((_, idx)=>{
-      const t = 1 - (idx * 0.08);
-      const rot = (idx - Math.floor(seeds.length/2)) * 8 * (Math.random()*1.0);
-      const tx = (Math.random()-0.5) * outSize * 0.03 * (idx+1);
-      const ty = (Math.random()-0.5) * outSize * 0.03 * (idx+1);
-      return { t, rot, tx, ty, opacity: Math.max(0.6 - idx*0.12, 0.28) };
-    });
-    const { defs, rectFill, noiseFilterId } = buildDefsAndRect(baseSettings.bgType, baseSettings.bgColor, outSize);
-    const rectFilterAttr = noiseFilterId ? ` filter="url(#${noiseFilterId})"` : '';
-    let inner = '';
-    for(let i=0;i<layers.length;i++){
-      const dataUri = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(layers[i])));
-      const tr = transforms[i];
-      inner += `<image href="${dataUri}" width="${outSize}" height="${outSize}" opacity="${tr.opacity}" transform="translate(${tr.tx},${tr.ty}) rotate(${tr.rot} ${outSize/2} ${outSize/2}) scale(${tr.t})" preserveAspectRatio="xMidYMid slice" />\n`;
-    }
-    const svg =
-`<svg xmlns="http://www.w3.org/2000/svg" width="${outSize}" height="${outSize}" viewBox="0 0 ${outSize} ${outSize}">
-  <defs>${defs}</defs>
-  <rect width="${outSize}" height="${outSize}" fill="${rectFill}" ${rectFilterAttr}/>
-  ${inner}
-</svg>`;
-    return svg;
-  }
-}
-
-/* ---------- Rendering ---------- */
-async function renderPreview(settings, { addToHistory=false } = {}){
-  previewBox.innerHTML = `<div style="color:var(--muted);text-align:center">Rendering...</div>`;
-  try{
-    const finalSvg = await buildFinalSvg(settings);
-    previewBox.innerHTML = finalSvg;
-    if(placeholder) placeholder.style.display = 'none';
-    previewMeta.textContent = `${settings.style} • ${settings.seed} • ${settings.size}px`;
-    settingsOut.textContent = JSON.stringify(settings, null, 2);
-
-    updateAutoDescriptionFromRendered(finalSvg, settings);
-
-    if(addToHistory){
-      history.unshift({settings, svg: finalSvg});
-      if(history.length>28) history.pop();
-      renderHistory();
-      confetti();
-      showToast('Generated and added to history');
-    } else {
-      showToast('Preview applied');
-    }
-  }catch(e){
-    previewBox.innerHTML = `<div style="color:#ff6b6b;font-weight:700">Error rendering preview</div><div style="color:var(--muted);margin-top:8px">Check console for details.</div>`;
-    console.error('Preview error:', e);
-    showToast('Preview error — check console');
-  }
-}
-
-/* ---------- Multi-seed composite runner ---------- */
-async function renderCompositeFromPrompt(promptText){
-  const enabled = multiSeedEl.checked;
-  if(!promptText){
-    showToast('Please enter a prompt');
-    return;
-  }
-  if(!enabled){
-    const s = readSettingsFromUI(); s.seed = promptText; await renderPreview(s, { addToHistory:true }); return;
-  }
-
-  let parts = [];
-  const delim = delimiterEl.value;
-  if(delim === 'space') parts = promptText.trim().split(/\s+/).filter(Boolean);
-  else if(delim === 'comma') parts = promptText.split(',').map(s=>s.trim()).filter(Boolean);
-  else if(delim === 'newline') parts = promptText.split(/\n+/).map(s=>s.trim()).filter(Boolean);
-  else if(delim === 'char') parts = promptText.replace(/\s+/g,'').split('').filter(Boolean);
-  if(parts.length === 0) parts = [promptText];
-
-  const maxParts = clamp(parseInt(partsCountEl.value)||3, 2, 12);
-
-  if(randomizePartsEl.checked){
-    const rnd = seededRandomFromSeed(promptText + '::parts');
-    const chosen = [];
-    const pool = parts.slice();
-    while(pool.length < maxParts){
-      pool.push(parts[pool.length % parts.length] + '-' + ((Math.abs(hashString(promptText + 'pad' + pool.length)) % 9000) + 1000));
-    }
-    for(let i=0;i<maxParts;i++){
-      const idx = Math.floor(rnd() * pool.length);
-      const suffix = '-' + ((Math.abs(hashString(promptText + 'suf' + i)) % 9000) + 1000);
-      chosen.push(pool[idx] + suffix);
-    }
-    parts = chosen;
-  } else {
-    if(parts.length >= maxParts) parts = parts.slice(0, maxParts);
-    else {
-      const padded = parts.slice();
-      let i=0;
-      while(padded.length < maxParts){
-        padded.push((parts[i % parts.length] || promptText) + '-' + ((Math.abs(hashString(promptText + '-pad-' + i)) % 9000) + 1000));
-        i++;
-      }
-      parts = padded;
-    }
-  }
-
-  const baseSettings = readSettingsFromUI();
-  const mode = composeModeEl.value || 'grid';
-  previewBox.innerHTML = `<div style="color:var(--muted);text-align:center">Rendering composite...</div>`;
-  try{
-    const compositeSvg = await buildCompositeFromSeeds(parts, Object.assign({}, baseSettings, { size: parseInt(baseSettings.size) }), mode);
-    previewBox.innerHTML = compositeSvg;
-    previewMeta.textContent = `Composite (${mode}) • ${parts.length} parts`;
-    settingsOut.textContent = JSON.stringify({ multiSeeds: parts, base: baseSettings }, null, 2);
-
-    updateAutoDescriptionForComposite(parts, baseSettings, mode, compositeSvg);
-
-    history.unshift({ settings: { seed: 'composite', style: baseSettings.style, size: baseSettings.size }, svg: compositeSvg });
-    if(history.length>28) history.pop();
-    renderHistory();
-    confetti();
-    showToast('Composite generated and added to history');
-  } catch(e){
-    console.error('Composite error', e);
-    previewBox.innerHTML = `<div style="color:#ff6b6b;font-weight:700">Error creating composite</div>`;
-    showToast('Error creating composite — check console');
-  }
-}
-
-/* ---------- Auto description ---------- */
-function computeRarity(seedString){
-  const h = hashString(seedString).toString();
-  const v = parseInt(h.slice(-2), 10) || 0;
-  if(v > 240) return 'Legendary';
-  if(v > 200) return 'Epic';
-  if(v > 140) return 'Rare';
-  if(v > 80) return 'Uncommon';
-  return 'Common';
-}
-function titleCase(s){ return s.replace(/[-_]/g,' ').split(/\s+/).map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' '); }
-function shortHex(seed){ return (hashString(seed)>>>0).toString(16).slice(0,4).toUpperCase(); }
-function generateAttributes(settings, seeds){
-  return [
-    { trait_type: 'Style', value: settings.style },
-    { trait_type: 'Background', value: settings.bgType },
-    { trait_type: 'BgColor', value: settings.bgColor },
-    { trait_type: 'Scale', value: `${settings.scale}%` },
-    { trait_type: 'Rotation', value: `${settings.rotation}°` },
-    { trait_type: 'Seeds', value: seeds.join(', ') },
-    { trait_type: 'Rarity', value: computeRarity(seeds.join('|')) }
-  ];
-}
-function pickDeterministicAdjective(seed){
-  const adjectives = ['glowing','playful','enigmatic','vibrant','serene','bold','whimsical','sleek','crisp','dreamy','electric','retro'];
-  return pickDeterministic(adjectives, seed);
-}
-function generateAutoDescription(settings, promptText, seeds){
-  const mainSeed = seeds && seeds.length ? seeds[0] : (settings.seed || 'anon');
-  const name = `${titleCase(mainSeed.toString().slice(0,16))} #${shortHex(seeds.join('|')|| mainSeed)}`;
-  const rarity = computeRarity(seeds.join('|') || mainSeed);
-  const mood = pickDeterministicAdjective(seeds.join('|') + '|' + settings.style);
-  const promptNote = promptText ? ` Inspired by "${promptText.trim().slice(0,120)}".` : '';
-  const blurb = `${name} is a ${mood} avatar rendered in the ${settings.style} style with a ${settings.bgType} background.${promptNote} It showcases layered geometry and balanced composition — perfect for avatars and collectibles.`;
-  const attributes = generateAttributes(settings, seeds);
-  const traitsText = attributes.map(a => `${a.trait_type}: ${a.value}`).join(' • ');
-  const hashtags = ['#Monadicons', '#Avatar', '#SVG', `#${rarity}`].join(' ');
-  const description = `${blurb}\n\nAttributes\n${traitsText}\n\nRarity: ${rarity}\n\n${hashtags}`;
-  return { name, description, attributes, rarity };
-}
-function updateAutoDescriptionFromRendered(svgText, settings){
-  try{
-    const seed = settings.seed ? settings.seed.toString() : 'anon';
-    const promptText = (promptEl.value || '').trim();
-    const meta = generateAutoDescription(settings, promptText, [seed]);
-    autoDescEl.textContent = meta.description;
-    const thumbData = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgText)));
-    descThumb.innerHTML = `<img src="${thumbData}" alt="thumb" style="width:100%;height:100%;object-fit:cover" />`;
-    regenDescBtn._meta = { meta, svg: svgText, settings };
-    copyDescBtn._meta = regenDescBtn._meta;
-    downloadMetaBtn._meta = regenDescBtn._meta;
-  }catch(e){ console.error('updateAutoDescriptionFromRendered error', e); }
-}
-function updateAutoDescriptionForComposite(parts, baseSettings, mode, compositeSvg){
-  try{
-    const promptText = (promptEl.value || '').trim();
-    const meta = generateAutoDescription(baseSettings, promptText, parts);
-    meta.name = `${meta.name} (${mode})`;
-    autoDescEl.textContent = meta.description;
-    const thumbData = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(compositeSvg)));
-    descThumb.innerHTML = `<img src="${thumbData}" alt="thumb" style="width:100%;height:100%;object-fit:cover" />`;
-    regenDescBtn._meta = { meta, svg: compositeSvg, settings: baseSettings, parts, mode };
-    copyDescBtn._meta = regenDescBtn._meta;
-    downloadMetaBtn._meta = regenDescBtn._meta;
-  }catch(e){ console.error('updateAutoDescriptionForComposite error', e); }
-}
-
-/* ---------- Download helpers ---------- */
-function downloadSVGfromString(svgString, filename='monadicon.svg'){
-  const blob = new Blob([svgString], {type:'image/svg+xml'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = filename; a.click();
-  URL.revokeObjectURL(url);
-}
-function downloadPNGfromSvgString(svgString, filename='monadicon.png'){
-  const img = new Image();
-  img.onload = () => {
-    const w = img.width, h = img.height;
-    const canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
-    const ctx = canvas.getContext('2d'); ctx.drawImage(img,0,0);
-    canvas.toBlob((blob)=>{ const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = filename; a.click(); URL.revokeObjectURL(url); }, 'image/png');
-  };
-  img.onerror = e => { showToast('PNG conversion failed'); console.error(e); };
-  img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
-}
-
-/* ---------- History UI ---------- */
-function renderHistory(){
-  historyEl.innerHTML = '';
-  for(const item of history){
-    const thumb = document.createElement('div'); thumb.className='thumb'; thumb.title = `${item.settings.seed || 'composite'} • ${item.settings.style}`;
-    const img = document.createElement('img'); img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover';
-    img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(item.svg)));
-    thumb.appendChild(img);
-    thumb.onclick = ()=> { loadSettings(item.settings); previewBox.innerHTML = item.svg; updateAutoDescriptionFromRendered(item.svg, item.settings); showToast('Loaded from history'); };
-    historyEl.appendChild(thumb);
-  }
-}
-
-/* ---------- UI read/load ---------- */
-function readSettingsFromUI(){
-  return {
-    seed: seedEl.value || 'anon',
-    style: styleEl.value,
-    size: parseInt(sizeEl.value) || 512,
-    scale: parseFloat(scaleEl.value) || 100,
-    rotation: parseFloat(rotationEl.value) || 0,
-    bgType: bgTypeEl.value,
-    bgColor: bgColorEl.value || '#7C3AED'
-  };
-}
-function loadSettings(s){
-  seedEl.value = s.seed || 'anon';
-  styleEl.value = s.style || 'adventurer';
-  sizeEl.value = s.size || 512;
-  scaleEl.value = s.scale || 100;
-  rotationEl.value = s.rotation || 0;
-  bgTypeEl.value = s.bgType || 'transparent';
-  bgColorEl.value = s.bgColor || '#7C3AED';
-  settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
-}
-
-/* ---------- Event wiring ---------- */
-generateBtn.addEventListener('click', async () => { const s = readSettingsFromUI(); await renderPreview(s, { addToHistory: true }); });
-applyPreviewBtn.addEventListener('click', async () => { const s = readSettingsFromUI(); await renderPreview(s, { addToHistory: false }); });
-
-applyPromptBtn.addEventListener('click', () => {
-  const p = (promptEl.value || '').trim();
-  if (!p) { showToast('Please enter a prompt'); return; }
-  seedEl.value = p;
-  settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
-  if (promptUseAsSeedEl.checked && liveToggle.checked) applyPreviewBtn.click();
-});
-generateFromPromptBtn.addEventListener('click', async () => {
-  const p = (promptEl.value || '').trim();
-  if (!p) { showToast('Please enter a prompt'); return; }
-  if (multiSeedEl.checked) { await renderCompositeFromPrompt(p); return; }
-  const seedFromPrompt = slugifyPrompt(p);
-  seedEl.value = seedFromPrompt;
-  settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
-  const s = readSettingsFromUI();
-  await renderPreview(s, { addToHistory: true });
-});
-promptUseAsSeedEl.addEventListener('change', () => {
-  if (promptUseAsSeedEl.checked) {
-    const p = (promptEl.value || '').trim();
-    if (p) seedEl.value = slugifyPrompt(p);
-    settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
-    if (liveToggle.checked) applyPreviewBtn.click();
-  }
-});
-promptEl.addEventListener('input', () => {
-  if (promptUseAsSeedEl.checked) {
-    const p = (promptEl.value || '').trim();
-    if (p) seedEl.value = slugifyPrompt(p);
-    settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
-    if (liveToggle.checked) { if (window._liveTimeout) clearTimeout(window._liveTimeout); window._liveTimeout = setTimeout(() => { applyPreviewBtn.click(); }, 300); }
-  }
-});
-
-/* ---------- Generate AI image (frontend) ---------- */
-generateAIBtn.addEventListener('click', async () => {
-  const prompt = (promptEl.value || '').trim();
-  if (!prompt) { showToast('Please enter a prompt'); return; }
-  generateAIBtn.disabled = true;
-  generateAIBtn.textContent = 'Generating AI...';
-  showToast('AI generation requested — server will do the work');
-
-  try {
-    const width = parseInt(sizeEl.value || 512, 10);
-    const height = width;
-    const resp = await fetch('https://your-project-name.vercel.app/api/generate-image-xai', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt, width, height })
-    });
-    const j = await resp.json();
-    if (!resp.ok || j.error) { 
-      console.error('AI error', j); 
-      showToast('AI generation failed (see console): ' + (j.error || 'Unknown error')); 
-      return; 
-    }
-    if (j.image) {
-      const mime = j.mime || 'image/png';
-      const dataUrl = `data:${mime};base64,${j.image}`;
-      previewBox.innerHTML = `<img src="${dataUrl}" alt="AI result" style="width:100%;height:100%;object-fit:cover" />`;
-      previewMeta.textContent = `AI image • ${prompt} • ${width}px`;
-      const svgWrapper = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}"><image href="${dataUrl}" width="${width}" height="${height}" /></svg>`;
-      updateAutoDescriptionFromRendered(svgWrapper, Object.assign(readSettingsFromUI(), { seed: prompt, style: 'ai-image' }));
-      history.unshift({ settings: { seed: prompt, style: 'ai-image', size: width }, svg: svgWrapper });
-      if (history.length > 28) history.pop();
-      renderHistory();
-      showToast('AI image ready');
-    } else {
-      console.error('Unexpected AI response', j);
-      showToast('AI returned unexpected response — check console');
-    }
-  } catch (err) {
-    console.error('AI generation failed', err);
-    showToast('AI generation failed — check console: ' + err.message);
-  } finally {
-    generateAIBtn.disabled = false;
-    generateAIBtn.textContent = 'Generate AI Image';
-  }
-});
-
-/* ---------- Downloads & share ---------- */
-downloadSvgBtn.addEventListener('click', async () => {
-  try{
-    const curSvg = previewBox.querySelector('svg');
-    if(curSvg){
-      const svgText = new XMLSerializer().serializeToString(curSvg);
-      downloadSVGfromString(svgText, `${(seedEl.value||'monadicon')}.svg`);
-      showToast('SVG downloaded');
-      return;
-    }
-    const s = readSettingsFromUI();
-    const svg = await buildFinalSvg(s);
-    downloadSVGfromString(svg, `${(s.seed||'monadicon')}.svg`);
-    showToast('SVG downloaded');
-  }catch(e){ showToast('SVG download failed'); console.error(e); }
-});
-downloadPngBtn.addEventListener('click', async () => {
-  try{
-    const curSvg = previewBox.querySelector('svg');
-    if(curSvg){
-      const svgText = new XMLSerializer().serializeToString(curSvg);
-      downloadPNGfromSvgString(svgText, `${(seedEl.value||'monadicon')}.png`);
-      showToast('PNG download started');
-      return;
-    }
-    const s = readSettingsFromUI();
-    const svg = await buildFinalSvg(s);
-    downloadPNGfromSvgString(svg, `${(s.seed||'monadicon')}.png`);
-    showToast('PNG download started');
-  }catch(e){ showToast('PNG creation failed'); console.error(e); }
-});
-copyEmbedBtn.addEventListener('click', async () => {
-  const curSvg = previewBox.querySelector('svg');
-  if(curSvg){
-    const svgText = new XMLSerializer().serializeToString(curSvg);
-    navigator.clipboard.writeText(svgText).then(() => showToast('SVG embed copied to clipboard')).catch(() => showToast('Copy failed'));
-    return;
-  }
-  const s = readSettingsFromUI();
-  const svg = await buildFinalSvg(s);
-  navigator.clipboard.writeText(svg).then(() => showToast('SVG embed copied to clipboard')).catch(() => showToast('Copy failed'));
-});
-
-/* ---------- Random / presets ---------- */
-randomBtn.addEventListener('click', () => {
-  seedEl.value = sampleSeeds[Math.floor(Math.random()*sampleSeeds.length)] + '-' + Math.floor(Math.random()*9999);
-  const styles = qsa('#style option').map(o => o.value);
-  styleEl.value = styles[Math.floor(Math.random()*
+                
+                history.unshift({ 
+                    settings: { 
+                        seed: prompt, 
+                        style: 'xai-image', 
+                        size: width 
+                    }, 
+                    svg: svgWrapper 
+                });
+                
+                if (history.length > 28) history.pop();
+                renderHistory();
+                
+                updateAutoDescriptionForAI(prompt, width, svgWrapper);
+                
+                showToast('xAI image generated successfully!');
+                return svgWrapper;
+            } catch (error) {
+                console.error('xAI generation error:', error);
+                previewBox.innerHTML = `
+                    <div style="text-align:center;color:#ff6b6b">
+                        <div style="font-weight:700;margin-bottom:8px">AI Generation Failed</div>
+                        <div style="font-size:14px">${error.message || 'Please try again'}</div>
+                    </div>
+                `;
+                showToast('xAI generation failed — see console');
+                return null;
+            }
+        }
+        
+        // Auto description
+        function computeRarity(seedString) { 
+            const h = hashString(seedString).toString(); 
+            const v = parseInt(h.slice(-2), 10) || 0; 
+            if (v > 240) return 'Legendary'; 
+            if (v > 200) return 'Epic'; 
+            if (v > 140) return 'Rare'; 
+            if (v > 80) return 'Uncommon'; 
+            return 'Common'; 
+        }
+        
+        function titleCase(s) { 
+            return s.replace(/[-_]/g, ' ').split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '); 
+        }
+        
+        function shortHex(seed) { 
+            return (hashString(seed) >>> 0).toString(16).slice(0, 4).toUpperCase(); 
+        }
+        
+        function generateAttributes(settings, seeds) {
+            return [
+                { trait_type: 'Style', value: settings.style },
+                { trait_type: 'Background', value: settings.bgType },
+                { trait_type: 'BgColor', value: settings.bgColor },
+                { trait_type: 'Scale', value: `${settings.scale}%` },
+                { trait_type: 'Rotation', value: `${settings.rotation}°` },
+                { trait_type: 'Seeds', value: seeds.join(', ') },
+                { trait_type: 'Rarity', value: computeRarity(seeds.join('|')) }
+            ];
+        }
+        
+        function pickDeterministicAdjective(seed) { 
+            const adjectives = ['glowing', 'playful', 'enigmatic', 'vibrant', 'serene', 'bold', 'whimsical', 'sleek', 'crisp', 'dreamy', 'electric', 'retro']; 
+            return pickDeterministic(adjectives, seed); 
+        }
+        
+        function generateAutoDescription(settings, promptText, seeds) {
+            const mainSeed = seeds && seeds.length ? seeds[0] : (settings.seed || 'anon');
+            const name = `${titleCase(mainSeed.toString().slice(0, 16))} #${shortHex(seeds.join('|') || mainSeed)}`;
+            const rarity = computeRarity(seeds.join('|') || mainSeed);
+            const mood = pickDeterministicAdjective(seeds.join('|') + '|' + settings.style);
+            const promptNote = promptText ? ` Inspired by "${promptText.trim().slice(0, 120)}".` : '';
+            const blurb = `${name} is a ${mood} avatar rendered in the ${settings.style} style with a ${settings.bgType} background.${promptNote} It showcases layered geometry and balanced composition — perfect for avatars and collectibles.`;
+            const attributes = generateAttributes(settings, seeds);
+            const traitsText = attributes.map(a => `${a.trait_type}: ${a.value}`).join(' • ');
+            const hashtags = ['#Monadicons', '#Avatar', '#SVG', `#${rarity}`].join(' ');
+            const description = `${blurb}\n\nAttributes\n${traitsText}\n\nRarity: ${rarity}\n\n${hashtags}`;
+            return { name, description, attributes, rarity };
+        }
+        
+        function updateAutoDescriptionFromRendered(svgText, settings) {
+            try {
+                const seed = settings.seed ? settings.seed.toString() : 'anon';
+                const promptText = (promptEl.value || '').trim();
+                const meta = generateAutoDescription(settings, promptText, [seed]);
+                autoDescEl.textContent = meta.description;
+                const thumbData = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgText)));
+                descThumb.innerHTML = `<img src="${thumbData}" alt="thumb" style="width:100%;height:100%;object-fit:cover" />`;
+                regenDescBtn._meta = { meta, svg: svgText, settings };
+                copyDescBtn._meta = regenDescBtn._meta;
+                downloadMetaBtn._meta = regenDescBtn._meta;
+            } catch (e) { 
+                console.error('updateAutoDescriptionFromRendered error', e); 
+            }
+        }
+        
+        function updateAutoDescriptionForAI(prompt, width, svgText) {
+            try {
+                const name = `AI: ${titleCase(prompt.slice(0, 20))}`;
+                const description = `${name}\n\nThis image was generated using xAI based on the prompt: "${prompt}".\n\nResolution: ${width}x${width}px\n\n#AI #xAI #GeneratedArt`;
+                
+                autoDescEl.textContent = description;
+                const thumbData = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgText)));
+                descThumb.innerHTML = `<img src="${thumbData}" alt="thumb" style="width:100%;height:100%;object-fit:cover" />`;
+                
+                const meta = {
+                    name,
+                    description,
+                    attributes: [
+                        { trait_type: 'Generator', value: 'xAI' },
+                        { trait_type: 'Prompt', value: prompt },
+                        { trait_type: 'Resolution', value: `${width}x${width}` }
+                    ],
+                    rarity: 'Unique'
+                };
+                
+                regenDescBtn._meta = { meta, svg: svgText };
+                copyDescBtn._meta = regenDescBtn._meta;
+                downloadMetaBtn._meta = regenDescBtn._meta;
+            } catch (e) { 
+                console.error('updateAutoDescriptionForAI error', e); 
+            }
+        }
+        
+        // Download functions
+        function downloadSVGfromString(svgString, filename = 'monadicon.svg') { 
+            const blob = new Blob([svgString], { type: 'image/svg+xml' }); 
+            const url = URL.createObjectURL(blob); 
+            const a = document.createElement('a'); 
+            a.href = url; 
+            a.download = filename; 
+            a.click(); 
+            URL.revokeObjectURL(url); 
+        }
+        
+        function downloadPNGfromSvgString(svgString, filename = 'monadicon.png') { 
+            const img = new Image(); 
+            img.onload = () => { 
+                const canvas = document.createElement('canvas'); 
+                canvas.width = img.width; 
+                canvas.height = img.height; 
+                const ctx = canvas.getContext('2d'); 
+                ctx.drawImage(img, 0, 0); 
+                canvas.toBlob((blob) => { 
+                    const url = URL.createObjectURL(blob); 
+                    const a = document.createElement('a'); 
+                    a.href = url; 
+                    a.download = filename; 
+                    a.click(); 
+                    URL.revokeObjectURL(url); 
+                }, 'image/png'); 
+            }; 
+            img.onerror = e => { 
+                showToast('PNG conversion failed'); 
+                console.error(e); 
+            }; 
+            img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString))); 
+        }
+        
+        function renderHistory() { 
+            historyEl.innerHTML = ''; 
+            for (const item of history) { 
+                const thumb = document.createElement('div'); 
+                thumb.className = 'thumb'; 
+                thumb.title = `${item.settings.seed || 'composite'} • ${item.settings.style}`; 
+                const img = document.createElement('img'); 
+                img.style.width = '100%'; 
+                img.style.height = '100%'; 
+                img.style.objectFit = 'cover'; 
+                
+                if (item.settings.style === 'xai-image') {
+                    const parser = new DOMParser();
+                    const svgDoc = parser.parseFromString(item.svg, 'image/svg+xml');
+                    const image = svgDoc.querySelector('image');
+                    img.src = image ? image.getAttribute('href') : '';
+                } else {
+                    img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(item.svg)));
+                }
+                
+                thumb.appendChild(img); 
+                thumb.onclick = () => { 
+                    loadSettings(item.settings); 
+                    previewBox.innerHTML = item.svg; 
+                    if (item.settings.style === 'xai-image') {
+                        updateAutoDescriptionForAI(item.settings.seed, item.settings.size, item.svg);
+                    } else {
+                        updateAutoDescriptionFromRendered(item.svg, item.settings); 
+                    }
+                    showToast('Loaded from history'); 
+                }; 
+                historyEl.appendChild(thumb); 
+            } 
+        }
+        
+        // Settings management
+        function readSettingsFromUI() { 
+            return { 
+                seed: seedEl.value || 'anon', 
+                style: styleEl.value, 
+                size: parseInt(sizeEl.value) || 512, 
+                scale: parseFloat(scaleEl.value) || 100, 
+                rotation: parseFloat(rotationEl.value) || 0, 
+                bgType: bgTypeEl.value, 
+                bgColor: bgColorEl.value || '#7C3AED' 
+            }; 
+        }
+        
+        function loadSettings(s) { 
+            seedEl.value = s.seed || 'anon'; 
+            styleEl.value = s.style || 'adventurer'; 
+            sizeEl.value = s.size || 512; 
+            scaleEl.value = s.scale || 100; 
+            rotationEl.value = s.rotation || 0; 
+            bgTypeEl.value = s.bgType || 'transparent'; 
+            bgColorEl.value = s.bgColor || '#7C3AED'; 
+            settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2); 
+        }
+        
+        // Confetti effect
+        function confetti() { 
+            const canvas = document.createElement('canvas'); 
+            canvas.style.position = 'fixed'; 
+            canvas.style.left = '0'; 
+            canvas.style.top = '0'; 
+            canvas.style.pointerEvents = 'none'; 
+            canvas.width = innerWidth; 
+            canvas.height = innerHeight; 
+            document.body.appendChild(canvas); 
+            const ctx = canvas.getContext('2d'); 
+            const pieces = Array.from({ length: 80 }, () => ({ 
+                x: innerWidth / 2 + (Math.random() - 0.5) * 200, 
+                y: innerHeight / 2 + (Math.random() - 0.5) * 60, 
+                vx: (Math.random() - 0.5) * 8, 
+                vy: Math.random() * -10 - 2, 
+                r: Math.random() * 6 + 3, 
+                c: `hsl(${Math.random() * 360},80%,60%)`, 
+                rot: Math.random() * Math.PI 
+            })); 
+            
+            (function anim() { 
+                ctx.clearRect(0, 0, canvas.width, canvas.height); 
+                pieces.forEach((p, i) => { 
+                    p.x += p.vx; 
+                    p.y += p.vy; 
+                    p.vy += 0.4; 
+                    p.rot += 0.2; 
+                    ctx.save(); 
+                    ctx.translate(p.x, p.y); 
+                    ctx.rotate(p.rot); 
+                    ctx.fillStyle = p.c; 
+                    ctx.fillRect(-p.r / 2, -p.r / 2, p.r, p.r); 
+                    ctx.restore(); 
+                    if (p.y > canvas.height + 50) pieces.splice(i, 1); 
+                }); 
+                if (pieces.length) requestAnimationFrame(anim); 
+                else canvas.remove(); 
+            })(); 
+        }
+        
+        // Theme management
+        let isLight = false;
+        
+        function setTheme(light) { 
+            isLight = !!light; 
+            if (isLight) { 
+                document.body.classList.add('light'); 
+                document.body.classList.remove('dark'); 
+                toggleThemeBtn.textContent = 'Dark'; 
+            } else { 
+                document.body.classList.remove('light'); 
+                document.body.classList.add('dark'); 
+                toggleThemeBtn.textContent = 'Light'; 
+            } 
+            try { 
+                localStorage.setItem('monadicons:theme', isLight ? 'light' : 'dark'); 
+            } catch (e) { } 
+        }
+        
+        // Event listeners
+        generateBtn.addEventListener('click', async () => { 
+            const s = readSettingsFromUI(); 
+            await renderPreview(s, true); 
+        });
+        
+        applyPreviewBtn.addEventListener('click', async () => { 
+            const s = readSettingsFromUI(); 
+            await renderPreview(s, false); 
+        });
+        
+        applyPromptBtn.addEventListener('click', () => { 
+            const p = (promptEl.value || '').trim(); 
+            if (!p) { 
+                showToast('Please enter a prompt'); 
+                return; 
+            } 
+            seedEl.value = p; 
+            settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2); 
+            if (promptUseAsSeedEl.checked && liveToggle.checked) applyPreviewBtn.click(); 
+        });
+        
+        generateFromPromptBtn.addEventListener('click', async () => { 
+            const p = (promptEl.value || '').trim(); 
+            if (!p) { 
+                showToast('Please enter a prompt'); 
+                return; 
+            } 
+            const seedFromPrompt = promptUseAsSeedEl.checked ? p : slugifyPrompt(p); 
+            seedEl.value = seedFromPrompt; 
+            settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2); 
+            const s = readSettingsFromUI(); 
+            await renderPreview(s, true); 
+        });
+        
+        generateAIBtn.addEventListener('click', async () => { 
+            const prompt = (promptEl.value || '').trim(); 
+            if (!prompt) { 
+                showToast('Please enter a prompt'); 
+                return; 
+            } 
+            const width = parseInt(sizeEl.value) || 512; 
+            await generateWithxAI(prompt, width); 
+        });
+        
+        promptUseAsSeedEl.addEventListener('change', () => { 
+            if (promptUseAsSeedEl.checked) { 
+                const p = (promptEl.value || '').trim(); 
+                if (p) seedEl.value = p; 
+                settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2); 
+                if (liveToggle.checked) applyPreviewBtn.click(); 
+            } 
+        });
+        
+        promptEl.addEventListener('input', () => { 
+            if (promptUseAsSeedEl.checked) { 
+                const p = (promptEl.value || '').trim(); 
+                if (p) seedEl.value = p; 
+                settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2); 
+                if (liveToggle.checked) { 
+                    if (window._liveTimeout) clearTimeout(window._liveTimeout); 
+                    window._liveTimeout = setTimeout(() => { applyPreviewBtn.click(); }, 300); 
+                } 
+            } 
+        });
+        
+        downloadSvgBtn.addEventListener('click', async () => { 
+            try { 
+                const curSvg = previewBox.querySelector('svg'); 
+                if (curSvg) { 
+                    const svgText = new XMLSerializer().serializeToString(curSvg); 
+                    downloadSVGfromString(svgText, `${(seedEl.value || 'monadicon')}.svg`); 
+                    showToast('SVG downloaded'); 
+                    return; 
+                } 
+                const s = readSettingsFromUI(); 
+                const svg = await buildFinalSvg(s); 
+                downloadSVGfromString(svg, `${(s.seed || 'monadicon')}.svg`); 
+                showToast('SVG downloaded'); 
+            } catch (e) { 
+                showToast('SVG download failed'); 
+                console.error(e); 
+            } 
+        });
+        
+        downloadPngBtn.addEventListener('click', async () => { 
+            try { 
+                const curSvg = previewBox.querySelector('svg'); 
+                if (curSvg) { 
+                    const svgText = new XMLSerializer().serializeToString(curSvg); 
+                    downloadPNGfromSvgString(svgText, `${(seedEl.value || 'monadicon')}.png`); 
+                    showToast('PNG download started'); 
+                    return; 
+                } 
+                const s = readSettingsFromUI(); 
+                const svg = await buildFinalSvg(s); 
+                downloadPNGfromSvgString(svg, `${(s.seed || 'monadicon')}.png`); 
+                showToast('PNG download started'); 
+            } catch (e) { 
+                showToast('PNG creation failed'); 
+                console.error(e); 
+            } 
+        });
+        
+        copyEmbedBtn.addEventListener('click', async () => { 
+            const curSvg = previewBox.querySelector('svg'); 
+            if (curSvg) { 
+                const svgText = new XMLSerializer().serializeToString(curSvg); 
+                navigator.clipboard.writeText(svgText).then(() => showToast('SVG embed copied to clipboard')).catch(() => showToast('Copy failed')); 
+                return; 
+            } 
+            const s = readSettingsFromUI(); 
+            const svg = await buildFinalSvg(s); 
+            navigator.clipboard.writeText(svg).then(() => showToast('SVG embed copied to clipboard')).catch(() => showToast('Copy failed')); 
+        });
+        
+        randomBtn.addEventListener('click', () => { 
+            seedEl.value = sampleSeeds[Math.floor(Math.random() * sampleSeeds.length)] + '-' + Math.floor(Math.random() * 9999); 
+            const styles = Array.from(document.querySelectorAll('#style option')).map(o => o.value); 
+            styleEl.value = styles[Math.floor(Math.random() * styles.length)]; 
+            bgTypeEl.value = ['transparent', 'solid', 'gradient', 'radial', 'dots', 'stripes', 'checker', 'noise'][Math.floor(Math.random() * 8)]; 
+            bgColorEl.value = '#' + Math.floor(Math.random() * 0xFFFFFF).toString(16).padStart(6, '0'); 
+            sizeEl.value = [128, 256, 512, 768, 1024][Math.floor(Math.random() * 5)]; 
+            scaleEl.value = 80 + Math.floor(Math.random() * 60); 
+            rotationEl.value = Math.floor(Math.random() * 360) - 180; 
+            if (liveToggle.checked) applyPreviewBtn.click(); 
+        });
+        
+        document.querySelectorAll('.preset').forEach(btn => { 
+            btn.addEventListener('click', () => { 
+                const seed = btn.dataset.seed; 
+                const style = btn.dataset.style; 
+                if (seed) seedEl.value = seed; 
+                if (style) styleEl.value = style; 
+                if (liveToggle.checked) applyPreviewBtn.click(); 
+            }); 
+        });
+        
+        randomPreset.addEventListener('click', () => randomBtn.click());
+        
+        exportJSON.addEventListener('click', () => { 
+            try { 
+                const settings = readSettingsFromUI(); 
+                const jsonText = JSON.stringify(settings, null, 2); 
+                const filename = `monadicon-settings-${Date.now()}.json`; 
+                const blob = new Blob([jsonText], { type: 'application/json' }); 
+                const url = URL.createObjectURL(blob); 
+                const a = document.createElement('a'); 
+                a.href = url; 
+                a.download = filename; 
+                a.click(); 
+                URL.revokeObjectURL(url); 
+                navigator.clipboard?.writeText(jsonText).catch(() => { }); 
+                showToast(`Settings exported and copied`); 
+            } catch (e) { 
+                console.error(e); 
+                showToast('Export failed'); 
+            } 
+        });
+        
+        copyJSON.addEventListener('click', () => { 
+            navigator.clipboard.writeText(JSON.stringify(readSettingsFromUI(), null, 2)); 
+            showToast('Settings JSON copied'); 
+        });
+        
+        downloadJSON.addEventListener('click', () => { 
+            const txt = JSON.stringify(readSettingsFromUI(), null, 2); 
+            const blob = new Blob([txt], { type: 'application/json' }); 
+            const a = document.createElement('a'); 
+            a.href = URL.createObjectURL(blob); 
+            a.download = 'monadicon-settings.json'; 
+            a.click(); 
+            showToast('Settings JSON downloaded'); 
+        });
+        
+        clearHistory.addEventListener('click', () => { 
+            history = []; 
+            renderHistory(); 
+            showToast('History cleared'); 
+        });
+        
+        toggleThemeBtn.addEventListener('click', () => setTheme(!isLight));
+        
+        regenDescBtn.addEventListener('click', async () => { 
+            try { 
+                const curSvgNode = previewBox.querySelector('svg'); 
+                if (curSvgNode) { 
+                    const svgText = new XMLSerializer().serializeToString(curSvgNode); 
+                    const settings = readSettingsFromUI(); 
+                    updateAutoDescriptionFromRendered(svgText, settings); 
+                    showToast('Description regenerated from preview'); 
+                    return; 
+                } 
+                const s = readSettingsFromUI(); 
+                const svg = await buildFinalSvg(s); 
+                updateAutoDescriptionFromRendered(svg, s); 
+                showToast('Description regenerated (rebuilt)'); 
+            } catch (e) { 
+                console.error('Regenerate failed', e); 
+                showToast('Regenerate failed — see console'); 
+            } 
+        });
+        
+        copyDescBtn.addEventListener('click', () => { 
+            const meta = copyDescBtn._meta; 
+            if (meta && meta.meta && meta.meta.description) { 
+                navigator.clipboard.writeText(meta.meta.description); 
+                showToast('Description copied'); 
+                return; 
+            } 
+            const txt = autoDescEl.textContent || ''; 
+            if (txt) { 
+                navigator.clipboard.writeText(txt); 
+                showToast('Description copied'); 
+            } else showToast('No description available'); 
+        });
+        
+        downloadMetaBtn.addEventListener('click', () => { 
+            const meta = downloadMetaBtn._meta; 
+            if (!meta || !meta.meta) { 
+                showToast('Generate an icon first'); 
+                return; 
+            } 
+            const metadata = { 
+                name: meta.meta.name, 
+                description: meta.meta.description, 
+                attributes: meta.meta.attributes, 
+                image: 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(meta.svg))) 
+            }; 
+            const txt = JSON.stringify(metadata, null, 2); 
+            const blob = new Blob([txt], { type: 'application/json' }); 
+            const url = URL.createObjectURL(blob); 
+            const a = document.createElement('a'); 
+            a.href = url; 
+            a.download = `${meta.meta.name.replace(/\s+/g, '_')}-metadata.json`; 
+            a.click(); 
+            URL.revokeObjectURL(url); 
+            showToast('Metadata JSON downloaded'); 
+        });
+        
+        // Live preview setup
+        function setupLivePreview() { 
+            const inputs = [seedEl, styleEl, sizeEl, scaleEl, rotationEl, bgTypeEl, bgColorEl]; 
+            inputs.forEach(inp => { 
+                inp.addEventListener('input', () => { 
+                    settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2); 
+                    if (liveToggle.checked) { 
+                        if (window._liveTimeout) clearTimeout(window._liveTimeout); 
+                        window._liveTimeout = setTimeout(() => { applyPreviewBtn.click(); }, 300); 
+                    } 
+                }); 
+            }); 
+        }
+        
+        // Initialize
+        setupLivePreview();
+        try { 
+            const p = localStorage.getItem('monadicons:theme'); 
+            setTheme(p === 'light'); 
+        } catch (e) { 
+            setTheme(false); 
+        }
+        settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
+        applyPreviewBtn.click();
+    </script>
+</body>
+</html>
