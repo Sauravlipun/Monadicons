@@ -1,547 +1,141 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Monadicons Social</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    :root{
-      --bg:#071018; --panel:#0f1520; --card:#111217; --muted:#9aa0b2; --text:#e6eef8;
-      --accent-grad: linear-gradient(90deg,#7b2ff7,#f107a3);
-      --glow: rgba(123,47,247,0.12);
-    }
-    *{box-sizing:border-box}
-    body{margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; background:
-      radial-gradient(800px 400px at 10% 0%, rgba(123,47,247,0.08), transparent 30%),
-      linear-gradient(180deg,#051018 0%, #071018 100%); color:var(--text); -webkit-font-smoothing:antialiased;}
-    .container{max-width:1180px;margin:28px auto;padding:20px}
-    header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
-    .brand{display:flex;gap:12px;align-items:center}
-    .logo{width:46px;height:46px;border-radius:10px;background:var(--accent-grad);display:grid;place-items:center;font-weight:800}
-    .logo span{color:white}
-    header h1{margin:0;font-size:1.5rem}
-    .back{padding:8px 12px;border-radius:10px;background:var(--card);color:var(--muted);text-decoration:none;border:1px solid #13151a}
-    /* Upload card */
-    .upload{margin-top:20px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent),var(--panel);border-radius:12px;padding:16px;border:1px solid #17181d;box-shadow:0 10px 30px rgba(0,0,0,0.45)}
-    .upload h2{margin:0 0 6px 0}
-    .hint{color:var(--muted);font-size:.95rem;margin-bottom:10px}
-    .form-row{display:grid;grid-template-columns:1fr 320px;gap:12px}
-    .form-row.single{grid-template-columns:1fr}
-    input[type="text"], textarea, input[type="file"]{width:100%;padding:12px;border-radius:10px;border:1px solid #16171b;background:var(--card);color:var(--text);outline:none}
-    textarea{min-height:92px;resize:vertical}
-    .actions{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
-    .btn{padding:10px 14px;border-radius:10px;border:0;font-weight:700;cursor:pointer}
-    .btn-primary{background:var(--accent-grad);color:#fff;box-shadow:0 6px 20px var(--glow)}
-    .btn-ghost{background:transparent;border:1px solid #1c1d21;color:var(--text)}
-    .btn.loading{opacity:.65;cursor:progress}
-    /* Stats pill */
-    .row-meta{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:26px}
-    .pill{background:#0d1116;color:var(--muted);padding:8px 12px;border-radius:999px;border:1px solid #121318;font-weight:600;font-size:.95rem}
-    /* Grid */
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px;margin-top:14px}
-    .card{background:var(--card);border-radius:12px;overflow:hidden;border:1px solid #15161a;display:flex;flex-direction:column;transition:transform .18s,box-shadow .18s}
-    .card:hover{transform:translateY(-6px);box-shadow:0 16px 40px rgba(0,0,0,0.6)}
-    .thumb{width:100%;aspect-ratio:1/1;object-fit:cover;background:#03030a}
-    .meta{padding:12px 12px 14px 12px;display:flex;flex-direction:column;gap:8px}
-    .user{font-weight:700;font-size:1rem}
-    .desc{color:var(--muted);font-size:.95rem}
-    .card-footer{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
-    .vote-btn{border-radius:8px;padding:8px 10px;border:1px solid #7b2ff7;background:transparent;color:#7b2ff7;font-weight:800;cursor:pointer}
-    .vote-count{font-weight:800}
-    /* Featured & leaderboard */
-    .featured{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-top:12px}
-    .leader{margin-top:10px;padding:0;list-style:none;display:grid;gap:8px}
-    .leader li{background:var(--card);padding:10px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;border:1px solid #141418}
-    /* empty */
-    .empty{color:var(--muted);margin-top:10px}
-    footer{margin-top:36px;text-align:center;color:var(--muted)}
-    /* small screens */
-    @media (max-width:720px){
-      .form-row{grid-template-columns:1fr}
-      header{gap:10px}
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monadicons Social</title>
+<style>
+  body { margin:0; font-family: Arial, sans-serif; background:#0e0e0e; color:#fff; }
+  .container { max-width: 1200px; margin:auto; padding:16px; }
+  .header { display:flex; justify-content:space-between; align-items:center; padding:16px 0; }
+  .header a { text-decoration:none; color:#fff; font-weight:bold; padding:8px 14px; border-radius:6px; background:linear-gradient(90deg,#7b2ff7,#f107a3); }
+  .upload-card, .gallery-card { background:#1c1c1c; padding:20px; border-radius:10px; margin-top:20px; }
+  label { display:block; margin-top:10px; font-weight:bold; }
+  input, textarea { width:100%; margin-top:5px; padding:8px; border-radius:6px; border:none; outline:none; background:#2c2c2c; color:#fff; }
+  button { margin-top:12px; padding:10px 14px; background:linear-gradient(90deg,#7b2ff7,#f107a3); color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer; }
+  .gallery { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin-top:30px; }
+  .card { background:#1c1c1c; border-radius:8px; padding:10px; text-align:center; position:relative; }
+  .card img { max-width:100%; border-radius:8px; }
+  .vote-btn { margin-top:8px; padding:6px 10px; background:#7b2ff7; border:none; border-radius:4px; color:#fff; cursor:pointer; }
+  .pagination { display:flex; justify-content:center; gap:10px; margin-top:20px; }
+  .pagination button { background:#f107a3; padding:8px 12px; border-radius:6px; border:none; color:#fff; cursor:pointer; }
+  .footer { text-align:center; margin-top:30px; font-size:14px; color:#bbb; }
+</style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <div class="brand">
-        <div class="logo"><span>M</span></div>
-        <h1>Monadicons Social</h1>
-      </div>
-      <a class="back" href="index.html">← Back to Generator</a>
-    </header>
-
-    <!-- Upload -->
-    <section class="upload" aria-labelledby="upload-heading">
-      <h2 id="upload-heading">Share your icon / artwork</h2>
-      <div class="hint">PNG / JPG / WebP. Upload an image, add a short description and show it to the community.</div>
-
-      <div class="form-row">
-        <div>
-          <label for="username" style="display:block;font-weight:700;margin-bottom:6px">Name / Handle</label>
-          <input id="username" type="text" placeholder="@your_handle or Your Name">
-        </div>
-        <div>
-          <label for="image" style="display:block;font-weight:700;margin-bottom:6px">Image</label>
-          <input id="image" type="file" accept="image/*">
-        </div>
-      </div>
-
-      <div class="form-row single" style="margin-top:12px">
-        <div>
-          <label for="description" style="display:block;font-weight:700;margin-bottom:6px">Description</label>
-          <textarea id="description" placeholder="Tell the community about this work..."></textarea>
-        </div>
-      </div>
-
-      <div class="actions">
-        <button id="uploadBtn" class="btn btn-primary">Upload & Showcase</button>
-        <button id="claimBtn" class="btn btn-ghost">Claim Rewards (soon)</button>
-      </div>
-
-      <div class="row-meta">
-        <div class="pill" id="postCount">0 posts</div>
-        <div style="color:var(--muted);font-size:.95rem">Realtime enabled ✓</div>
-      </div>
-    </section>
-
-    <!-- Showcase -->
-    <section class="section" aria-labelledby="gallery-heading">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:18px">
-        <h2 id="gallery-heading">Community Gallery</h2>
-        <div class="pill" id="latestTime">—</div>
-      </div>
-      <div id="showcase" class="grid" aria-live="polite"></div>
-      <div id="noPosts" class="empty" style="display:none">No posts yet — be the first to upload ✨</div>
-    </section>
-
-    <!-- Featured -->
-    <section class="section" aria-labelledby="featured-heading">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:26px">
-        <h2 id="featured-heading">Featured Creators</h2>
-        <div class="pill">Curated • Live</div>
-      </div>
-      <div id="featured" class="featured"></div>
-    </section>
-
-    <!-- Leaderboard -->
-    <section class="section" aria-labelledby="lb-heading">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:26px">
-        <h2 id="lb-heading">Top Voted</h2>
-        <div class="pill">Top 8</div>
-      </div>
-      <ul id="leaderboard" class="leader"></ul>
-    </section>
-
-    <footer>Powered by Monadicons + Supabase • Be kind, credit artists 💜</footer>
+<div class="container">
+  <div class="header">
+    <h1>Monadicons Social</h1>
+    <a href="index.html">← Back to Home</a>
   </div>
 
-  <script>
-  /***********************************************************************
-   * Monadicons Social - fully client-side page using Supabase
-   * - Realtime live updates (inserts/updates/deletes)
-   * - Upload to storage
-   * - Insert into artwork_posts table
-   * - Voting uses increment_vote RPC if available
-   * - Per-user vote prevention via localStorage
-   *
-   * IMPORTANT:
-   * - Expose NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to the browser.
-   * - Recommended SQL (run once in Supabase SQL editor) creates exec_sql and increment_vote RPCs.
-   ***********************************************************************/
+  <div class="upload-card">
+    <h2>Upload Your Icon / Artwork</h2>
+    <label for="username">Name / Handle</label>
+    <input id="username" type="text" placeholder="Enter your name or @handle">
+    <label for="description">Description</label>
+    <textarea id="description" rows="3" placeholder="Describe your work"></textarea>
+    <label for="file">Upload Image</label>
+    <input id="file" type="file" accept="image/*">
+    <button onclick="uploadArtwork()">Upload & Showcase</button>
+    <button onclick="claimRewards()">Claim Rewards</button>
+  </div>
 
-  // Read environment variables - support multiple exposure styles
-  const SUPABASE_URL =
-    (window.__env && (window.__env.NEXT_PUBLIC_SUPABASE_URL || window.__env.SUPABASE_URL)) ||
-    (window.env && (window.env.NEXT_PUBLIC_SUPABASE_URL || window.env.SUPABASE_URL)) ||
-    window.NEXT_PUBLIC_SUPABASE_URL || window.SUPABASE_URL || "";
-  const SUPABASE_ANON_KEY =
-    (window.__env && (window.__env.NEXT_PUBLIC_SUPABASE_ANON_KEY || window.__env.SUPABASE_ANON_KEY)) ||
-    (window.env && (window.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || window.env.SUPABASE_ANON_KEY)) ||
-    window.NEXT_PUBLIC_SUPABASE_ANON_KEY || window.SUPABASE_ANON_KEY || "";
+  <h2 style="margin-top:30px;">Community Gallery</h2>
+  <div id="gallery" class="gallery"></div>
+  <div class="pagination">
+    <button id="prevPage">Prev</button>
+    <span id="pageInfo">Page 1</span>
+    <button id="nextPage">Next</button>
+  </div>
 
-  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-    alert("Supabase environment variables not found. Make sure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are exposed in your environment.");
-  }
+  <div class="footer">Powered by Monadicons + Supabase</div>
+</div>
 
-  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = window.env?.NEXT_PUBLIC_SUPABASE_URL || "YOUR_SUPABASE_URL";
+  const SUPABASE_ANON_KEY = window.env?.NEXT_PUBLIC_SUPABASE_ANON_KEY || "YOUR_SUPABASE_ANON_KEY";
 
-  // DOM refs
-  const showcaseEl = document.getElementById("showcase");
-  const featuredEl = document.getElementById("featured");
-  const leaderboardEl = document.getElementById("leaderboard");
-  const postCountEl = document.getElementById("postCount");
-  const latestTimeEl = document.getElementById("latestTime");
-  const noPostsEl = document.getElementById("noPosts");
-  const uploadBtn = document.getElementById("uploadBtn");
-  const claimBtn = document.getElementById("claimBtn");
+  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const ITEMS_PER_PAGE = 5;
+  let currentPage = 1;
+  let totalItems = 0;
 
-  // Config
-  const BUCKET_PRIMARY = "artwork";    // try this first
-  const BUCKET_FALLBACK = "artworks";  // fallback if your bucket named differently
-  const TABLE = "artwork_posts";
-
-  // Utility: show loading state on button
-  function setButtonLoading(btn, isLoading, text="Upload & Showcase"){
-    if(isLoading){
-      btn.classList.add("loading");
-      btn.textContent = "Uploading…";
-      btn.disabled = true;
-    } else {
-      btn.classList.remove("loading");
-      btn.textContent = text;
-      btn.disabled = false;
+  async function uploadArtwork() {
+    const username = document.getElementById('username').value.trim();
+    const description = document.getElementById('description').value.trim();
+    const fileInput = document.getElementById('file');
+    if (!username || !description || fileInput.files.length === 0) {
+      alert("Please fill out all fields and select an image.");
+      return;
     }
+    const file = fileInput.files[0];
+    const fileName = `${Date.now()}_${file.name}`;
+
+    const { error: uploadError } = await supabase.storage.from('artwork').upload(fileName, file);
+    if (uploadError) { alert("Upload failed: " + uploadError.message); return; }
+
+    const { data: publicData } = supabase.storage.from('artwork').getPublicUrl(fileName);
+    const { error: insertError } = await supabase.from('artwork_posts').insert([{ username, description, image_url: publicData.publicUrl }]);
+    if (insertError) { alert("Database insert failed: " + insertError.message); return; }
+
+    alert("Upload successful!");
+    loadGallery();
   }
 
-  // Escape html
-  function esc(s){ return String(s||"").replace(/[&<>"'`=\/]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;","/":"&#x2F;","`":"&#x60;",'=':"&#x3D;"}[c])); }
+  async function loadGallery() {
+    const { data, error, count } = await supabase.from('artwork_posts')
+      .select('*', { count: 'exact' })
+      .order('id', { ascending: false })
+      .range((currentPage-1)*ITEMS_PER_PAGE, currentPage*ITEMS_PER_PAGE-1);
 
-  // ---------- Create table if missing (best-effort, requires exec_sql RPC)
-  async function ensureTable(){
-    // Try a simple select; if it errors (relation doesn't exist), try to create using exec_sql RPC
-    try {
-      const { error } = await sb.from(TABLE).select("id").limit(1);
-      if (!error) return; // table exists
-      console.log("Table check returned error:", error.message);
-      // DDL to create table
-      const ddl = `
-        create table if not exists public.${TABLE} (
-          id bigint generated by default as identity primary key,
-          username text not null,
-          description text,
-          image_url text,
-          votes int default 0,
-          inserted_at timestamptz default now()
-        );
+    if (error) { console.error(error); return; }
+    totalItems = count;
+
+    const galleryDiv = document.getElementById('gallery');
+    galleryDiv.innerHTML = "";
+    data.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <img src="${item.image_url}" alt="Artwork">
+        <h3>${item.username}</h3>
+        <p>${item.description}</p>
+        <button class="vote-btn" onclick="vote(${item.id})">Vote ❤️</button>
+        <span id="votes-${item.id}" style="display:block; margin-top:5px;">Votes: ${item.votes || 0}</span>
       `;
-      try {
-        // try to run via RPC exec_sql (recommended to set up once in SQL editor)
-        await sb.rpc('exec_sql', { query: ddl });
-        console.log("Attempted to create table via exec_sql RPC.");
-      } catch (rpcErr){
-        console.warn("exec_sql RPC not available or failed. Please create the table manually if required.", rpcErr?.message || rpcErr);
-      }
-    } catch (e){
-      console.error("Error during ensureTable:", e);
-    }
-  }
-
-  // ---------- Ensure bucket exists (best-effort)
-  async function ensureBucket(name){
-    try {
-      const { data } = await sb.storage.listBuckets();
-      const has = (data || []).some(b => b.name === name);
-      if (!has) {
-        // try to create (may require service role; anon may not be able to)
-        const res = await sb.storage.createBucket(name, { public: true }).catch(x=>x);
-        if (res && res.message) console.warn("Could not create bucket (anon key may not have permission). Create manually:", res.message);
-      }
-    } catch(err){
-      console.warn("Bucket check/create failed:", err?.message || err);
-    }
-  }
-
-  // ---------- Render helpers ----------
-  function renderCards(posts){
-    showcaseEl.innerHTML = "";
-    if (!posts || posts.length === 0){
-      noPostsEl.style.display = "block";
-      postCountEl.textContent = "0 posts";
-      latestTimeEl.textContent = "—";
-      return;
-    }
-    noPostsEl.style.display = "none";
-    postCountEl.textContent = `${posts.length} ${posts.length===1?"post":"posts"}`;
-    latestTimeEl.textContent = new Date(posts[0].inserted_at || Date.now()).toLocaleString();
-
-    posts.forEach(p => {
-      addOrUpdateCard(p);
+      galleryDiv.appendChild(card);
     });
+    document.getElementById('pageInfo').innerText = `Page ${currentPage}`;
   }
 
-  // Create or update a single card (used by realtime)
-  function addOrUpdateCard(p){
-    const existing = document.getElementById(`post-${p.id}`);
-    const html = `
-      <img class="thumb" src="${esc(p.image_url)}" alt="Artwork by ${esc(p.username)}">
-      <div class="meta">
-        <div class="user">${esc(p.username)}</div>
-        <div class="desc">${esc(p.description || "")}</div>
-        <div class="card-footer">
-          <div class="pill" style="background:transparent;border:0;color:var(--muted);font-weight:600">${new Date(p.inserted_at || Date.now()).toLocaleDateString()}</div>
-          <div style="display:flex;align-items:center;gap:10px">
-            <button class="vote-btn" data-id="${p.id}">▲ Vote</button>
-            <div class="vote-count" id="v-${p.id}">${p.votes ?? 0}</div>
-          </div>
-        </div>
-      </div>
-    `;
-    if (existing){
-      existing.innerHTML = html;
-    } else {
-      const card = document.createElement("div");
-      card.className = "card";
-      card.id = `post-${p.id}`;
-      card.innerHTML = html;
-      // prepend newest at top
-      showcaseEl.prepend(card);
-    }
-    // attach vote handler
-    const btn = (document.getElementById(`post-${p.id}`) || {}).querySelector?.(".vote-btn");
-    if (btn){
-      btn.onclick = async () => {
-        await handleVoteClick(p.id);
-      };
-      // disable button if already voted (localStorage)
-      const voted = JSON.parse(localStorage.getItem("votedPosts") || "[]");
-      if (voted.includes(p.id)) {
-        btn.disabled = true;
-        btn.style.opacity = "0.55";
-        btn.textContent = "Voted";
-      } else {
-        btn.disabled = false;
-        btn.style.opacity = "1";
-        btn.textContent = "▲ Vote";
-      }
-    }
+  async function vote(id) {
+    const { data, error } = await supabase.from('artwork_posts').select('votes').eq('id', id).single();
+    if (error) { console.error(error); return; }
+    const votes = (data.votes || 0) + 1;
+    await supabase.from('artwork_posts').update({ votes }).eq('id', id);
+    document.getElementById(`votes-${id}`).innerText = `Votes: ${votes}`;
   }
 
-  function renderFeatured(posts){
-    featuredEl.innerHTML = "";
-    const top = [...posts].sort((a,b)=> (b.votes ?? 0) - (a.votes ?? 0)).slice(0,6);
-    top.forEach(p => {
-      const item = document.createElement("div");
-      item.className = "card";
-      item.innerHTML = `<img class="thumb" src="${esc(p.image_url)}" alt=""><div class="meta"><div class="user">${esc(p.username)}</div><div class="pill">★ Featured</div></div>`;
-      featuredEl.appendChild(item);
-    });
+  async function claimRewards() {
+    alert("Rewards claiming feature coming soon!");
   }
 
-  function renderLeaderboard(posts){
-    leaderboardEl.innerHTML = "";
-    const top = [...posts].sort((a,b)=> (b.votes ?? 0) - (a.votes ?? 0)).slice(0,8);
-    if (top.length === 0){
-      leaderboardEl.innerHTML = `<li style="background:transparent;color:var(--muted)">No votes yet</li>`;
-      return;
-    }
-    top.forEach((p, idx) => {
-      const li = document.createElement("li");
-      li.innerHTML = `<span>${idx+1}. ${esc(p.username)}</span><span>${p.votes ?? 0} votes</span>`;
-      leaderboardEl.appendChild(li);
-    });
-  }
+  document.getElementById('prevPage').addEventListener('click', () => {
+    if(currentPage > 1){ currentPage--; loadGallery(); }
+  });
+  document.getElementById('nextPage').addEventListener('click', () => {
+    if(currentPage*ITEMS_PER_PAGE < totalItems){ currentPage++; loadGallery(); }
+  });
 
-  // ---------- Load all posts (initial load) ----------
-  async function loadAll(){
-    try {
-      skeleton();
-      const { data, error } = await sb.from(TABLE).select("*").order("inserted_at",{ascending:false});
-      if (error) {
-        console.error("Fetch posts failed:", error);
-        showcaseEl.innerHTML = `<div class="empty">Could not load posts: ${esc(error.message)}</div>`;
-        postCountEl.textContent = "—";
-        latestTimeEl.textContent = "—";
-        return;
-      }
-      renderCards(data);
-      renderFeatured(data);
-      renderLeaderboard(data);
-    } catch (e){
-      console.error("loadAll error:", e);
-    }
-  }
+  loadGallery();
 
-  // show skeleton while loading
-  function skeleton(){
-    showcaseEl.innerHTML = "";
-    for (let i=0;i<6;i++){
-      const c = document.createElement("div");
-      c.className = "card";
-      c.innerHTML = `<div class="thumb" style="background:linear-gradient(90deg,#111 0,#151 50%,#111 100%);height:200px"></div><div class="meta"><div style="height:14px;width:60%;background:#1a1a22;border-radius:6px"></div><div style="height:12px;width:90%;background:#111;border-radius:6px;margin-top:8px"></div></div>`;
-      showcaseEl.appendChild(c);
-    }
-  }
-
-  // ---------- Upload handler ----------
-  async function uploadHandler(){
-    const username = document.getElementById("username").value.trim();
-    const description = document.getElementById("description").value.trim();
-    const fileEl = document.getElementById("image");
-    const file = fileEl.files && fileEl.files[0];
-
-    if (!username || !file){
-      alert("Please enter your name/handle and choose an image to upload.");
-      return;
-    }
-
-    setButtonLoading(uploadBtn, true);
-
-    // ensure bucket(s) exist (best-effort)
-    await ensureBucket(BUCKET_PRIMARY);
-    await ensureBucket(BUCKET_FALLBACK);
-
-    const cleanName = `${Date.now()}_${file.name}`.replace(/\s+/g,"_");
-    // try primary bucket
-    let usedBucket = BUCKET_PRIMARY;
-    let uploadErr = null;
-    try {
-      const { error } = await sb.storage.from(BUCKET_PRIMARY).upload(cleanName, file);
-      if (error) throw error;
-    } catch (e){
-      // try fallback
-      try {
-        const { error } = await sb.storage.from(BUCKET_FALLBACK).upload(cleanName, file);
-        if (error) throw error;
-        usedBucket = BUCKET_FALLBACK;
-      } catch (e2){
-        uploadErr = e2;
-      }
-    }
-
-    if (uploadErr){
-      console.error("Storage upload failed:", uploadErr);
-      alert("Upload failed. Check storage bucket name and permissions.");
-      setButtonLoading(uploadBtn, false);
-      return;
-    }
-
-    const publicUrl = `${SUPABASE_URL.replace(/\/$/,"")}/storage/v1/object/public/${usedBucket}/${encodeURIComponent(cleanName)}`;
-
-    // insert metadata row
-    const { error: insertErr } = await sb.from(TABLE).insert([{ username, description, image_url: publicUrl }]);
-    setButtonLoading(uploadBtn, false);
-    if (insertErr){
-      console.error("Insert row failed:", insertErr);
-      alert("Saved file but failed to create post row. Check table & RLS.");
-      return;
-    }
-
-    // Clear form
-    document.getElementById("username").value = "";
-    document.getElementById("description").value = "";
-    document.getElementById("image").value = "";
-
-    // The realtime subscription will insert the new card; also refresh as fallback
-    setTimeout(loadAll, 400);
-  }
-
-  // ---------- Voting ----------
-  function hasVoted(postId){
-    const voted = JSON.parse(localStorage.getItem("votedPosts") || "[]");
-    return voted.includes(postId);
-  }
-
-  function markVoted(postId){
-    const voted = JSON.parse(localStorage.getItem("votedPosts") || "[]");
-    if (!voted.includes(postId)) {
-      voted.push(postId);
-      localStorage.setItem("votedPosts", JSON.stringify(voted));
-    }
-  }
-
-  async function handleVoteClick(id){
-    if (hasVoted(id)){
-      alert("You already voted for this post.");
-      return;
-    }
-
-    // Optimistic UI bump
-    const el = document.getElementById(`v-${id}`);
-    if (el) {
-      el.textContent = String(Number(el.textContent || 0) + 1);
-    }
-
-    // Try RPC first (recommended)
-    try {
-      const { error: rpcErr } = await sb.rpc("increment_vote", { row_id: id });
-      if (rpcErr) {
-        // If RPC not available, try direct update (may fail if RLS)
-        const { error: updErr } = await sb.from(TABLE).update({ votes: (sb && sb.rpc) ? undefined : undefined }).eq("id", id); // placeholder to call update below
-        // We'll do a direct update with an expression by selecting current votes then updating.
-        const { data: row } = await sb.from(TABLE).select("votes").eq("id", id).single();
-        const current = (row && row.votes) ? row.votes : 0;
-        const { error: finalErr } = await sb.from(TABLE).update({ votes: current + 1 }).eq("id", id);
-        if (finalErr){
-          console.warn("Update failed (maybe RLS). RPC recommended. Error:", finalErr);
-          alert("Vote could not be recorded server-side. Please contact admin.");
-        }
-      }
-    } catch (e){
-      console.warn("Vote RPC attempt failed:", e);
-    }
-
-    // Mark local voted
-    markVoted(id);
-    // disable button visually
-    const btn = document.querySelector(`#post-${id} .vote-btn`);
-    if (btn){ btn.disabled = true; btn.textContent = "Voted"; btn.style.opacity = "0.6"; }
-    // Re-render leaderboard after short delay (realtime will also update)
-    setTimeout(loadAll, 250);
-  }
-
-  // ---------- Realtime subscription ----------
-  function subscribeRealtime(){
-    try {
-      const channel = sb.channel('public:artwork_posts')
-        .on('postgres_changes', { event: '*', schema: 'public', table: TABLE }, payload => {
-          // payload: {eventType:'INSERT'|'UPDATE'|'DELETE', schema, table, new, old}
-          const ev = payload.eventType || payload.event;
-          if (ev === 'INSERT' || ev === 'INSERT') {
-            // prepend new
-            if (payload.new) addOrUpdateCard(payload.new);
-          } else if (ev === 'UPDATE') {
-            if (payload.new) {
-              // update count + description etc
-              addOrUpdateCard(payload.new);
-              // update leaderboard
-              // small debounce
-              setTimeout(loadAll, 200);
-            }
-          } else if (ev === 'DELETE'){
-            if (payload.old) {
-              const el = document.getElementById(`post-${payload.old.id}`);
-              if (el) el.remove();
-              setTimeout(loadAll, 150);
-            }
-          } else {
-            // fallback: refresh
-            setTimeout(loadAll, 200);
-          }
-        })
-        .subscribe((status) => {
-          // console.log("Realtime subscribe status:", status);
-        });
-
-      return channel;
-    } catch (e){
-      console.warn("Realtime subscription failed:", e);
-    }
-  }
-
-  // ---------- bootstrap ----------
-  (async function bootstrap(){
-    // best-effort table creation
-    await ensureTable();
-    // ensure bucket existence attempts
-    await ensureBucket(BUCKET_PRIMARY);
-    await ensureBucket(BUCKET_FALLBACK);
-    // initial load
-    await loadAll();
-    // subscribe realtime
-    subscribeRealtime();
-  })();
-
-  // UI bindings
-  uploadBtn.addEventListener("click", uploadHandler);
-  claimBtn.addEventListener("click", ()=> alert("Rewards claiming coming soon!"));
-
-  // expose some helpers for dev console
-  window.Monadicons = { loadAll, sb, ensureTable, ensureBucket };
-
-  </script>
+  // Realtime updates
+  supabase.channel('public:artwork_posts')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'artwork_posts' }, payload => {
+      loadGallery();
+    }).subscribe();
+</script>
 </body>
 </html>
