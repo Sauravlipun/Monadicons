@@ -7,113 +7,76 @@
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(180deg,#0e0e0e,#1c1c1c);
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #0e0e0e, #1a1a1a);
       color: #fff;
+      min-height: 100vh;
     }
     .container { max-width: 1200px; margin: auto; padding: 16px; }
     .header {
-      display: flex; justify-content: space-between; align-items: center; padding: 16px 0;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 20px 0;
     }
     .header h1 {
-      font-size: 28px;
       background: linear-gradient(90deg,#7b2ff7,#f107a3);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      font-weight: 800;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      font-size: 2.2em; margin: 0;
     }
     .header a {
       text-decoration: none; color: #fff; font-weight: bold;
-      padding: 8px 14px; border-radius: 6px;
+      padding: 10px 16px; border-radius: 8px;
       background: linear-gradient(90deg,#7b2ff7,#f107a3);
-      transition: transform 0.2s;
+      transition: transform 0.2s ease;
     }
     .header a:hover { transform: scale(1.05); }
     .upload-card {
-      background: #222; padding: 20px; border-radius: 12px;
-      margin-top: 20px; box-shadow: 0 0 15px rgba(255,255,255,0.05);
+      background: #1c1c1c; padding: 20px; border-radius: 12px;
+      margin-top: 20px; box-shadow: 0 0 10px rgba(123,47,247,0.3);
     }
-    .upload-card h2 { margin: 0 0 10px 0; font-size: 22px; }
-    label { display: block; margin-top: 12px; font-weight: 600; }
+    label { display: block; margin-top: 12px; font-weight: bold; }
     input, textarea {
-      width: 100%; margin-top: 5px; padding: 10px;
-      border-radius: 6px; border: none; outline: none;
-      background: #2c2c2c; color: white;
+      width: 100%; margin-top: 6px; padding: 10px;
+      border-radius: 8px; border: none; outline: none;
+      background: #2c2c2c; color: #fff;
     }
     button {
-      margin-top: 14px; padding: 10px 16px;
+      margin-top: 14px; padding: 12px 18px;
       background: linear-gradient(90deg,#7b2ff7,#f107a3);
-      color: white; border: none; border-radius: 6px;
-      font-weight: bold; cursor: pointer; transition: transform 0.2s;
+      color: white; border: none; border-radius: 8px; font-weight: bold;
+      cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-    button:hover { transform: scale(1.05); }
-    .leaderboard {
-      background: #1a1a1a; padding: 20px; border-radius: 12px;
-      margin-top: 30px; box-shadow: 0 0 12px rgba(255,255,255,0.05);
-    }
-    .leaderboard h2 {
-      background: linear-gradient(90deg,#f107a3,#7b2ff7);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      font-size: 24px;
-      margin-top: 0;
-    }
-    .leaderboard-list {
-      margin: 0; padding: 0; list-style: none;
-    }
-    .leaderboard-list li {
-      padding: 10px; margin-top: 8px;
-      background: #222; border-radius: 8px;
-      display: flex; justify-content: space-between; align-items: center;
-    }
+    button:hover { transform: scale(1.05); box-shadow: 0 0 8px rgba(241,7,163,0.5); }
     .gallery {
-      display: grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
-      gap: 24px; margin-top: 30px;
+      display: grid; grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+      gap: 20px; margin-top: 40px;
     }
     .card {
-      background: #1a1a1a; border-radius: 12px; padding: 14px;
-      text-align: center; box-shadow: 0 0 12px rgba(255,255,255,0.05);
-      opacity: 0; transform: translateY(20px);
-      transition: opacity 0.6s ease, transform 0.6s ease;
+      background: #1c1c1c; border-radius: 12px; padding: 12px; text-align: center;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
-    .card.show { opacity: 1; transform: translateY(0); }
-    .card img { max-width: 100%; border-radius: 8px; }
-    .vote-section {
-      margin-top: 12px; display: flex; justify-content: center;
-      align-items: center; gap: 10px;
-    }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 0 12px rgba(123,47,247,0.4); }
+    .card img { max-width: 100%; border-radius: 10px; margin-bottom: 12px; }
     .vote-btn {
-      padding: 8px 12px; font-size: 14px;
-      background: linear-gradient(90deg,#f107a3,#7b2ff7);
-      border: none; border-radius: 4px;
-      cursor: pointer; transition: transform 0.2s;
+      background: transparent; border: 2px solid #7b2ff7;
+      padding: 6px 12px; border-radius: 6px; color: #fff; cursor: pointer;
+      font-weight: bold; transition: background 0.2s ease, transform 0.2s ease;
     }
-    .vote-btn:hover { transform: scale(1.05); }
-    .footer { text-align: center; margin-top: 40px; font-size: 14px; color: #bbb; }
-    .modal-overlay {
-      display: none; position: fixed; top:0; left:0; right:0; bottom:0;
-      background: rgba(0,0,0,0.6); justify-content: center; align-items: center;
-      z-index: 9999;
+    .vote-btn:hover { background: #7b2ff7; transform: scale(1.05); }
+    .vote-btn[disabled] {
+      opacity: 0.5; cursor: not-allowed; transform: none !important;
     }
-    .modal {
-      background: #222; padding: 20px; border-radius: 10px;
-      max-width: 400px; width: 90%; text-align: center;
-      box-shadow: 0 0 20px rgba(0,0,0,0.4);
-    }
-    .modal h3 { margin: 0 0 10px; }
-    .modal input { width: 100%; margin: 10px 0; }
-    .modal-buttons { display: flex; justify-content: center; gap: 10px; }
+    .footer { text-align: center; margin-top: 50px; font-size: 14px; color: #bbb; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
       <h1>Monadicons Social</h1>
-      <a href="index.html">← Back</a>
+      <a href="index.html">← Back to Home</a>
     </div>
 
     <div class="upload-card">
-      <h2>Upload Your Icon / Artwork</h2>
+      <h2>Showcase Your Icon or Artwork</h2>
       <label for="username">Name / Handle</label>
       <input id="username" type="text" placeholder="Enter your name or @handle">
       <label for="description">Description</label>
@@ -124,175 +87,130 @@
       <button onclick="claimRewards()">Claim Rewards</button>
     </div>
 
-    <div class="leaderboard">
-      <h2>🏆 Top Creators</h2>
-      <ul id="leaderboard" class="leaderboard-list"></ul>
-    </div>
-
-    <h2 style="margin-top:30px;">Community Gallery</h2>
+    <h2 style="margin-top:40px;">Community Gallery</h2>
     <div id="gallery" class="gallery"></div>
 
-    <div class="footer">
-      Powered by Monadicons + Supabase (Realtime)
-    </div>
-  </div>
-
-  <!-- Vote Modal -->
-  <div id="voteModal" class="modal-overlay">
-    <div class="modal">
-      <h3>Enter your name to vote</h3>
-      <input id="voterName" type="text" placeholder="@username or name">
-      <div class="modal-buttons">
-        <button onclick="submitVote()">Vote</button>
-        <button onclick="closeModal()">Cancel</button>
-      </div>
-    </div>
+    <div class="footer">Powered by Monadicons + Supabase (Realtime)</div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const SUPABASE_URL = "<YOUR_SUPABASE_URL>";
-    const SUPABASE_ANON_KEY = "<YOUR_SUPABASE_ANON_KEY>";
+    const SUPABASE_URL = window.NEXT_PUBLIC_SUPABASE_URL || "<YOUR_SUPABASE_URL>";
+    const SUPABASE_ANON_KEY = window.NEXT_PUBLIC_SUPABASE_ANON_KEY || "<YOUR_SUPABASE_ANON_KEY>";
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    const BUCKET_NAME = 'artwork';
-    let currentVotePostId = null;
-    let voteCache = {};
-    let postCache = [];
 
     async function ensureBucket() {
       const { data: buckets } = await sb.storage.listBuckets();
-      if (!buckets.some(b => b.name === BUCKET_NAME)) {
-        await sb.storage.createBucket(BUCKET_NAME, { public: true });
+      if (!buckets?.some(b => b.name === "artwork")) {
+        await sb.storage.createBucket("artwork", { public: true });
+        console.log("Created 'artwork' bucket.");
+      }
+    }
+
+    async function ensureTable() {
+      const { error } = await sb.from('artwork_posts').select('id').limit(1);
+      if (error) {
+        const ddl = `
+          create table if not exists public.artwork_posts (
+            id bigint generated by default as identity primary key,
+            username text not null,
+            description text,
+            image_url text,
+            votes int default 0,
+            inserted_at timestamp with time zone default now()
+          );
+        `;
+        await sb.rpc('exec_sql', { query: ddl }).catch(() => {
+          console.warn("Table auto-create failed. Please create manually if first run.");
+        });
       }
     }
 
     async function uploadArtwork() {
       await ensureBucket();
+      await ensureTable();
+
       const username = document.getElementById('username').value.trim();
       const description = document.getElementById('description').value.trim();
       const fileInput = document.getElementById('file');
       if (!username || !description || fileInput.files.length === 0) {
-        alert("Please fill out all fields and select an image."); return;
+        alert("Please fill out all fields and select an image.");
+        return;
       }
+
       const file = fileInput.files[0];
       const fileName = `${Date.now()}_${file.name}`;
-      const { error: uploadError } = await sb.storage.from(BUCKET_NAME).upload(fileName, file);
+      const { error: uploadError } = await sb.storage.from('artwork').upload(fileName, file);
       if (uploadError) { alert("Upload failed: " + uploadError.message); return; }
-      const { data: publicData } = sb.storage.from(BUCKET_NAME).getPublicUrl(fileName);
+      const { data: publicData } = sb.storage.from('artwork').getPublicUrl(fileName);
+
       const { error: insertError } = await sb.from('artwork_posts').insert([
-        { username, description, image_url: publicData.publicUrl }
+        { username, description, image_url: publicData.publicUrl, votes: 0 }
       ]);
-      if (insertError) { alert("Database insert failed: " + insertError.message); return; }
-      alert("Upload successful!");
-    }
-
-    function openModal(postId) {
-      currentVotePostId = postId;
-      document.getElementById("voterName").value = "";
-      document.getElementById("voteModal").style.display = "flex";
-    }
-    function closeModal() {
-      document.getElementById("voteModal").style.display = "none";
-    }
-
-    async function submitVote() {
-      const voter = document.getElementById("voterName").value.trim();
-      if (!voter) return;
-      const votedPosts = JSON.parse(localStorage.getItem("votedPosts") || "[]");
-      if (votedPosts.includes(currentVotePostId)) {
-        alert("You already voted for this post!"); closeModal(); return;
-      }
-      const { error } = await sb.from('artwork_votes').insert([{ post_id: currentVotePostId, voter }]);
-      if (error) alert("Vote failed: " + error.message);
+      if (insertError) { alert("Database insert failed: " + insertError.message); }
       else {
-        votedPosts.push(currentVotePostId);
-        localStorage.setItem("votedPosts", JSON.stringify(votedPosts));
-        alert("Thanks for voting!");
+        alert("Upload successful!");
+        document.getElementById('username').value = "";
+        document.getElementById('description').value = "";
+        document.getElementById('file').value = "";
       }
-      closeModal();
     }
 
     async function loadGallery() {
-      const { data: posts } = await sb.from('artwork_posts').select('*').order('id',{ascending:false});
-      const { data: votes } = await sb.from('artwork_votes').select('post_id');
-      voteCache = {};
-      (votes||[]).forEach(v=>{voteCache[v.post_id]=(voteCache[v.post_id]||0)+1});
-      postCache = posts || [];
-      renderGallery();
-      renderLeaderboard();
-    }
-
-    function renderGallery() {
+      const { data, error } = await sb.from('artwork_posts').select('*').order('votes', { ascending: false });
+      if (error) { console.error(error); return; }
       const galleryDiv = document.getElementById('gallery');
       galleryDiv.innerHTML = "";
-      postCache.forEach(item=>addCard(item,true));
+      const voted = JSON.parse(localStorage.getItem('votedPosts') || "[]");
+      data.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.id = `post-${item.id}`;
+        const alreadyVoted = voted.includes(item.id);
+        card.innerHTML = `
+          <img src="${item.image_url}" alt="Artwork">
+          <h3>${item.username}</h3>
+          <p>${item.description}</p>
+          <p><strong>Votes: <span class="vote-count">${item.votes || 0}</span></strong></p>
+          <button class="vote-btn" ${alreadyVoted ? "disabled" : ""} onclick="vote(${item.id}, ${item.votes || 0})">
+            ${alreadyVoted ? "Voted" : "Vote"}
+          </button>
+        `;
+        galleryDiv.appendChild(card);
+      });
     }
 
-    function renderLeaderboard() {
-      const leaderboardDiv = document.getElementById('leaderboard');
-      const ranked = [...postCache].sort((a,b)=>(voteCache[b.id]||0)-(voteCache[a.id]||0)).slice(0,5);
-      leaderboardDiv.innerHTML = ranked.map(p=>`
-        <li><strong>${p.username}</strong> <span>${voteCache[p.id]||0} votes</span></li>
-      `).join("");
+    async function vote(id, currentVotes) {
+      const voted = JSON.parse(localStorage.getItem('votedPosts') || "[]");
+      if (voted.includes(id)) return; // safety
+      await sb.from('artwork_posts').update({ votes: currentVotes + 1 }).eq('id', id);
+      voted.push(id);
+      localStorage.setItem('votedPosts', JSON.stringify(voted));
+      const btn = document.querySelector(`#post-${id} .vote-btn`);
+      if (btn) { btn.textContent = "Voted"; btn.disabled = true; }
     }
 
-    function addCard(item, instant=false) {
-      const count = voteCache[item.id]||0;
-      const galleryDiv = document.getElementById('gallery');
-      const card=document.createElement('div');
-      card.className='card';
-      card.id=`post-${item.id}`;
-      card.innerHTML=`
-        <img src="${item.image_url}" alt="Artwork">
-        <h3>${item.username}</h3>
-        <p>${item.description}</p>
-        <div class="vote-section">
-          <button class="vote-btn" onclick="openModal(${item.id})">Vote</button>
-          <span class="vote-count" data-count="${count}">${count} votes</span>
-        </div>`;
-      galleryDiv.prepend(card);
-      if(!instant) setTimeout(()=>card.classList.add('show'),50);
-      else card.classList.add('show');
-    }
-
-    function animateVoteCount(postId,newCount) {
-      const el=document.querySelector(`#post-${postId} .vote-count`);
-      if(!el) return;
-      let oldCount=parseInt(el.dataset.count)||0;
-      el.dataset.count=newCount;
-      let current=oldCount;
-      const step=newCount>oldCount?1:-1;
-      const interval=setInterval(()=>{
-        current+=step;
-        el.textContent=`${current} votes`;
-        if(current===newCount) clearInterval(interval);
-      },50);
-    }
-
-    function subscribeRealtime() {
-      sb.channel('realtime')
-        .on('postgres_changes',{event:'INSERT',schema:'public',table:'artwork_posts'},payload=>{
-          postCache.unshift(payload.new);
-          addCard(payload.new);
-          renderLeaderboard();
-        })
-        .on('postgres_changes',{event:'INSERT',schema:'public',table:'artwork_votes'},payload=>{
-          const postId=payload.new.post_id;
-          const current=(voteCache[postId]||0)+1;
-          voteCache[postId]=current;
-          animateVoteCount(postId,current);
-          renderLeaderboard();
-        })
-        .subscribe();
-    }
-
-    async function claimRewards() {
+    function claimRewards() {
       alert("Rewards claiming feature coming soon!");
     }
 
+    // Listen for live changes and update only affected card
+    sb.channel('artwork_posts_changes')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'artwork_posts' }, payload => {
+        loadGallery();
+      })
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'artwork_posts' }, payload => {
+        const row = payload.new;
+        const card = document.getElementById(`post-${row.id}`);
+        if (card) {
+          card.querySelector('.vote-count').textContent = row.votes || 0;
+        }
+      })
+      .subscribe();
+
     ensureBucket();
+    ensureTable();
     loadGallery();
-    subscribeRealtime();
   </script>
 </body>
 </html>
