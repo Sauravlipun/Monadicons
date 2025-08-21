@@ -1,186 +1,298 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Monadicons Social</title>
   <style>
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0e0e0e;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(180deg,#0e0e0e,#1c1c1c);
       color: #fff;
     }
-    .container {
-      max-width: 1200px;
-      margin: auto;
-      padding: 16px;
-    }
+    .container { max-width: 1200px; margin: auto; padding: 16px; }
     .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 0;
+      display: flex; justify-content: space-between; align-items: center; padding: 16px 0;
+    }
+    .header h1 {
+      font-size: 28px;
+      background: linear-gradient(90deg,#7b2ff7,#f107a3);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 800;
     }
     .header a {
-      text-decoration: none;
-      color: #fff;
-      font-weight: bold;
-      padding: 8px 14px;
-      border-radius: 6px;
+      text-decoration: none; color: #fff; font-weight: bold;
+      padding: 8px 14px; border-radius: 6px;
       background: linear-gradient(90deg,#7b2ff7,#f107a3);
+      transition: transform 0.2s;
     }
+    .header a:hover { transform: scale(1.05); }
     .upload-card {
-      background: #1c1c1c;
-      padding: 20px;
-      border-radius: 10px;
-      margin-top: 20px;
+      background: #222; padding: 20px; border-radius: 12px;
+      margin-top: 20px; box-shadow: 0 0 15px rgba(255,255,255,0.05);
     }
-    label {
-      display: block;
-      margin-top: 10px;
-      font-weight: bold;
-    }
+    .upload-card h2 { margin: 0 0 10px 0; font-size: 22px; }
+    label { display: block; margin-top: 12px; font-weight: 600; }
     input, textarea {
-      width: 100%;
-      margin-top: 5px;
-      padding: 8px;
-      border-radius: 6px;
-      border: none;
-      outline: none;
+      width: 100%; margin-top: 5px; padding: 10px;
+      border-radius: 6px; border: none; outline: none;
+      background: #2c2c2c; color: white;
     }
     button {
-      margin-top: 12px;
-      padding: 10px 14px;
+      margin-top: 14px; padding: 10px 16px;
       background: linear-gradient(90deg,#7b2ff7,#f107a3);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
+      color: white; border: none; border-radius: 6px;
+      font-weight: bold; cursor: pointer; transition: transform 0.2s;
+    }
+    button:hover { transform: scale(1.05); }
+    .leaderboard {
+      background: #1a1a1a; padding: 20px; border-radius: 12px;
+      margin-top: 30px; box-shadow: 0 0 12px rgba(255,255,255,0.05);
+    }
+    .leaderboard h2 {
+      background: linear-gradient(90deg,#f107a3,#7b2ff7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 24px;
+      margin-top: 0;
+    }
+    .leaderboard-list {
+      margin: 0; padding: 0; list-style: none;
+    }
+    .leaderboard-list li {
+      padding: 10px; margin-top: 8px;
+      background: #222; border-radius: 8px;
+      display: flex; justify-content: space-between; align-items: center;
     }
     .gallery {
-      display: grid;
-      grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
-      gap: 16px;
-      margin-top: 30px;
+      display: grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
+      gap: 24px; margin-top: 30px;
     }
     .card {
-      background: #1c1c1c;
-      border-radius: 8px;
-      padding: 10px;
-      text-align: center;
+      background: #1a1a1a; border-radius: 12px; padding: 14px;
+      text-align: center; box-shadow: 0 0 12px rgba(255,255,255,0.05);
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
     }
-    .card img {
-      max-width: 100%;
-      border-radius: 8px;
+    .card.show { opacity: 1; transform: translateY(0); }
+    .card img { max-width: 100%; border-radius: 8px; }
+    .vote-section {
+      margin-top: 12px; display: flex; justify-content: center;
+      align-items: center; gap: 10px;
     }
-    .footer {
-      text-align: center;
-      margin-top: 30px;
-      font-size: 14px;
-      color: #bbb;
+    .vote-btn {
+      padding: 8px 12px; font-size: 14px;
+      background: linear-gradient(90deg,#f107a3,#7b2ff7);
+      border: none; border-radius: 4px;
+      cursor: pointer; transition: transform 0.2s;
     }
+    .vote-btn:hover { transform: scale(1.05); }
+    .footer { text-align: center; margin-top: 40px; font-size: 14px; color: #bbb; }
+    .modal-overlay {
+      display: none; position: fixed; top:0; left:0; right:0; bottom:0;
+      background: rgba(0,0,0,0.6); justify-content: center; align-items: center;
+      z-index: 9999;
+    }
+    .modal {
+      background: #222; padding: 20px; border-radius: 10px;
+      max-width: 400px; width: 90%; text-align: center;
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    }
+    .modal h3 { margin: 0 0 10px; }
+    .modal input { width: 100%; margin: 10px 0; }
+    .modal-buttons { display: flex; justify-content: center; gap: 10px; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
       <h1>Monadicons Social</h1>
-      <a href="index.html">← Back to Home</a>
+      <a href="index.html">← Back</a>
     </div>
 
     <div class="upload-card">
       <h2>Upload Your Icon / Artwork</h2>
       <label for="username">Name / Handle</label>
       <input id="username" type="text" placeholder="Enter your name or @handle">
-
       <label for="description">Description</label>
       <textarea id="description" rows="3" placeholder="Describe your work"></textarea>
-
       <label for="file">Upload Image</label>
       <input id="file" type="file" accept="image/*">
-
       <button onclick="uploadArtwork()">Upload & Showcase</button>
       <button onclick="claimRewards()">Claim Rewards</button>
+    </div>
+
+    <div class="leaderboard">
+      <h2>🏆 Top Creators</h2>
+      <ul id="leaderboard" class="leaderboard-list"></ul>
     </div>
 
     <h2 style="margin-top:30px;">Community Gallery</h2>
     <div id="gallery" class="gallery"></div>
 
     <div class="footer">
-      Powered by Monadicons + Supabase
+      Powered by Monadicons + Supabase (Realtime)
+    </div>
+  </div>
+
+  <!-- Vote Modal -->
+  <div id="voteModal" class="modal-overlay">
+    <div class="modal">
+      <h3>Enter your name to vote</h3>
+      <input id="voterName" type="text" placeholder="@username or name">
+      <div class="modal-buttons">
+        <button onclick="submitVote()">Vote</button>
+        <button onclick="closeModal()">Cancel</button>
+      </div>
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const SUPABASE_URL = "https://chqyhungrvvioofigapw.supabase.co";
-    const SUPABASE_ANON_KEY = "<YOUR_ANON_KEY_HERE>"; // Replace with your real anon key
-
+    const SUPABASE_URL = "<YOUR_SUPABASE_URL>";
+    const SUPABASE_ANON_KEY = "<YOUR_SUPABASE_ANON_KEY>";
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const BUCKET_NAME = 'artwork';
+    let currentVotePostId = null;
+    let voteCache = {};
+    let postCache = [];
+
+    async function ensureBucket() {
+      const { data: buckets } = await sb.storage.listBuckets();
+      if (!buckets.some(b => b.name === BUCKET_NAME)) {
+        await sb.storage.createBucket(BUCKET_NAME, { public: true });
+      }
+    }
 
     async function uploadArtwork() {
+      await ensureBucket();
       const username = document.getElementById('username').value.trim();
       const description = document.getElementById('description').value.trim();
       const fileInput = document.getElementById('file');
       if (!username || !description || fileInput.files.length === 0) {
-        alert("Please fill out all fields and select an image.");
-        return;
+        alert("Please fill out all fields and select an image."); return;
       }
-
       const file = fileInput.files[0];
       const fileName = `${Date.now()}_${file.name}`;
-
-      // Upload to Supabase Storage (bucket: artwork)
-      let { error: uploadError } = await sb.storage.from('artwork').upload(fileName, file);
-      if (uploadError) {
-        alert("Upload failed: " + uploadError.message);
-        return;
-      }
-
-      // Get public URL
-      const { data: publicData } = sb.storage.from('artwork').getPublicUrl(fileName);
-
-      // Insert metadata into database
+      const { error: uploadError } = await sb.storage.from(BUCKET_NAME).upload(fileName, file);
+      if (uploadError) { alert("Upload failed: " + uploadError.message); return; }
+      const { data: publicData } = sb.storage.from(BUCKET_NAME).getPublicUrl(fileName);
       const { error: insertError } = await sb.from('artwork_posts').insert([
         { username, description, image_url: publicData.publicUrl }
       ]);
+      if (insertError) { alert("Database insert failed: " + insertError.message); return; }
+      alert("Upload successful!");
+    }
 
-      if (insertError) {
-        alert("Database insert failed: " + insertError.message);
-      } else {
-        alert("Upload successful!");
-        loadGallery();
+    function openModal(postId) {
+      currentVotePostId = postId;
+      document.getElementById("voterName").value = "";
+      document.getElementById("voteModal").style.display = "flex";
+    }
+    function closeModal() {
+      document.getElementById("voteModal").style.display = "none";
+    }
+
+    async function submitVote() {
+      const voter = document.getElementById("voterName").value.trim();
+      if (!voter) return;
+      const votedPosts = JSON.parse(localStorage.getItem("votedPosts") || "[]");
+      if (votedPosts.includes(currentVotePostId)) {
+        alert("You already voted for this post!"); closeModal(); return;
       }
+      const { error } = await sb.from('artwork_votes').insert([{ post_id: currentVotePostId, voter }]);
+      if (error) alert("Vote failed: " + error.message);
+      else {
+        votedPosts.push(currentVotePostId);
+        localStorage.setItem("votedPosts", JSON.stringify(votedPosts));
+        alert("Thanks for voting!");
+      }
+      closeModal();
     }
 
     async function loadGallery() {
-      const { data, error } = await sb.from('artwork_posts').select('*').order('id', { ascending: false });
-      if (error) {
-        console.error(error);
-        return;
-      }
+      const { data: posts } = await sb.from('artwork_posts').select('*').order('id',{ascending:false});
+      const { data: votes } = await sb.from('artwork_votes').select('post_id');
+      voteCache = {};
+      (votes||[]).forEach(v=>{voteCache[v.post_id]=(voteCache[v.post_id]||0)+1});
+      postCache = posts || [];
+      renderGallery();
+      renderLeaderboard();
+    }
+
+    function renderGallery() {
       const galleryDiv = document.getElementById('gallery');
       galleryDiv.innerHTML = "";
-      data.forEach(item => {
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-          <img src="${item.image_url}" alt="Artwork">
-          <h3>${item.username}</h3>
-          <p>${item.description}</p>
-        `;
-        galleryDiv.appendChild(card);
-      });
+      postCache.forEach(item=>addCard(item,true));
+    }
+
+    function renderLeaderboard() {
+      const leaderboardDiv = document.getElementById('leaderboard');
+      const ranked = [...postCache].sort((a,b)=>(voteCache[b.id]||0)-(voteCache[a.id]||0)).slice(0,5);
+      leaderboardDiv.innerHTML = ranked.map(p=>`
+        <li><strong>${p.username}</strong> <span>${voteCache[p.id]||0} votes</span></li>
+      `).join("");
+    }
+
+    function addCard(item, instant=false) {
+      const count = voteCache[item.id]||0;
+      const galleryDiv = document.getElementById('gallery');
+      const card=document.createElement('div');
+      card.className='card';
+      card.id=`post-${item.id}`;
+      card.innerHTML=`
+        <img src="${item.image_url}" alt="Artwork">
+        <h3>${item.username}</h3>
+        <p>${item.description}</p>
+        <div class="vote-section">
+          <button class="vote-btn" onclick="openModal(${item.id})">Vote</button>
+          <span class="vote-count" data-count="${count}">${count} votes</span>
+        </div>`;
+      galleryDiv.prepend(card);
+      if(!instant) setTimeout(()=>card.classList.add('show'),50);
+      else card.classList.add('show');
+    }
+
+    function animateVoteCount(postId,newCount) {
+      const el=document.querySelector(`#post-${postId} .vote-count`);
+      if(!el) return;
+      let oldCount=parseInt(el.dataset.count)||0;
+      el.dataset.count=newCount;
+      let current=oldCount;
+      const step=newCount>oldCount?1:-1;
+      const interval=setInterval(()=>{
+        current+=step;
+        el.textContent=`${current} votes`;
+        if(current===newCount) clearInterval(interval);
+      },50);
+    }
+
+    function subscribeRealtime() {
+      sb.channel('realtime')
+        .on('postgres_changes',{event:'INSERT',schema:'public',table:'artwork_posts'},payload=>{
+          postCache.unshift(payload.new);
+          addCard(payload.new);
+          renderLeaderboard();
+        })
+        .on('postgres_changes',{event:'INSERT',schema:'public',table:'artwork_votes'},payload=>{
+          const postId=payload.new.post_id;
+          const current=(voteCache[postId]||0)+1;
+          voteCache[postId]=current;
+          animateVoteCount(postId,current);
+          renderLeaderboard();
+        })
+        .subscribe();
     }
 
     async function claimRewards() {
       alert("Rewards claiming feature coming soon!");
     }
 
-    // Load gallery on page load
+    ensureBucket();
     loadGallery();
+    subscribeRealtime();
   </script>
 </body>
 </html>
