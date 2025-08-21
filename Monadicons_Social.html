@@ -14,10 +14,12 @@
     --muted: #bfb8d9;
   }
 
+  /* Basic layout */
   html,body{height:100%;margin:0;font-family:Inter,Arial,Helvetica,sans-serif;color:#fff;background:linear-gradient(135deg,var(--bg1),var(--bg2));}
   #bgCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:-2;}
-
   .wrap{max-width:1230px;margin:18px auto;padding:18px;box-sizing:border-box;}
+
+  /* Header */
   .header{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:12px;}
   .brand{display:flex;gap:12px;align-items:center;}
   .logo{width:52px;height:52px;border-radius:10px;display:grid;place-items:center;font-weight:700;background:linear-gradient(135deg,var(--accent1),var(--accent2));color:#fff;font-size:20px;}
@@ -25,13 +27,12 @@
   .nav{display:flex;gap:8px;align-items:center;}
   .btn{background:linear-gradient(90deg,var(--accent1),var(--accent2));border:none;color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:600;text-decoration:none;}
   .small-btn{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);padding:6px 8px;border-radius:8px;cursor:pointer;font-size:12px;}
-  .ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:#fff;padding:8px 10px;border-radius:8px;cursor:pointer;}
 
   .muted{color:var(--muted);font-size:13px;}
 
+  /* Sections */
   .section-title{margin-top:12px;font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
   .carousel{margin:14px 0;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));border-radius:12px;padding:14px;display:flex;align-items:center;gap:12px;justify-content:center;position:relative;min-height:180px;box-shadow:0 6px 30px rgba(11,3,30,0.45);}
-  .carousel-inner{display:flex;flex-direction:column;align-items:center;gap:8px;}
   .carousel-img{max-height:140px;max-width:100%;border-radius:10px;object-fit:cover;cursor:pointer;box-shadow:0 8px 30px rgba(16,6,40,0.6);transition:transform .18s ease;}
   .carousel-controls{position:absolute;top:50%;transform:translateY(-50%);width:100%;display:flex;justify-content:space-between;pointer-events:none;}
   .carousel-controls button{pointer-events:all;background:rgba(0,0,0,0.45);border:none;color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer;margin:0 10px;}
@@ -46,6 +47,7 @@
   textarea{resize:vertical;min-height:56px;}
   .upload-actions{display:flex;gap:8px;align-items:center;margin-top:10px;}
 
+  /* Gallery layout - smaller thumbs so many images visible */
   .gallery{margin-top:12px;display:grid;grid-template-columns:repeat(5,1fr);gap:10px;max-height:calc(100vh - 420px);overflow:auto;padding-right:6px;}
   @media (max-width:1280px){ .gallery{grid-template-columns:repeat(4,1fr);} }
   @media (max-width:900px){ .gallery{grid-template-columns:repeat(3,1fr);max-height:420px;} }
@@ -77,44 +79,28 @@
   .modal .content{max-width:880px;max-height:90vh;width:calc(100% - 48px);padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));display:flex;flex-direction:column;gap:12px;align-items:center;}
   .modal img{max-width:100%;max-height:72vh;object-fit:contain;border-radius:10px;}
 
-  /* toast (undo) base */
+  /* animated undo snackbar + rate toast */
   .toast-base{position:fixed;left:18px;bottom:18px;z-index:1400;pointer-events:none;display:flex;flex-direction:column;gap:8px;}
-  /* animated toast */
-  .toast {
-    min-width:220px;
-    pointer-events:all;
-    display:flex;align-items:center;gap:12px;
-    background:linear-gradient(90deg,var(--accent1),var(--accent2));
-    color:#fff;padding:12px 14px;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,0.5);
-    transform:translateY(18px); opacity:0; transition: transform 260ms cubic-bezier(.2,.9,.2,1), opacity 260ms ease;
-    position:relative; overflow:hidden;
-  }
-  .toast.show{ transform:translateY(0); opacity:1; }
+  .toast{min-width:220px;pointer-events:all;display:flex;align-items:center;gap:12px;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;padding:12px 14px;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,0.5);transform:translateY(18px);opacity:0;transition:transform 260ms cubic-bezier(.2,.9,.2,1),opacity 260ms ease;position:relative;overflow:hidden;}
+  .toast.show{transform:translateY(0);opacity:1;}
   .toast .msg{flex:1;font-weight:600;font-size:14px;}
   .toast .undo{background:rgba(255,255,255,0.15);border:none;color:#fff;padding:8px 10px;border-radius:8px;cursor:pointer;font-weight:700;}
-  .toast .bar{position:absolute;left:0;bottom:0;height:4px;background:rgba(255,255,255,0.35);border-bottom-left-radius:10px;border-bottom-right-radius:10px; width:100%; transform-origin:left; transition: transform linear; }
+  .toast .bar{position:absolute;left:0;bottom:0;height:4px;background:rgba(255,255,255,0.35);border-bottom-left-radius:10px;border-bottom-right-radius:10px;width:100%;transform-origin:left;transition:transform linear;}
+  .rate-toast{min-width:200px;pointer-events:all;background:linear-gradient(90deg,#ff4d6d,#ff7a7a);color:#fff;padding:10px 12px;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,0.5);transform:translateY(18px);opacity:0;transition:transform 220ms ease,opacity 220ms ease;}
+  .rate-toast.show{transform:translateY(0);opacity:1;}
 
-  /* rate limit toast (red) */
-  .rate-toast{
-    min-width:200px; pointer-events:all; background:linear-gradient(90deg,#ff4d6d,#ff7a7a); color:#fff; padding:10px 12px; border-radius:10px; box-shadow:0 8px 30px rgba(0,0,0,0.5);
-    transform:translateY(18px); opacity:0; transition:transform 220ms ease, opacity 220ms ease;
-  }
-  .rate-toast.show{ transform:translateY(0); opacity:1; }
-  .rate-toast .time{ font-weight:700; margin-left:6px; }
-
-  /* confirm modal */
   .confirm-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);z-index:1300;}
   .confirm-box{width:420px;max-width:90%;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0.06));padding:18px;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.6);color:#fff;}
   .confirm-box p{margin:0 0 12px 0;color:var(--muted);}
   .confirm-actions{display:flex;gap:8px;justify-content:flex-end;}
   .confirm-actions .cancel{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);border-radius:8px;padding:8px 12px;cursor:pointer;}
+  .vote-disabled-note{font-size:12px;color:rgba(255,255,255,0.7);margin-top:6px;}
 
-  /* theme overlay for transition */
+  /* overlay for theme crossfade */
   #themeOverlay{position:fixed;inset:0;pointer-events:none;z-index:2000;opacity:0;transition:opacity .35s ease;}
   #themeOverlay.show{opacity:1;}
   #themeOverlay .overlay-inner{position:absolute;inset:0;background:linear-gradient(135deg,var(--overlay-bg1,#000),var(--overlay-bg2,#111));opacity:1;}
-
-  .vote-disabled-note{font-size:12px;color:rgba(255,255,255,0.7);margin-top:6px;}
+  .gmon-active .logo{background:linear-gradient(135deg,#00b4d8,#90e0ef);color:#002b36;}
 </style>
 </head>
 <body>
@@ -134,6 +120,7 @@
     <div class="nav">
       <a class="btn" href="index.html">← Home</a>
       <button id="themeBtn" class="small-btn">Theme: Purple</button>
+      <button id="resetThemeBtn" class="small-btn" title="Reset to default purple">Reset</button>
       <button id="gmonBtn" class="small-btn" title="Quick Gmonadicons">Gmonadicons</button>
     </div>
   </div>
@@ -221,7 +208,7 @@
   <div class="footer">Powered by Monadicons ©2025</div>
 </div>
 
-<!-- modal -->
+<!-- preview modal -->
 <div id="modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
   <div class="content" role="document">
     <div style="width:100%;display:flex;justify-content:flex-end;">
@@ -253,15 +240,14 @@
 
 <script>
 /* ============================
-   Configuration: rate-limits
+   CONFIG: vote rate-limits
    ============================ */
-const MAX_VOTES_PER_MIN = 15;        // max global votes in time window
-const VOTE_WINDOW_MS = 60_000;       // window for global rate limit
-const PER_ARTWORK_COOLDOWN_S = 30;   // seconds before same emoji on same artwork again
+const MAX_VOTES_PER_MIN = 15;        // global votes per VOTE_WINDOW_MS
+const VOTE_WINDOW_MS = 60_000;
+const PER_ARTWORK_COOLDOWN_S = 30;   // seconds per emoji per artwork
 
 /* ============================
-   Theme & particle background
-   (same as before; kept compact)
+   Theme / Particle Background
    ============================ */
 const THEMES = [
   { key:'purple', name:'Purple', vars:{ bg1:'#12002b', bg2:'#240046', accent1:'#7b2ff7', accent2:'#f107a3', particle:'rgba(139,61,255,0.09)', overlay1:'#3b0a66', overlay2:'#2a0a3b' } },
@@ -269,8 +255,10 @@ const THEMES = [
   { key:'sunset', name:'Sunset', vars:{ bg1:'#2b0f3a', bg2:'#ff6b6b', accent1:'#ff9a8b', accent2:'#ffd194', particle:'rgba(255,150,120,0.08)', overlay1:'#7f1d5b', overlay2:'#ff6b6b' } },
   { key:'midnight', name:'Midnight', vars:{ bg1:'#020617', bg2:'#0b132b', accent1:'#6a5acd', accent2:'#b084ff', particle:'rgba(106,90,205,0.07)', overlay1:'#00112b', overlay2:'#0b132b' } }
 ];
-const THEME_KEY='mon_theme_index';
+const THEME_KEY = 'mon_theme_index';
 const themeBtn = document.getElementById('themeBtn');
+const resetThemeBtn = document.getElementById('resetThemeBtn');
+const gmonBtn = document.getElementById('gmonBtn');
 const themeOverlay = document.getElementById('themeOverlay');
 const overlayInner = themeOverlay.querySelector('.overlay-inner');
 
@@ -284,6 +272,7 @@ function applyTheme(vars){
   document.documentElement.style.setProperty('--overlay-bg2', vars.overlay2 || vars.bg2);
   if(vars === THEMES[1].vars) document.documentElement.classList.add('gmon-active'); else document.documentElement.classList.remove('gmon-active');
 }
+
 function animateTheme(index){
   const t = THEMES[index];
   overlayInner.style.background = `linear-gradient(135deg, ${t.vars.overlay1}, ${t.vars.overlay2})`;
@@ -293,34 +282,38 @@ function animateTheme(index){
   themeBtn.textContent = `Theme: ${t.name}`;
   localStorage.setItem(THEME_KEY, String(index));
 }
-let themeIndex = parseInt(localStorage.getItem(THEME_KEY) || '0',10);
-if(isNaN(themeIndex)||themeIndex<0||themeIndex>=THEMES.length) themeIndex=0;
+
+/* Init theme (default index 0 = Purple) */
+let themeIndex = parseInt(localStorage.getItem(THEME_KEY) || '0', 10);
+if(isNaN(themeIndex) || themeIndex < 0 || themeIndex >= THEMES.length) themeIndex = 0;
 applyTheme(THEMES[themeIndex].vars);
 themeBtn.textContent = `Theme: ${THEMES[themeIndex].name}`;
-themeBtn.addEventListener('click', ()=>{ themeIndex = (themeIndex+1)%THEMES.length; animateTheme(themeIndex); });
-document.getElementById('gmonBtn').addEventListener('click', ()=>{ themeIndex = 1; animateTheme(themeIndex); });
 
-/* particle bg */
+/* events */
+themeBtn.addEventListener('click', ()=> { themeIndex = (themeIndex + 1) % THEMES.length; animateTheme(themeIndex); });
+resetThemeBtn.addEventListener('click', ()=> { themeIndex = 0; animateTheme(0); });
+gmonBtn.addEventListener('click', ()=> { themeIndex = 1; animateTheme(1); });
+
+/* particle background */
 const canvas = document.getElementById('bgCanvas'); const ctx = canvas.getContext('2d');
 let W = canvas.width = innerWidth, H = canvas.height = innerHeight;
 let particles = [];
-function setupParticles(){ particles=[]; const c = Math.round((W*H)/70000)+40; for(let i=0;i<c;i++){ particles.push({ x:Math.random()*W, y:Math.random()*H, r:Math.random()*1.6+0.6, vx:(Math.random()-0.5)*0.25, vy:(Math.random()-0.5)*0.25 }); } }
+function setupParticles(){ particles=[]; const count = Math.round((W*H)/70000) + 40; for(let i=0;i<count;i++){ particles.push({ x:Math.random()*W, y:Math.random()*H, r:Math.random()*1.6 + 0.6, vx:(Math.random()-0.5)*0.25, vy:(Math.random()-0.5)*0.25 }); } }
 setupParticles();
-function getCssVar(n, f){ const v = getComputedStyle(document.documentElement).getPropertyValue(n); return v? v.trim(): f; }
+function getCssVar(name, fallback){ const v = getComputedStyle(document.documentElement).getPropertyValue(name); return v ? v.trim() : fallback; }
 function hexToRgba(input, alpha){
-  if(!input) return `rgba(18,0,43,${alpha})`;
-  input = input.trim();
-  if(input.startsWith('rgba')||input.startsWith('hsla')) return input;
+  if(!input) return `rgba(18,0,43,${alpha})`; input = input.trim();
+  if(input.startsWith('rgba') || input.startsWith('hsla')) return input;
   if(input.startsWith('rgb(')) return input.replace('rgb(', 'rgba(').replace(')', `,${alpha})`);
-  if(input[0]==='#'){ let hex=input.slice(1); if(hex.length===3) hex=hex.split('').map(h=>h+h).join(''); const r=parseInt(hex.slice(0,2),16), g=parseInt(hex.slice(2,4),16), b=parseInt(hex.slice(4,6),16); return `rgba(${r},${g},${b},${alpha})`; }
+  if(input[0] === '#'){ let hex = input.slice(1); if(hex.length===3) hex = hex.split('').map(h=>h+h).join(''); const r = parseInt(hex.slice(0,2),16), g = parseInt(hex.slice(2,4),16), b = parseInt(hex.slice(4,6),16); return `rgba(${r},${g},${b},${alpha})`; }
   return `rgba(18,0,43,${alpha})`;
 }
-function bgAnim(){ ctx.clearRect(0,0,W,H); const g1=getCssVar('--bg1','#12002b'), g2=getCssVar('--bg2','#240046'); const grad=ctx.createLinearGradient(0,0,W,H); grad.addColorStop(0, hexToRgba(g1,0.10)); grad.addColorStop(1, hexToRgba(g2,0.12)); ctx.fillStyle=grad; ctx.fillRect(0,0,W,H); const particleColor = getCssVar('--particle-color','rgba(139,61,255,0.09)'); particles.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; if(p.x<-10) p.x = W+10; if(p.x>W+10) p.x = -10; if(p.y<-10) p.y = H+10; if(p.y>H+10) p.y = -10; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle = particleColor; ctx.fill(); }); requestAnimationFrame(bgAnim); }
+function bgAnim(){ ctx.clearRect(0,0,W,H); const g1 = getCssVar('--bg1','#12002b'), g2 = getCssVar('--bg2','#240046'); const grad = ctx.createLinearGradient(0,0,W,H); grad.addColorStop(0, hexToRgba(g1,0.10)); grad.addColorStop(1, hexToRgba(g2,0.12)); ctx.fillStyle = grad; ctx.fillRect(0,0,W,H); const particleColor = getCssVar('--particle-color','rgba(139,61,255,0.09)'); particles.forEach(p => { p.x += p.vx; p.y += p.vy; if(p.x < -10) p.x = W + 10; if(p.x > W + 10) p.x = -10; if(p.y < -10) p.y = H + 10; if(p.y > H + 10) p.y = -10; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle = particleColor; ctx.fill(); }); requestAnimationFrame(bgAnim); }
 bgAnim();
-addEventListener('resize', ()=>{ W=canvas.width=innerWidth; H=canvas.height=innerHeight; setupParticles(); });
+addEventListener('resize', ()=>{ W = canvas.width = innerWidth; H = canvas.height = innerHeight; setupParticles(); });
 
 /* ============================
-   App core: gallery, chat, undo, confirm, carousel
+   App core (gallery, chat, votes, undo)
    ============================ */
 const galleryEl = document.getElementById('gallery');
 const uploadBtn = document.getElementById('uploadBtn');
@@ -364,69 +357,65 @@ const confirmOk = document.getElementById('confirmOk');
 const confirmCancel = document.getElementById('confirmCancel');
 const voteNote = document.getElementById('voteNote');
 
-let artworks = JSON.parse(localStorage.getItem('artworks') || '[]');
+let artworks = JSON.parse(localStorage.getItem('artworks') || '[]'); // { id, username, description, data, votes:{} }
 let messages = JSON.parse(localStorage.getItem('messages') || '[]');
 let customEmojis = JSON.parse(localStorage.getItem('custom_emojis') || '[]');
 
-let featuredIndex = 0; let featuredArtworks = []; let modalCurrentIndex = -1;
+let featuredIndex = 0;
+let featuredArtworks = [];
+let modalCurrentIndex = -1;
 
-/* vote history and cooldowns stored in localStorage */
-let voteHistory = JSON.parse(localStorage.getItem('vote_history') || '[]'); // array of timestamps (ms)
-let voteCooldowns = JSON.parse(localStorage.getItem('vote_cooldowns') || '{}'); // { "<artId>_<emoji>": ts }
+/* vote persistence */
+let voteHistory = JSON.parse(localStorage.getItem('vote_history') || '[]'); // timestamps
+let voteCooldowns = JSON.parse(localStorage.getItem('vote_cooldowns') || '{}'); // { "<artId>_<emoji>": lastTimestamp }
 
+/* simple persistence helpers */
 function persistVoteState(){ localStorage.setItem('vote_history', JSON.stringify(voteHistory)); localStorage.setItem('vote_cooldowns', JSON.stringify(voteCooldowns)); }
-
-/* Undo */
-let lastAction = null;
-const UNDO_MS = 8000;
-
 function save(){ localStorage.setItem('artworks', JSON.stringify(artworks)); }
 
-/* ensure artworks have stable ids (for cooldown tracking) */
+/* ensure every artwork has an id */
 function ensureIds(){
   let changed = false;
-  artworks = artworks.map(a=>{
+  artworks = artworks.map(a => {
     if(!a.id){ a.id = `${Date.now().toString(36)}_${Math.random().toString(36).slice(2,8)}`; changed = true; }
     return a;
   });
   if(changed) save();
 }
 
-/* leaderboard computation */
+/* leaderboard & featured logic */
 function computeLeaderboard(){
   const map = {};
-  artworks.forEach(a=>{
-    const total = Object.values(a.votes || {}).reduce((s,v)=>s+v,0);
-    map[a.username] = (map[a.username]||0) + total;
+  artworks.forEach(a => {
+    const total = Object.values(a.votes || {}).reduce((s,v) => s+v, 0);
+    map[a.username] = (map[a.username] || 0) + total;
   });
   const sorted = Object.entries(map).sort((a,b)=>b[1]-a[1]);
   return { sorted, map };
 }
-
 let lastTop10 = [];
 function updateLeaderboard(){
   const { sorted } = computeLeaderboard();
   const top10 = sorted.slice(0,10);
   leaderboardBody.innerHTML = '';
-  top10.forEach(([user,score], i)=>{
+  top10.forEach(([user,score], i) => {
     const tr = document.createElement('tr');
     tr.innerHTML = `<td style="width:30px">${i+1}</td><td>${escapeHtml(user)}</td><td style="width:70px">${score}</td>`;
     leaderboardBody.appendChild(tr);
   });
   miniTop.innerHTML = top10.slice(0,3).map(([u,s])=>`${escapeHtml(u)}: ${s}`).join('<br>') || '<span class="muted">No activity yet</span>';
-  const topUsernames = top10.map(t=>t[0]);
+  const topUsernames = top10.map(t => t[0]);
   if(JSON.stringify(topUsernames) !== JSON.stringify(lastTop10)){
     lastTop10 = topUsernames;
-    if(topUsernames.length>0) showRateToast(`Top creators updated — #1: ${escapeHtml(topUsernames[0])}`, 3500);
+    if(topUsernames.length > 0) showRateToast(`Top creators updated — #1: ${escapeHtml(topUsernames[0])}`, 3000);
   }
   return topUsernames;
 }
 
-/* featured */
 function updateFeatured(){
-  const topUsernames = computeLeaderboard().sorted.slice(0,10).map(x=>x[0]);
+  const topUsernames = computeLeaderboard().sorted.slice(0,10).map(x => x[0]);
   const candidate = artworks.filter(a => topUsernames.includes(a.username));
-  featuredArtworks = candidate.slice().sort((a,b)=>{
+  featuredArtworks = candidate.slice().sort((a,b) => {
     const ta = Object.values(a.votes||{}).reduce((s,v)=>s+v,0);
     const tb = Object.values(b.votes||{}).reduce((s,v)=>s+v,0);
     return tb - ta;
@@ -445,7 +434,7 @@ function updateFeatured(){
   carouselVotes.textContent = `👍 ${(votes['👍']||0)}  •  😍 ${(votes['😍']||0)}  •  🎨 ${(votes['🎨']||0)}`;
 }
 
-/* render gallery */
+/* render gallery items and attach listeners */
 function renderGallery(){
   galleryEl.innerHTML = '';
   const items = [...artworks].slice().reverse();
@@ -460,43 +449,51 @@ function renderGallery(){
         <p title="${escapeHtml(item.description)}">${escapeHtml(item.description)}</p>
       </div>
       <div class="vote-row" aria-hidden="false">
-        <button class="vote-btn" id="v_${item.id}_thumb_${index}_like">👍 ${(item.votes['👍']||0)}</button>
-        <button class="vote-btn" id="v_${item.id}_thumb_${index}_heart">😍 ${(item.votes['😍']||0)}</button>
-        <button class="vote-btn" id="v_${item.id}_thumb_${index}_art">🎨 ${(item.votes['🎨']||0)}</button>
+        <button class="vote-btn" id="v_${item.id}_like">👍 ${(item.votes['👍']||0)}</button>
+        <button class="vote-btn" id="v_${item.id}_heart">😍 ${(item.votes['😍']||0)}</button>
+        <button class="vote-btn" id="v_${item.id}_art">🎨 ${(item.votes['🎨']||0)}</button>
       </div>
       <div style="display:flex;gap:6px;margin-top:6px;">
-        <button class="small-btn" onclick="handleDownload(event, ${index})">Download</button>
-        <button class="small-btn" onclick="handleShareX(event, ${index})">Share X</button>
-        <button class="danger-btn" onclick="handleDelete(event, ${index})">Delete</button>
+        <button class="small-btn" id="d_${index}">Download</button>
+        <button class="small-btn" id="s_${index}">Share X</button>
+        <button class="danger-btn" id="x_${index}">Delete</button>
       </div>
     `;
-    // attach vote button listeners with rate-limit check
-    card.querySelector(`#v_${item.id}_thumb_${index}_like`).addEventListener('click', (e)=>{ e.stopPropagation(); tryVote(index,'👍'); });
-    card.querySelector(`#v_${item.id}_thumb_${index}_heart`).addEventListener('click', (e)=>{ e.stopPropagation(); tryVote(index,'😍'); });
-    card.querySelector(`#v_${item.id}_thumb_${index}_art`).addEventListener('click', (e)=>{ e.stopPropagation(); tryVote(index,'🎨'); });
+    galleryEl.appendChild(card);
 
-    card.addEventListener('click', (e)=>{
-      const target = e.target;
-      if (target.closest('.small-btn') || target.closest('.danger-btn')) return;
+    // vote listeners with rate-limit wrapper
+    card.querySelector(`#v_${item.id}_like`).addEventListener('click', (e)=>{ e.stopPropagation(); tryVote(index, '👍'); });
+    card.querySelector(`#v_${item.id}_heart`).addEventListener('click', (e)=>{ e.stopPropagation(); tryVote(index, '😍'); });
+    card.querySelector(`#v_${item.id}_art`).addEventListener('click', (e)=>{ e.stopPropagation(); tryVote(index, '🎨'); });
+
+    // download, share, delete
+    card.querySelector(`#d_${index}`).addEventListener('click', (e)=>{ e.stopPropagation(); downloadArt(index); });
+    card.querySelector(`#s_${index}`).addEventListener('click', (e)=>{ e.stopPropagation(); shareX(index); });
+    card.querySelector(`#x_${index}`).addEventListener('click', (e)=>{ e.stopPropagation(); showConfirmFor('delete', `Delete this artwork by "${escapeHtml(artworks[index].username)}"?`, { index }); });
+
+    // clicking thumbnail opens modal (unless clicking buttons)
+    card.addEventListener('click', (e)=> {
+      const t = e.target;
+      if(t.closest('.vote-btn') || t.closest('.small-btn') || t.closest('.danger-btn')) return;
       openModal(index);
     });
-    galleryEl.appendChild(card);
   });
+
   updateLeaderboard();
   updateFeatured();
 }
 
-/* handlers for inline-like buttons used elsewhere */
-function handleDownload(e, index){ e.stopPropagation(); downloadArt(index); }
-function handleShareX(e, index){ e.stopPropagation(); shareX(index); }
-function handleDelete(e, index){ e.stopPropagation(); showConfirmFor('delete', `Delete this artwork by "${escapeHtml(artworks[index].username)}"?`, { index }); }
+/* helper functions for download/share */
+function downloadArt(index){ const a = document.createElement('a'); a.href = artworks[index].data; a.download = `${(artworks[index].username||'art')}-monadicons.png`; document.body.appendChild(a); a.click(); a.remove(); }
+function shareX(index){ const text = encodeURIComponent(`${artworks[index].description || ''} — by ${artworks[index].username || 'Anonymous'}`); const url = encodeURIComponent(artworks[index].data); window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank', 'noopener'); }
 
-/* vote infrastructure & rate-limiting helpers */
+/* ============================
+   Voting + rate-limits (client-side)
+   ============================ */
 function now(){ return Date.now(); }
 function pruneVoteHistory(){ const cutoff = now() - VOTE_WINDOW_MS; voteHistory = voteHistory.filter(ts => ts > cutoff); persistVoteState(); }
 function votesInWindow(){ pruneVoteHistory(); return voteHistory.length; }
 function addVoteTimestamp(){ voteHistory.push(now()); persistVoteState(); }
-
 function getCooldownKey(artId, emoji){ return `${artId}_${emoji}`; }
 function cooldownRemainingSec(artId, emoji){
   const key = getCooldownKey(artId, emoji);
@@ -504,24 +501,20 @@ function cooldownRemainingSec(artId, emoji){
   const remain = Math.max(0, Math.ceil((last + PER_ARTWORK_COOLDOWN_S*1000 - now())/1000));
   return remain;
 }
-function setCooldown(artId, emoji){
-  const key = getCooldownKey(artId, emoji);
-  voteCooldowns[key] = now();
-  persistVoteState();
-}
+function setCooldown(artId, emoji){ const key = getCooldownKey(artId, emoji); voteCooldowns[key] = now(); persistVoteState(); }
 
-/* TryVote wrapper that enforces limits then calls vote() */
+/* tryVote enforces limits then records vote */
 function tryVote(index, emoji){
   const art = artworks[index];
   if(!art) return;
   ensureIds();
   pruneVoteHistory();
-  // global limit
+  // global rate limit
   if(votesInWindow() >= MAX_VOTES_PER_MIN){
     const earliest = voteHistory[0] || now();
     const waitMs = Math.max(1000, VOTE_WINDOW_MS - (now() - earliest));
     const waitSec = Math.ceil(waitMs/1000);
-    showRateToast(`Too many votes — try again in ${waitSec}s`, 4200);
+    showRateToast(`Too many votes — try again in ${waitSec}s`, 3800);
     voteNote.textContent = `Rate limited: wait ${waitSec}s`;
     setTimeout(()=> voteNote.textContent = '', 4000);
     return;
@@ -534,25 +527,27 @@ function tryVote(index, emoji){
     setTimeout(()=> voteNote.textContent = '', 3500);
     return;
   }
-  // allowed: disable button briefly to avoid rapid double clicks
-  const btns = document.querySelectorAll(`#v_${art.id}_thumb_${index}_like, #v_${art.id}_thumb_${index}_heart, #v_${art.id}_thumb_${index}_art`);
-  btns.forEach(b=> b.disabled = true);
-  setTimeout(()=> btns.forEach(b=> b.disabled = false), 600);
+  // disable the target art's vote buttons briefly to prevent double clicks
+  const btns = document.querySelectorAll(`#v_${art.id}_like, #v_${art.id}_heart, #v_${art.id}_art`);
+  btns.forEach(b => b.disabled = true);
+  setTimeout(()=> btns.forEach(b => b.disabled = false), 700);
 
-  // register vote and cooldown
+  // register vote
   addVoteTimestamp();
   setCooldown(art.id, emoji);
   vote(index, emoji);
 }
 
-/* vote: increments counts and updates UI */
+/* vote increments */
 function vote(index, emoji){
   if(!artworks[index].votes) artworks[index].votes = {};
-  artworks[index].votes[emoji] = (artworks[index].votes[emoji]||0) + 1;
+  artworks[index].votes[emoji] = (artworks[index].votes[emoji] || 0) + 1;
   save(); renderGallery(); updateFeatured();
 }
 
-/* Upload: add id for each artwork */
+/* ============================
+   Upload, delete, clear, export
+   ============================ */
 uploadBtn.addEventListener('click', doUpload);
 function doUpload(){
   const username = (usernameEl.value || 'Anonymous').trim();
@@ -560,7 +555,7 @@ function doUpload(){
   const file = fileInput.files[0];
   if(!file){ alert('Please select an image to upload.'); return; }
   const reader = new FileReader();
-  reader.onload = (e)=>{
+  reader.onload = (e) => {
     const id = `${Date.now().toString(36)}_${Math.random().toString(36).slice(2,8)}`;
     artworks.push({ id, username, description, data: e.target.result, votes: {} });
     save(); renderGallery();
@@ -568,30 +563,25 @@ function doUpload(){
   };
   reader.readAsDataURL(file);
 }
-/* Enter-to-upload */
-usernameEl.addEventListener('keydown',(e)=>{ if(e.key==='Enter'){ e.preventDefault(); doUpload(); }});
-descEl.addEventListener('keydown',(e)=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); doUpload(); }});
 
-/* Delete with undo */
+/* Enter-to-upload shortcuts */
+usernameEl.addEventListener('keydown', (e)=>{ if(e.key === 'Enter'){ e.preventDefault(); doUpload(); }});
+descEl.addEventListener('keydown', (e)=>{ if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); doUpload(); }});
+
 function performDeleteAt(index){
-  if(index<0 || index>=artworks.length) return;
+  if(index < 0 || index >= artworks.length) return;
   const item = artworks[index];
   setLastActionAndToast({ type:'delete', payload:{ item, index }});
-  artworks.splice(index,1); save(); renderGallery();
+  artworks.splice(index, 1); save(); renderGallery();
 }
 
-/* Clear all */
+/* clear all with undo */
+clearAllBtn.addEventListener('click', ()=> showConfirmFor('clearAll', 'Clear ALL artworks? (Undo available)', {}) );
 function performClearAll(){
-  if(artworks.length===0){ showRateToast('No artworks to clear', 2000); return; }
+  if(artworks.length === 0){ showRateToast('No artworks to clear', 1800); return; }
   setLastActionAndToast({ type:'clearAll', payload:{ items: artworks.slice() }});
   artworks = []; save(); renderGallery();
 }
-
-/* Chat */
-function renderMessages(){ chatMessages.innerHTML=''; messages.forEach(m=>{ const d=document.createElement('div'); d.className='msg'; d.textContent=m.text; chatMessages.appendChild(d); }); chatMessages.scrollTop = chatMessages.scrollHeight; }
-sendMsg.addEventListener('click', ()=>{ const val = chatInput.value.trim(); if(!val) return; messages.push({ text: val }); localStorage.setItem('messages', JSON.stringify(messages)); chatInput.value=''; renderMessages(); });
-chatInput.addEventListener('keydown',(e)=>{ if(e.key==='Enter') sendMsg.click(); });
-emojiSelect.addEventListener('change', ()=>{ chatInput.value += emojiSelect.value; chatInput.focus(); });
 
 /* export gallery JSON */
 exportBtn.addEventListener('click', ()=>{
@@ -600,29 +590,32 @@ exportBtn.addEventListener('click', ()=>{
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'monadicons_gallery.json'; document.body.appendChild(a); a.click(); a.remove();
 });
 
-/* Download/share */
-function downloadArt(index){ const a=document.createElement('a'); a.href = artworks[index].data; a.download = `${(artworks[index].username||'art')}-monadicons.png`; document.body.appendChild(a); a.click(); a.remove(); }
-function shareX(index){ const text=encodeURIComponent(`${artworks[index].description||''} — by ${artworks[index].username||'Anonymous'}`); const url=encodeURIComponent(artworks[index].data); window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`,'_blank','noopener'); }
-
-/* modal preview */
+/* ============================
+   Modal preview & carousel
+   ============================ */
 function openModal(index){
-  modal.style.display='flex'; modal.setAttribute('aria-hidden','false'); modalImg.src = artworks[index].data; modalCurrentIndex = index;
+  modal.style.display = 'flex';
+  modal.setAttribute('aria-hidden','false');
+  modalImg.src = artworks[index].data;
+  modalCurrentIndex = index;
   downloadBtn.onclick = ()=> downloadArt(index);
   shareXBtn.onclick = ()=> shareX(index);
   deleteModalBtn.onclick = ()=> showConfirmFor('delete', `Delete this artwork by "${escapeHtml(artworks[index].username)}"?`, { index });
 }
 closeModalBtn.addEventListener('click', ()=>{ modal.style.display='none'; modal.setAttribute('aria-hidden','true'); });
-window.addEventListener('keydown',(e)=>{ if(e.key==='Escape'){ if(confirmModal.style.display==='flex'){ confirmModal.style.display='none'; confirmModal.setAttribute('aria-hidden','true'); if(typeof(confirmResolve)=='function') confirmResolve(false); } else if(modal.style.display==='flex'){ modal.style.display='none'; modal.setAttribute('aria-hidden','true'); } }});
-window.addEventListener('click', (e)=>{ if(e.target===modal){ modal.style.display='none'; modal.setAttribute('aria-hidden','true'); } });
+window.addEventListener('click', (e)=>{ if(e.target === modal){ modal.style.display='none'; modal.setAttribute('aria-hidden','true'); } });
+window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape'){ if(confirmModal.style.display === 'flex'){ confirmModal.style.display = 'none'; confirmModal.setAttribute('aria-hidden','true'); if(typeof(confirmResolve) === 'function') confirmResolve(false); } else if(modal.style.display === 'flex'){ modal.style.display='none'; modal.setAttribute('aria-hidden','true'); } }});
 
-/* carousel controls */
-prevBtn.addEventListener('click', ()=>{ if(featuredArtworks.length===0) return; featuredIndex=(featuredIndex-1+featuredArtworks.length)%featuredArtworks.length; updateFeatured(); });
-nextBtn.addEventListener('click', ()=>{ if(featuredArtworks.length===0) return; featuredIndex=(featuredIndex+1)%featuredArtworks.length; updateFeatured(); });
-let carouselInterval = setInterval(()=>{ if(featuredArtworks.length>0){ featuredIndex=(featuredIndex+1)%featuredArtworks.length; updateFeatured(); } }, 5000);
-carouselVoteThumb.addEventListener('click', ()=>{ if(!featuredArtworks.length) return; const current=featuredArtworks[featuredIndex]; const idx=artworks.indexOf(current); if(idx>=0) tryVote(idx,'👍'); });
-carouselOpen.addEventListener('click', ()=>{ if(!featuredArtworks.length) return; const current=featuredArtworks[featuredIndex]; const idx=artworks.indexOf(current); if(idx>=0) openModal(idx); });
+/* carousel */
+prevBtn.addEventListener('click', ()=>{ if(featuredArtworks.length === 0) return; featuredIndex = (featuredIndex - 1 + featuredArtworks.length) % featuredArtworks.length; updateFeatured(); });
+nextBtn.addEventListener('click', ()=>{ if(featuredArtworks.length === 0) return; featuredIndex = (featuredIndex + 1) % featuredArtworks.length; updateFeatured(); });
+let carouselInterval = setInterval(()=>{ if(featuredArtworks.length>0){ featuredIndex = (featuredIndex + 1) % featuredArtworks.length; updateFeatured(); } }, 5000);
+carouselVoteThumb.addEventListener('click', ()=>{ if(!featuredArtworks.length) return; const cur = featuredArtworks[featuredIndex]; const idx = artworks.indexOf(cur); if(idx >= 0) tryVote(idx, '👍'); });
+carouselOpen.addEventListener('click', ()=>{ if(!featuredArtworks.length) return; const cur = featuredArtworks[featuredIndex]; const idx = artworks.indexOf(cur); if(idx >= 0) openModal(idx); });
 
-/* confirm modal helpers */
+/* ============================
+   Confirm modal & undo snackbar
+   ============================ */
 let confirmResolve = null;
 function showConfirmFor(type, message, payload){
   confirmDesc.innerHTML = message;
@@ -646,28 +639,28 @@ confirmOk.addEventListener('click', ()=>{ if(confirmResolve) confirmResolve(true
 confirmCancel.addEventListener('click', ()=>{ if(confirmResolve) confirmResolve(false); });
 confirmModal.addEventListener('click', (e)=>{ if(e.target === confirmModal){ if(confirmResolve) confirmResolve(false); } });
 
-/* perform clear chat */
-function performClearChat(){ if(messages.length===0){ showRateToast('No chat to clear',2000); return; } setLastActionAndToast({ type:'clearChat', payload:{ messages: messages.slice() }}); messages=[]; localStorage.setItem('messages', JSON.stringify(messages)); renderMessages(); }
-
-/* Undo toast / rate toast helpers (animated snackbar) */
+/* Undo snackbar creation + control */
+let lastAction = null;
+const UNDO_MS = 8000;
+function actionMessage(action){
+  if(action.type === 'delete') return 'Artwork deleted';
+  if(action.type === 'clearAll') return 'All artworks cleared';
+  if(action.type === 'clearChat') return 'Chat cleared';
+  return 'Action performed';
+}
 function createUndoToast(action){
-  // remove any existing undo toast
+  // remove existing undo toasts
   const existing = toastBase.querySelector('.toast.undo-snack');
-  if(existing){ existing.remove(); }
+  if(existing) existing.remove();
   const toast = document.createElement('div');
   toast.className = 'toast undo-snack';
   toast.innerHTML = `<div class="msg">${actionMessage(action)}</div><button class="undo">Undo</button><div class="bar"></div>`;
   toastBase.appendChild(toast);
-  // force reflow then show
   requestAnimationFrame(()=> toast.classList.add('show'));
   const bar = toast.querySelector('.bar');
-  // animate bar with transform to simulate progress
   bar.style.transform = 'scaleX(1)';
-  // using transform for linear animation
   setTimeout(()=> { bar.style.transition = `transform ${UNDO_MS}ms linear`; bar.style.transform = 'scaleX(0)'; }, 20);
-
-  const timeoutId = setTimeout(()=>{ toast.classList.remove('show'); setTimeout(()=> toast.remove(), 300); }, UNDO_MS);
-  // attach undo handler
+  const timeoutId = setTimeout(()=>{ toast.classList.remove('show'); setTimeout(()=> toast.remove(), 300); lastAction = null; }, UNDO_MS);
   toast.querySelector('.undo').addEventListener('click', ()=>{
     clearTimeout(timeoutId);
     if(lastAction){
@@ -688,13 +681,6 @@ function createUndoToast(action){
   });
   return timeoutId;
 }
-function actionMessage(action){
-  if(action.type==='delete') return 'Artwork deleted';
-  if(action.type==='clearAll') return 'All artworks cleared';
-  if(action.type==='clearChat') return 'Chat cleared';
-  return 'Action performed';
-}
-
 function setLastActionAndToast(actionObj){
   if(lastAction && lastAction.timeoutId){ clearTimeout(lastAction.timeoutId); lastAction = null; }
   lastAction = { ...actionObj, createdAt: Date.now(), timeoutId: null };
@@ -702,8 +688,11 @@ function setLastActionAndToast(actionObj){
   lastAction.timeoutId = tid;
 }
 
-/* Rate-limit toast (red) */
-function showRateToast(text, duration=3000){
+/* keyboard undo Ctrl/Cmd + Z */
+document.addEventListener('keydown', (e)=>{ if((e.ctrlKey||e.metaKey) && e.key.toLowerCase() === 'z'){ const btn = toastBase.querySelector('.undo'); if(btn) btn.click(); } });
+
+/* Rate-limit small red toast */
+function showRateToast(text, duration=2500){
   const elm = document.createElement('div');
   elm.className = 'rate-toast';
   elm.innerHTML = `<div style="font-weight:700;">${text}</div>`;
@@ -712,10 +701,15 @@ function showRateToast(text, duration=3000){
   setTimeout(()=>{ elm.classList.remove('show'); setTimeout(()=> elm.remove(), 260); }, duration);
 }
 
-/* keyboard undo Ctrl/Cmd + Z (works with toast) */
-document.addEventListener('keydown', (e)=>{ if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='z'){ const undoBtn = toastBase.querySelector('.undo'); if(undoBtn) undoBtn.click(); } });
+/* ============================
+   Chat & emojis
+   ============================ */
+function renderMessages(){ chatMessages.innerHTML = ''; messages.forEach(m=>{ const d = document.createElement('div'); d.className = 'msg'; d.textContent = m.text; chatMessages.appendChild(d); }); chatMessages.scrollTop = chatMessages.scrollHeight; }
+sendMsg.addEventListener('click', ()=>{ const val = chatInput.value.trim(); if(!val) return; messages.push({ text: val }); localStorage.setItem('messages', JSON.stringify(messages)); chatInput.value=''; renderMessages(); });
+chatInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') sendMsg.click(); });
+emojiSelect.addEventListener('change', ()=>{ chatInput.value += emojiSelect.value; chatInput.focus(); });
 
-/* emoji creation */
+/* custom emoji creation */
 function populateEmojiSelect(){
   const built = ['😀','😍','🔥','👍','🎨','💖'];
   emojiSelect.innerHTML = '';
@@ -723,9 +717,9 @@ function populateEmojiSelect(){
     const opt = document.createElement('option'); opt.value = e; opt.textContent = e; emojiSelect.appendChild(opt);
   });
 }
-addEmojiBtn.addEventListener('click', ()=>{
+addEmojiBtn.addEventListener('click', ()=> {
   const val = (customEmojiInput.value || '').trim();
-  if(!val){ showRateToast('Paste an emoji to add',2000); return; }
+  if(!val){ showRateToast('Paste an emoji to add', 1800); return; }
   customEmojis = customEmojis || [];
   if(!customEmojis.includes(val)) customEmojis.push(val);
   localStorage.setItem('custom_emojis', JSON.stringify(customEmojis));
@@ -733,12 +727,19 @@ addEmojiBtn.addEventListener('click', ()=>{
   populateEmojiSelect();
 });
 
-/* export handled above */
+/* clear chat with confirm */
+clearChatBtn.addEventListener('click', ()=> showConfirmFor('clearChat', 'Clear chat history? (Undo available)', {}) );
+function performClearChat(){ if(messages.length === 0){ showRateToast('No chat to clear', 1500); return; } setLastActionAndToast({ type:'clearChat', payload:{ messages: messages.slice() } }); messages = []; localStorage.setItem('messages', JSON.stringify(messages)); renderMessages(); }
 
-/* init */
+/* ============================
+   Utilities & init
+   ============================ */
+function escapeHtml(s=''){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'); }
+
+/* init function */
 function init(){
   ensureIds();
-  artworks = artworks.map(a => ({ id: a.id, username: a.username||'Anonymous', description: a.description||'', data: a.data, votes: a.votes||{} }));
+  artworks = artworks.map(a => ({ id: a.id, username: a.username || 'Anonymous', description: a.description || '', data: a.data, votes: a.votes || {} }));
   messages = messages || [];
   customEmojis = customEmojis || [];
   voteHistory = JSON.parse(localStorage.getItem('vote_history') || '[]');
@@ -747,12 +748,11 @@ function init(){
 }
 init();
 
-/* expose for inline usage */
+/* expose some functions for debugging/inline uses if needed */
 window.tryVote = tryVote;
-window.handleDownload = handleDownload;
-window.handleShareX = handleShareX;
-window.handleDelete = handleDelete;
+window.performDeleteAt = performDeleteAt;
 window.openModal = openModal;
+
 </script>
 </body>
 </html>
