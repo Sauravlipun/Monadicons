@@ -13,15 +13,11 @@
     --card:#1c1330;
     --muted:#bfb8d9;
   }
-
-  /* page + background canvas */
   html,body { height:100%; margin:0; font-family:Inter,Arial,Helvetica,sans-serif; color:#fff; background:linear-gradient(135deg,var(--bg1),var(--bg2)); }
   #bgCanvas{ position:fixed; inset:0; width:100%; height:100%; z-index:-2; }
 
-  /* container */
   .wrap{ max-width:1230px; margin:18px auto; padding:18px; box-sizing:border-box; }
 
-  /* header */
   .header{ display:flex; gap:12px; align-items:center; justify-content:space-between; margin-bottom:12px; }
   .brand { display:flex; gap:12px; align-items:center; }
   .logo{ width:52px;height:52px;border-radius:10px; display:grid;place-items:center;font-weight:700;
@@ -30,7 +26,6 @@
   .nav { display:flex; gap:10px; align-items:center; }
   .btn { background:linear-gradient(90deg,var(--accent1),var(--accent2)); border:none; color:#fff; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:600; text-decoration:none; }
 
-  /* featured carousel */
   .section-title{ margin-top:12px; font-size:14px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
   .carousel { margin:14px 0; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06)); border-radius:12px; padding:14px; display:flex; align-items:center; gap:12px; justify-content:center; position:relative; min-height:180px; box-shadow:0 6px 30px rgba(11,3,30,0.45); }
   .carousel-inner { display:flex; flex-direction:column; align-items:center; gap:8px; }
@@ -40,14 +35,9 @@
   .carousel-controls button{ pointer-events:all; background:rgba(0,0,0,0.45); border:none; color:#fff; padding:8px 12px; border-radius:8px; cursor:pointer; margin:0 10px; }
   .carousel-votes{ color:var(--muted); font-size:13px; }
 
-  /* layout columns */
   .grid { display:grid; grid-template-columns: 1fr 350px; gap:18px; align-items:start; }
   @media (max-width:1000px){ .grid{ grid-template-columns: 1fr; } }
 
-  /* left column holds gallery */
-  .left { }
-
-  /* upload card */
   .card { background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06)); border-radius:12px; padding:14px; box-shadow:0 6px 20px rgba(9,3,36,0.55); }
   .upload-row { display:flex; gap:10px; align-items:center; }
   label{ display:block; font-size:13px; color:var(--muted); margin-top:8px; margin-bottom:6px; }
@@ -55,13 +45,12 @@
   textarea{ resize:vertical; min-height:56px; }
   .upload-actions { display:flex; gap:8px; align-items:center; margin-top:10px; }
 
-  /* compact gallery grid: 5 columns on large screens to show 20+ thumbnails */
   .gallery {
     margin-top:12px;
     display:grid;
     grid-template-columns: repeat(5, 1fr);
     gap:10px;
-    max-height: calc(100vh - 420px); /* keeps viewport to show ~4 rows (20 images) on desktop */
+    max-height: calc(100vh - 420px);
     overflow:auto;
     padding-right:6px;
   }
@@ -90,8 +79,8 @@
   .vote-row{ display:flex; gap:6px; align-items:center; justify-content:center; margin-top:4px; flex-wrap:wrap; }
   .vote-btn { background:linear-gradient(90deg,var(--accent1),var(--accent2)); border:none; color:#fff; padding:6px 8px; border-radius:8px; cursor:pointer; font-weight:700; font-size:12px; display:inline-flex; gap:6px; align-items:center; }
   .small-btn{ background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--muted); padding:6px 8px; border-radius:8px; cursor:pointer; font-size:12px; }
+  .danger-btn{ background:transparent; border:1px solid rgba(255,70,90,0.15); color:#ff7070; padding:6px 8px; border-radius:8px; cursor:pointer; font-size:12px; }
 
-  /* right column (sidebar) */
   .sidebar { display:flex; flex-direction:column; gap:12px; }
   .leaderboard { padding:12px; border-radius:10px; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.04)); }
   .leaderboard h3{ margin:0 0 8px 0; font-size:15px; }
@@ -104,17 +93,42 @@
   .chat .msg { padding:6px 8px; border-radius:8px; background:rgba(123,47,247,0.06); margin-bottom:8px; font-size:13px; }
   .chat-row{ display:flex; gap:8px; }
 
-  /* footer */
   .footer{ margin-top:18px; color:var(--muted); font-size:13px; text-align:center; padding-bottom:30px; }
 
-  /* modal */
   .modal { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.85); z-index:999; }
   .modal .content { max-width:880px; max-height:90vh; width:calc(100% - 48px); padding:18px; border-radius:12px; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06)); display:flex; flex-direction:column; gap:12px; align-items:center; }
   .modal img{ max-width:100%; max-height:72vh; object-fit:contain; border-radius:10px; }
 
-  /* small helpers */
   .muted{ color:var(--muted); font-size:13px; }
   a.small-link{ color:var(--accent1); text-decoration:none; font-weight:600; }
+
+  /* toast (undo) */
+  .toast {
+    position:fixed;
+    left:18px;
+    bottom:18px;
+    background:linear-gradient(90deg,var(--accent1),var(--accent2));
+    color:#fff;
+    padding:12px 14px;
+    border-radius:10px;
+    box-shadow:0 8px 30px rgba(0,0,0,0.5);
+    display:flex;
+    gap:12px;
+    align-items:center;
+    z-index:1200;
+    min-width:220px;
+  }
+  .toast .msg{ flex:1; font-weight:600; font-size:14px; }
+  .toast .undo{ background:rgba(255,255,255,0.15); border:none; color:#fff; padding:8px 10px; border-radius:8px; cursor:pointer; font-weight:700; }
+  .toast .bar{ position:absolute; left:0; bottom:0; height:4px; background:rgba(255,255,255,0.35); border-bottom-left-radius:10px; border-bottom-right-radius:10px; }
+  
+  /* confirm modal */
+  .confirm-modal { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.7); z-index:1300; }
+  .confirm-box { width:420px; max-width:90%; background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0.06)); padding:18px; border-radius:12px; box-shadow:0 10px 40px rgba(0,0,0,0.6); color:#fff; }
+  .confirm-box p{ margin:0 0 12px 0; color:var(--muted); }
+  .confirm-actions{ display:flex; gap:8px; justify-content:flex-end; }
+  .confirm-actions .btn{ padding:8px 12px; }
+  .confirm-actions .cancel{ background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--muted); border-radius:8px; padding:8px 12px; cursor:pointer; }
 </style>
 </head>
 <body>
@@ -164,6 +178,7 @@
             <input id="file" type="file" accept="image/*">
             <div class="upload-actions">
               <button id="uploadBtn" class="btn">Upload & Showcase</button>
+              <button id="clearAllBtn" class="small-btn" title="Remove all artworks">Clear all artworks</button>
               <div class="muted" style="font-size:12px; margin-left:8px;">Tip: upload clear PNG / JPG</div>
             </div>
           </div>
@@ -197,6 +212,7 @@
             <option>😀</option><option>😍</option><option>🔥</option><option>👍</option><option>🎨</option><option>💖</option>
           </select>
           <button id="sendMsg" class="btn">Send</button>
+          <button id="clearChatBtn" class="small-btn" title="Clear chat history">Clear Chat</button>
         </div>
       </div>
     </aside>
@@ -205,7 +221,7 @@
   <div class="footer">Powered by Monadicons ©2025</div>
 </div>
 
-<!-- modal -->
+<!-- preview modal -->
 <div id="modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
   <div class="content" role="document">
     <div style="width:100%; display:flex; justify-content:flex-end;">
@@ -215,13 +231,29 @@
     <div style="display:flex;gap:10px; align-items:center; width:100%; justify-content:center;">
       <button id="downloadBtn" class="vote-btn">Download</button>
       <button id="shareXBtn" class="small-btn">Share on X</button>
+      <button id="deleteModalBtn" class="danger-btn">Delete Artwork</button>
     </div>
   </div>
 </div>
 
+<!-- confirm modal -->
+<div id="confirmModal" class="confirm-modal" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="confirm-box" role="document" aria-labelledby="confirmTitle" aria-describedby="confirmDesc">
+    <h3 id="confirmTitle" style="margin:0 0 8px 0;">Confirm action</h3>
+    <p id="confirmDesc">Are you sure?</p>
+    <div class="confirm-actions">
+      <button id="confirmCancel" class="cancel">Cancel</button>
+      <button id="confirmOk" class="btn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- toast for undo -->
+<div id="toastContainer" style="position:fixed;left:18px;bottom:18px;z-index:1400"></div>
+
 <script>
 /* ----------------------------
-   Animated particle background
+   Particle background
    ---------------------------- */
 const canvas = document.getElementById('bgCanvas');
 const ctx = canvas.getContext('2d');
@@ -235,19 +267,16 @@ for(let i=0;i<PARTICLE_COUNT;i++){
     y: Math.random()*H,
     r: Math.random()*1.6 + 0.6,
     vx: (Math.random()-0.5)*0.25,
-    vy: (Math.random()-0.5)*0.25,
-    hue: Math.random()*360
+    vy: (Math.random()-0.5)*0.25
   });
 }
 function bgAnim(){
   ctx.clearRect(0,0,W,H);
-  // soft gradient overlay
   const g = ctx.createLinearGradient(0,0,W,H);
   g.addColorStop(0,'rgba(36,0,70,0.10)');
   g.addColorStop(1,'rgba(18,0,43,0.12)');
   ctx.fillStyle = g;
   ctx.fillRect(0,0,W,H);
-
   particles.forEach(p=>{
     p.x += p.vx; p.y += p.vy;
     if(p.x < -10) p.x = W + 10;
@@ -265,7 +294,7 @@ bgAnim();
 addEventListener('resize',()=>{ W = canvas.width = innerWidth; H = canvas.height = innerHeight; });
 
 /* ----------------------------
-   App: localStorage gallery + chat
+   App core + confirmation + undo
    ---------------------------- */
 const galleryEl = document.getElementById('gallery');
 const uploadBtn = document.getElementById('uploadBtn');
@@ -293,26 +322,86 @@ const modalImg = document.getElementById('modalImg');
 const closeModalBtn = document.getElementById('closeModal');
 const downloadBtn = document.getElementById('downloadBtn');
 const shareXBtn = document.getElementById('shareXBtn');
+const deleteModalBtn = document.getElementById('deleteModalBtn');
+
+const clearAllBtn = document.getElementById('clearAllBtn');
+const clearChatBtn = document.getElementById('clearChatBtn');
+
+const toastContainer = document.getElementById('toastContainer');
+
+const confirmModal = document.getElementById('confirmModal');
+const confirmDesc = document.getElementById('confirmDesc');
+const confirmOk = document.getElementById('confirmOk');
+const confirmCancel = document.getElementById('confirmCancel');
 
 let artworks = JSON.parse(localStorage.getItem('artworks') || '[]'); // array of {username,description,data,votes:{}}
 let messages = JSON.parse(localStorage.getItem('messages') || '[]');
 
 let featuredIndex = 0;
 let featuredArtworks = [];
+let modalCurrentIndex = -1;
 
-/* Utility: safe save */
-function save() {
-  localStorage.setItem('artworks', JSON.stringify(artworks));
+/* Undo state */
+let lastAction = null; // { type:'delete'|'clearAll'|'clearChat', payload:..., timeoutId }
+const UNDO_MS = 8000;
+
+/* Save helper */
+function save(){ localStorage.setItem('artworks', JSON.stringify(artworks)); }
+
+/* Leaderboard computation */
+function computeLeaderboard(){
+  const map = {};
+  artworks.forEach(a=>{
+    const total = Object.values(a.votes || {}).reduce((s,v)=>s+v,0);
+    map[a.username] = (map[a.username]||0) + total;
+  });
+  const sorted = Object.entries(map).sort((a,b)=>b[1]-a[1]);
+  return { sorted, map };
 }
 
-/* Render gallery thumbnails */
+/* Update leaderboard UI */
+function updateLeaderboard(){
+  const { sorted } = computeLeaderboard();
+  const top10 = sorted.slice(0,10);
+  leaderboardBody.innerHTML = '';
+  top10.forEach(([user,score], i)=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td style="width:30px">${i+1}</td><td>${escapeHtml(user)}</td><td style="width:70px">${score}</td>`;
+    leaderboardBody.appendChild(tr);
+  });
+  miniTop.innerHTML = top10.slice(0,3).map(([u,s])=>`${escapeHtml(u)}: ${s}`).join('<br>') || '<span class="muted">No activity yet</span>';
+  return top10.map(t=>t[0]); // usernames
+}
+
+/* Update featured - only from top10 creators, pick top artworks among them */
+function updateFeatured(){
+  const topUsernames = computeLeaderboard().sorted.slice(0,10).map(x=>x[0]);
+  const candidate = artworks.filter(a => topUsernames.includes(a.username));
+  featuredArtworks = candidate.slice().sort((a,b)=>{
+    const ta = Object.values(a.votes||{}).reduce((s,v)=>s+v,0);
+    const tb = Object.values(b.votes||{}).reduce((s,v)=>s+v,0);
+    return tb - ta;
+  }).slice(0,3);
+  if(featuredArtworks.length === 0){
+    carouselImg.src = '';
+    carouselVotes.textContent = '--';
+    carouselImg.alt = '';
+    return;
+  }
+  if(featuredIndex >= featuredArtworks.length) featuredIndex = 0;
+  const art = featuredArtworks[featuredIndex];
+  carouselImg.src = art.data;
+  carouselImg.alt = art.description || art.username;
+  const votes = art.votes || {};
+  carouselVotes.textContent = `👍 ${(votes['👍']||0)}  •  😍 ${(votes['😍']||0)}  •  🎨 ${(votes['🎨']||0)}`;
+}
+
+/* Render gallery */
 function renderGallery(){
   galleryEl.innerHTML = '';
-  // show newest first
   const items = [...artworks].slice().reverse();
   items.forEach((item, revIdx) => {
-    // compute real index
-    const index = artworks.length - 1 - revIdx;
+    const index = artworks.length - 1 - revIdx; // real index in artworks array
     const card = document.createElement('div');
     card.className = 'thumb';
     card.innerHTML = `
@@ -329,12 +418,12 @@ function renderGallery(){
       <div style="display:flex;gap:6px;margin-top:6px;">
         <button class="small-btn" onclick="handleDownload(event, ${index})">Download</button>
         <button class="small-btn" onclick="handleShareX(event, ${index})">Share X</button>
+        <button class="danger-btn" onclick="handleDelete(event, ${index})">Delete</button>
       </div>
     `;
-    // clicking the card (not buttons) opens modal
     card.addEventListener('click', (e)=>{
       const target = e.target;
-      if (target.closest('.vote-btn') || target.closest('.small-btn')) return;
+      if (target.closest('.vote-btn') || target.closest('.small-btn') || target.closest('.danger-btn')) return;
       openModal(index);
     });
     galleryEl.appendChild(card);
@@ -343,33 +432,25 @@ function renderGallery(){
   updateFeatured();
 }
 
-/* Vote handling that prevents card click propagation */
-function handleVote(e, index, emoji){
-  e.stopPropagation();
-  vote(index, emoji);
-}
-function handleDownload(e, index){
-  e.stopPropagation();
-  downloadArt(index);
-}
-function handleShareX(e, index){
-  e.stopPropagation();
-  shareX(index);
-}
+/* Handlers to stop propagation */
+function handleVote(e, index, emoji){ e.stopPropagation(); vote(index, emoji); }
+function handleDownload(e, index){ e.stopPropagation(); downloadArt(index); }
+function handleShareX(e, index){ e.stopPropagation(); shareX(index); }
+function handleDelete(e, index){ e.stopPropagation(); showConfirmFor('delete', `Delete this artwork by "${escapeHtml(artworks[index].username)}"?`, { index }); }
 
-/* Voting logic */
+/* Voting */
 function vote(index, emoji){
   if(!artworks[index].votes) artworks[index].votes = {};
   artworks[index].votes[emoji] = (artworks[index].votes[emoji]||0) + 1;
   save();
   renderGallery();
-  updateFeatured(); // update carousel counts
+  updateFeatured();
 }
 
 /* Upload */
 uploadBtn.addEventListener('click', ()=>{
-  const username = usernameEl.value.trim() || 'Anonymous';
-  const description = descEl.value.trim() || '';
+  const username = (usernameEl.value || 'Anonymous').trim();
+  const description = (descEl.value || '').trim();
   const file = fileInput.files[0];
   if(!file){
     alert('Please select an image to upload.');
@@ -385,101 +466,64 @@ uploadBtn.addEventListener('click', ()=>{
   reader.readAsDataURL(file);
 });
 
-/* Leaderboard + mini top */
-function updateLeaderboard(){
-  const map = {};
-  artworks.forEach(a=>{
-    const total = Object.values(a.votes || {}).reduce((s,v)=>s+v,0);
-    map[a.username] = (map[a.username]||0) + total;
-  });
-  const sorted = Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,10);
-  leaderboardBody.innerHTML = '';
-  sorted.forEach(([user,score], i)=>{
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td style="width:30px">${i+1}</td><td>${escapeHtml(user)}</td><td style="width:70px">${score}</td>`;
-    leaderboardBody.appendChild(tr);
-  });
-
-  // mini top
-  miniTop.innerHTML = sorted.slice(0,3).map(([u,s])=>`${escapeHtml(u)}: ${s}`).join('<br>') || '<span class="muted">No activity yet</span>';
+/* Delete (permanent) with undo snapshot - called after confirmation */
+function performDeleteAt(index){
+  if(index < 0 || index >= artworks.length) return;
+  const item = artworks[index];
+  // set undo state and remove item
+  setLastActionAndToast({ type:'delete', payload:{ item, index }});
+  artworks.splice(index,1);
+  save();
+  renderGallery();
 }
 
-/* Featured carousel */
-function updateFeatured(){
-  featuredArtworks = [...artworks].slice().sort((a,b)=>{
-    const ta = Object.values(a.votes||{}).reduce((s,v)=>s+v,0);
-    const tb = Object.values(b.votes||{}).reduce((s,v)=>s+v,0);
-    return tb - ta;
-  }).slice(0,3);
-  if(featuredArtworks.length === 0){
-    carouselImg.src = '';
-    carouselVotes.textContent = '--';
-    carouselImg.alt = '';
-    return;
-  }
-  // clamp featuredIndex
-  if(featuredIndex >= featuredArtworks.length) featuredIndex = 0;
-  if(featuredIndex < 0) featuredIndex = 0;
-  const art = featuredArtworks[featuredIndex];
-  carouselImg.src = art.data;
-  carouselImg.alt = art.description || art.username;
-  const votes = art.votes || {};
-  carouselVotes.textContent = `👍 ${(votes['👍']||0)}  •  😍 ${(votes['😍']||0)}  •  🎨 ${(votes['🎨']||0)}`;
+/* Clear all artworks - confirmation then perform */
+function performClearAll(){
+  if(artworks.length === 0) return;
+  setLastActionAndToast({ type:'clearAll', payload:{ items: artworks.slice() }});
+  artworks = [];
+  save();
+  renderGallery();
 }
 
-/* carousel controls */
-prevBtn.addEventListener('click', ()=>{
-  featuredIndex = (featuredIndex-1 + featuredArtworks.length) % Math.max(featuredArtworks.length,1);
-  updateFeatured();
-});
-nextBtn.addEventListener('click', ()=>{
-  featuredIndex = (featuredIndex+1) % Math.max(featuredArtworks.length,1);
-  updateFeatured();
-});
-let carouselInterval = setInterval(()=>{ featuredIndex = (featuredIndex+1) % Math.max(featuredArtworks.length,1); updateFeatured(); }, 5000);
-
-/* vote via carousel button */
-carouselVoteThumb.addEventListener('click', ()=>{
-  if(!featuredArtworks.length) return;
-  const current = featuredArtworks[featuredIndex];
-  const idx = artworks.indexOf(current);
-  if(idx >= 0) vote(idx, '👍');
-});
-carouselOpen.addEventListener('click', ()=>{
-  if(!featuredArtworks.length) return;
-  const current = featuredArtworks[featuredIndex];
-  const idx = artworks.indexOf(current);
-  if(idx >= 0) openModal(idx);
-});
-
-/* modal open/close */
-function openModal(index){
-  modal.style.display = 'flex';
-  modal.setAttribute('aria-hidden','false');
-  modalImg.src = artworks[index].data;
-  // set download/share buttons
-  downloadBtn.onclick = ()=>downloadArt(index);
-  shareXBtn.onclick = ()=>shareX(index);
+/* Clear chat */
+function performClearChat(){
+  if(messages.length === 0) return;
+  setLastActionAndToast({ type:'clearChat', payload:{ messages: messages.slice() }});
+  messages = [];
+  localStorage.setItem('messages', JSON.stringify(messages));
+  renderMessages();
 }
-closeModalBtn.addEventListener('click', ()=>{ modal.style.display='none'; modal.setAttribute('aria-hidden','true'); });
-window.addEventListener('click', (e)=>{ if(e.target === modal){ modal.style.display='none'; modal.setAttribute('aria-hidden','true'); } });
 
-/* download and share functions */
+/* download & share */
 function downloadArt(index){
   const a = document.createElement('a');
   a.href = artworks[index].data;
-  a.download = `${artworks[index].username || 'art'}-monadicons.png`;
+  a.download = `${(artworks[index].username||'art')}-monadicons.png`;
   document.body.appendChild(a);
   a.click();
   a.remove();
 }
 function shareX(index){
   const text = encodeURIComponent(`${artworks[index].description || ''} — by ${artworks[index].username || 'Anonymous'}`);
-  // For data URLs, Twitter may not embed the image; we still include the data URL as url param (user may paste)
   const url = encodeURIComponent(artworks[index].data);
   const shareUrl = `https://twitter.com/intent/tweet?text=${text}&url=${url}`;
   window.open(shareUrl, '_blank', 'noopener');
 }
+
+/* modal preview */
+function openModal(index){
+  modal.style.display = 'flex';
+  modal.setAttribute('aria-hidden','false');
+  modalImg.src = artworks[index].data;
+  modalCurrentIndex = index;
+  downloadBtn.onclick = ()=> downloadArt(index);
+  shareXBtn.onclick = ()=> shareX(index);
+  // delete action should use confirm modal
+  deleteModalBtn.onclick = ()=> showConfirmFor('delete', `Delete this artwork by "${escapeHtml(artworks[index].username)}"?`, { index });
+}
+closeModalBtn.addEventListener('click', ()=>{ modal.style.display='none'; modal.setAttribute('aria-hidden','true'); });
+window.addEventListener('click', (e)=>{ if(e.target === modal){ modal.style.display='none'; modal.setAttribute('aria-hidden','true'); } });
 
 /* Chat */
 function renderMessages(){
@@ -503,28 +547,193 @@ sendMsg.addEventListener('click', ()=>{
 chatInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') sendMsg.click(); });
 emojiSelect.addEventListener('change', ()=>{ chatInput.value += emojiSelect.value; chatInput.focus(); });
 
-/* safety: escape HTML for displayed text */
-function escapeHtml(s=''){
-  return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
+/* clear chat confirm */
+document.getElementById('clearChatBtn').addEventListener('click', ()=> {
+  showConfirmFor('clearChat', 'Clear chat history? This cannot be undone (but you will have an Undo option).', {});
+});
+
+/* clear all confirm */
+clearAllBtn.addEventListener('click', ()=> {
+  showConfirmFor('clearAll', 'Clear ALL artworks? This will remove every uploaded artwork (Undo available).', {});
+});
+
+/* carousel controls & auto rotate */
+prevBtn.addEventListener('click', ()=>{
+  if(featuredArtworks.length === 0) return;
+  featuredIndex = (featuredIndex - 1 + featuredArtworks.length) % featuredArtworks.length;
+  updateFeatured();
+});
+nextBtn.addEventListener('click', ()=>{
+  if(featuredArtworks.length === 0) return;
+  featuredIndex = (featuredIndex + 1) % featuredArtworks.length;
+  updateFeatured();
+});
+let carouselInterval = setInterval(()=>{ if(featuredArtworks.length>0){ featuredIndex = (featuredIndex + 1) % featuredArtworks.length; updateFeatured(); } }, 5000);
+
+/* carousel vote & open */
+carouselVoteThumb.addEventListener('click', ()=>{
+  if(!featuredArtworks.length) return;
+  const current = featuredArtworks[featuredIndex];
+  const idx = artworks.indexOf(current);
+  if(idx >= 0) vote(idx, '👍');
+});
+carouselOpen.addEventListener('click', ()=>{
+  if(!featuredArtworks.length) return;
+  const current = featuredArtworks[featuredIndex];
+  const idx = artworks.indexOf(current);
+  if(idx >= 0) openModal(idx);
+});
+
+/* ============================
+   Confirmation modal helpers
+   ============================ */
+let confirmResolve = null;
+function showConfirmFor(type, message, payload){
+  confirmDesc.innerHTML = message;
+  confirmModal.style.display = 'flex';
+  confirmModal.setAttribute('aria-hidden','false');
+
+  // return a promise resolved when user confirms/cancels
+  return new Promise((resolve) => {
+    confirmResolve = (ok) => {
+      confirmModal.style.display = 'none';
+      confirmModal.setAttribute('aria-hidden','true');
+      confirmResolve = null;
+      if(ok){
+        // perform the requested action
+        if(type === 'delete'){
+          performDeleteAt(payload.index);
+        } else if(type === 'clearAll'){
+          performClearAll();
+        } else if(type === 'clearChat'){
+          performClearChat();
+        }
+      }
+      resolve(ok);
+    };
+  });
+}
+confirmOk.addEventListener('click', ()=>{ if(confirmResolve) confirmResolve(true); });
+confirmCancel.addEventListener('click', ()=>{ if(confirmResolve) confirmResolve(false); });
+confirmModal.addEventListener('click', (e)=>{ if(e.target === confirmModal){ if(confirmResolve) confirmResolve(false); } });
+
+/* ============================
+   Undo toast / state helpers
+   ============================ */
+function setLastActionAndToast(actionObj){
+  // finalize any previous pending toast (we remove the timeout so it cannot be undone anymore)
+  if(lastAction && lastAction.timeoutId){
+    clearTimeout(lastAction.timeoutId);
+    lastAction = null;
+    // remove existing toast UI immediately
+    toastContainer.innerHTML = '';
+  }
+
+  lastAction = {
+    ...actionObj,
+    createdAt: Date.now(),
+    timeoutId: null
+  };
+  showUndoToastFor(lastAction);
 }
 
-/* initialization */
+function showUndoToastFor(action){
+  toastContainer.innerHTML = '';
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  const msg = document.createElement('div');
+  msg.className = 'msg';
+  if(action.type === 'delete') msg.textContent = 'Artwork deleted';
+  else if(action.type === 'clearAll') msg.textContent = 'All artworks cleared';
+  else if(action.type === 'clearChat') msg.textContent = 'Chat cleared';
+  else msg.textContent = 'Action performed';
+
+  const undoBtn = document.createElement('button');
+  undoBtn.className = 'undo';
+  undoBtn.textContent = 'Undo';
+
+  const bar = document.createElement('div');
+  bar.className = 'bar';
+  bar.style.width = '100%';
+  bar.style.transition = `width ${UNDO_MS}ms linear`;
+
+  toast.appendChild(msg);
+  toast.appendChild(undoBtn);
+  toastContainer.appendChild(toast);
+  toastContainer.appendChild(bar);
+  // start progress bar animation
+  setTimeout(()=>{ bar.style.width = '0%'; }, 20);
+
+  // schedule finalization
+  const timeoutId = setTimeout(()=>{
+    lastAction = null;
+    toastContainer.innerHTML = '';
+  }, UNDO_MS);
+  lastAction.timeoutId = timeoutId;
+
+  undoBtn.onclick = ()=> {
+    if(!lastAction) return;
+    clearTimeout(lastAction.timeoutId);
+    // reverse
+    if(lastAction.type === 'delete'){
+      const { item, index } = lastAction.payload;
+      const insertAt = Math.min(Math.max(index,0), artworks.length);
+      artworks.splice(insertAt,0,item);
+      save();
+      renderGallery();
+      updateFeatured();
+    } else if(lastAction.type === 'clearAll'){
+      artworks = lastAction.payload.items.slice();
+      save();
+      renderGallery();
+      updateFeatured();
+    } else if(lastAction.type === 'clearChat'){
+      messages = lastAction.payload.messages.slice();
+      localStorage.setItem('messages', JSON.stringify(messages));
+      renderMessages();
+    }
+    lastAction = null;
+    toastContainer.innerHTML = '';
+  };
+}
+
+/* Keyboard undo: Ctrl/Cmd + Z */
+document.addEventListener('keydown', (e)=>{
+  if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z'){
+    if(lastAction){
+      // simulate clicking undo button
+      const undoBtn = toastContainer.querySelector('.undo');
+      if(undoBtn){
+        undoBtn.click();
+      }
+    }
+  }
+});
+
+/* Utility: escape HTML */
+function escapeHtml(s=''){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'); }
+
+/* Initialization */
 function init(){
-  // ensure votes object exists
   artworks = artworks.map(a => ({ username: a.username||'Anonymous', description: a.description||'', data: a.data, votes: a.votes||{} }));
-  save(); renderGallery(); renderMessages(); updateFeatured();
+  messages = messages || [];
+  save();
+  renderGallery();
+  renderMessages();
+  updateFeatured();
 }
 init();
 
-/* expose small helpers for inline onclick in older browsers (they call handleVote etc) */
+/* Expose functions used by inline onclick handlers */
 window.handleVote = handleVote;
 window.handleDownload = handleDownload;
 window.handleShareX = handleShareX;
+window.handleDelete = handleDelete;
 window.openModal = openModal;
+window.deleteArt = performDeleteAt;
 window.vote = vote;
 window.downloadArt = downloadArt;
 window.shareX = shareX;
-
 </script>
 </body>
 </html>
