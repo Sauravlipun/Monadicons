@@ -5,61 +5,83 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Monadicons Social</title>
 <style>
-body { margin:0; font-family:'Arial', sans-serif; background: linear-gradient(135deg,#0e0e0e,#1c1c1c); color:#fff; }
-.container { max-width:1200px; margin:auto; padding:20px; }
-.header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; }
-.header h1 { font-size:2rem; background:linear-gradient(90deg,#7b2ff7,#f107a3); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-.header a { text-decoration:none; color:#fff; padding:8px 14px; border-radius:6px; background:linear-gradient(90deg,#7b2ff7,#f107a3); font-weight:bold; margin-top:10px; }
+/* Body & background */
+body { margin:0; font-family:Arial,sans-serif; background:#111; color:#fff; overflow-x:hidden; }
+#bgCanvas { position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1; }
 
-.upload-card { background:#1c1c1c; padding:20px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.5); margin-bottom:30px; transition:0.3s; }
-.upload-card:hover { box-shadow:0 6px 20px rgba(0,0,0,0.7); }
-.upload-card h2 { margin-top:0; color:#f107a3; }
+/* Container */
+.container { max-width:1200px; margin:auto; padding:16px; }
+
+/* Header */
+.header { display:flex; justify-content:space-between; align-items:center; padding:16px 0; }
+.header h1 { margin:0; font-size:28px; text-transform:uppercase; letter-spacing:1px; }
+.header a { text-decoration:none; color:#fff; font-weight:bold; padding:6px 12px; border-radius:6px; background:linear-gradient(90deg,#7b2ff7,#f107a3); transition:0.3s; }
+.header a:hover { transform:scale(1.05); }
+
+/* Section Titles */
+.section-title { font-size:22px; margin-top:30px; border-bottom:1px solid #333; padding-bottom:6px; text-transform:uppercase; }
+
+/* Carousel */
+.carousel { position:relative; margin:20px 0; height:200px; overflow:hidden; border-radius:12px; background:#1c1c1c; display:flex; align-items:center; justify-content:center; flex-direction:column; transition:0.3s; }
+.carousel img { max-height:150px; max-width:100%; border-radius:10px; cursor:pointer; transition: transform 0.3s; }
+.carousel button { position:absolute; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.5); border:none; color:#fff; font-size:24px; padding:8px 12px; cursor:pointer; border-radius:6px; transition:0.2s; }
+.carousel button:hover { background:rgba(255,255,255,0.2); }
+.prev { left:10px; } .next { right:10px; }
+.vote-counter { margin-top:8px; font-size:14px; }
+
+/* Cards */
+.upload-card, .chat-card, .leaderboard-card { background:#1c1c1c; padding:20px; border-radius:12px; margin-top:20px; box-shadow:0 0 10px rgba(0,0,0,0.5); }
 label { display:block; margin-top:10px; font-weight:bold; }
-input, textarea { width:100%; margin-top:5px; padding:10px; border-radius:8px; border:none; outline:none; background:#2a2a2a; color:#fff; }
-button { margin-top:12px; padding:10px 14px; background:linear-gradient(90deg,#7b2ff7,#f107a3); color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer; transition:0.3s; }
-button:hover { transform:scale(1.05); }
+input, textarea, select { width:100%; margin-top:5px; padding:8px; border-radius:6px; border:none; outline:none; background:#222; color:#fff; }
+button { margin-top:12px; padding:8px 12px; background:linear-gradient(90deg,#7b2ff7,#f107a3); color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer; transition:0.3s; }
+button:hover { transform:scale(1.03); }
 
-.drag-drop { border: 2px dashed #7b2ff7; border-radius:10px; padding:20px; text-align:center; margin-top:10px; cursor:pointer; transition:0.3s; }
-.drag-drop.hover { background:#2a2a2a; }
+/* Gallery */
+.gallery { display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:12px; margin-top:20px; max-height:500px; overflow-y:auto; }
+.card { background:#1c1c1c; border-radius:8px; padding:6px; text-align:center; cursor:pointer; position:relative; transition:0.3s; }
+.card:hover { transform:scale(1.03); }
+.card img { width:100%; height:100px; object-fit:cover; border-radius:6px; display:block; margin:auto; }
+.card h3 { margin:4px 0 0 0; font-size:12px; }
+.card p { font-size:10px; color:#ccc; margin:2px 0; }
+.vote-btn { margin:2px; cursor:pointer; font-size:14px; }
+.action-btn { margin:2px; cursor:pointer; font-size:12px; padding:4px 6px; border-radius:4px; }
 
-.search-bar { margin-bottom:20px; }
-.search-bar input { width:100%; padding:12px; border-radius:10px; border:none; background:#2a2a2a; color:#fff; font-size:16px; outline:none; }
-
-.top-creators, .daily-leaderboard, .weekly-leaderboard { display:flex; gap:20px; margin-bottom:30px; flex-wrap:wrap; }
-.top-card, .leader-card, .card { flex:1; background:#3a3a3a; border-radius:12px; padding:15px; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.5); transition:0.3s; position:relative; max-width:250px; margin-bottom:15px; }
-.top-card:hover, .leader-card:hover, .card:hover { transform:translateY(-5px); box-shadow:0 6px 20px rgba(0,0,0,0.6); }
-.top-card img, .leader-card img, .card img { max-width:100%; max-height:150px; border-radius:12px; margin-bottom:8px; transition:0.3s; }
-
-.vote-btn { background:#f107a3; margin-top:6px; font-weight:bold; padding:6px 10px; border-radius:6px; cursor:pointer; }
-
-.progress-container { width:100%; height:8px; background:#444; border-radius:4px; margin-top:6px; }
-.progress-bar { width:0%; height:8px; background:#7b2ff7; border-radius:4px; transition:0.5s ease-in-out; }
-
-.chat-box { background:#1a1a1a; border-radius:12px; padding:15px; margin-top:30px; max-width:100%; box-shadow:0 4px 12px rgba(0,0,0,0.5); }
-.chat-log { max-height:250px; overflow-y:auto; padding:5px; background:#2a2a2a; border-radius:10px; margin-bottom:10px; }
-.chat-log p { margin:5px 0; transition:0.3s; }
-.chat-input { display:flex; gap:10px; }
-.chat-input input { flex:1; padding:8px; border-radius:8px; border:none; outline:none; background:#2a2a2a; color:#fff; }
-.chat-input button { padding:8px 12px; }
-.emoji-picker { display:flex; gap:6px; flex-wrap:wrap; margin-top:5px; }
-.emoji-picker span { cursor:pointer; font-size:20px; transition:0.2s; }
-.emoji-picker span:hover { transform:scale(1.3); }
-
-.footer { text-align:center; margin-top:50px; font-size:14px; color:#bbb; }
+/* Footer */
+.footer { text-align:center; margin-top:30px; font-size:14px; color:#bbb; }
 
 /* Modal */
-.modal { display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; overflow:auto; background:rgba(0,0,0,0.85); }
-.modal-content { background:#1c1c1c; margin:5% auto; padding:20px; border-radius:12px; width:90%; max-width:500px; text-align:center; box-shadow:0 4px 15px rgba(0,0,0,0.7); position:relative; }
-.modal-content img { max-width:100%; max-height:300px; border-radius:12px; margin-bottom:10px; }
-.close { position:absolute; top:10px; right:15px; color:#fff; font-size:28px; font-weight:bold; cursor:pointer; }
-.close:hover { color:#f107a3; }
+.modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); justify-content:center; align-items:center; z-index:1000; }
+.modal-content { position:relative; max-width:80%; max-height:80%; }
+.modal-content img { max-width:100%; max-height:100%; border-radius:8px; display:block; margin:auto; }
+.close-modal { position:absolute; top:10px; right:10px; color:#fff; font-size:24px; cursor:pointer; }
+
+/* Chat */
+.chat-messages { max-height:200px; overflow-y:auto; margin-top:10px; background:#222; padding:8px; border-radius:6px; }
+.message { margin:4px 0; display:flex; align-items:center; justify-content:space-between; }
+.emoji-btn { margin-left:4px; cursor:pointer; }
+.chat-input { display:flex; gap:6px; margin-top:8px; }
+.chat-input input { flex:1; }
+
+/* Leaderboard */
+.leaderboard-card table { width:100%; border-collapse:collapse; margin-top:10px; }
+.leaderboard-card th, .leaderboard-card td { border:1px solid #333; padding:6px; text-align:left; }
+.leaderboard-card th { background:#222; }
 </style>
 </head>
 <body>
+<canvas id="bgCanvas"></canvas>
 <div class="container">
   <div class="header">
     <h1>Monadicons Social</h1>
-    <a href="index.html">← Back to Home</a>
+    <a href="index.html">← Home</a>
+  </div>
+
+  <div class="section-title">Featured Artworks</div>
+  <div class="carousel" id="carousel">
+    <button class="prev" id="prevBtn">&#10094;</button>
+    <img id="carouselImg" src="" alt="Featured Artwork">
+    <div class="vote-counter" id="carouselVotes"></div>
+    <button class="next" id="nextBtn">&#10095;</button>
   </div>
 
   <div class="upload-card">
@@ -67,199 +89,102 @@ button:hover { transform:scale(1.05); }
     <label for="username">Name / Handle</label>
     <input id="username" type="text" placeholder="Enter your name or @handle">
     <label for="description">Description</label>
-    <textarea id="description" rows="3" placeholder="Describe your work"></textarea>
-    <div class="drag-drop" id="dropArea">Drag & Drop Image Here or Click to Upload</div>
-    <input id="file" type="file" accept="image/*" style="display:none">
-    <div class="progress-bar" id="progressBar"></div>
-    <button onclick="uploadArtwork()">Upload & Showcase</button>
+    <textarea id="description" rows="2" placeholder="Describe your work"></textarea>
+    <label for="file">Upload Image</label>
+    <input id="file" type="file" accept="image/*">
+    <button id="uploadBtn">Upload & Showcase</button>
   </div>
 
-  <div class="search-bar">
-    <input type="text" id="searchInput" placeholder="Search artworks by name or description" oninput="filterGallery()">
-  </div>
-
-  <h2>Top Creators - Top 10 get Free Mon tokens!</h2>
-  <div id="topCreators" class="top-creators"></div>
-
-  <h2>Daily Leaderboard</h2>
-  <div id="dailyLeaderboard" class="daily-leaderboard"></div>
-
-  <h2>Weekly Leaderboard</h2>
-  <div id="weeklyLeaderboard" class="weekly-leaderboard"></div>
-
-  <h2>Community Gallery</h2>
+  <div class="section-title">Community Gallery</div>
   <div id="gallery" class="gallery"></div>
 
-  <div class="chat-box">
-    <h3>Community Chat</h3>
-    <div id="chatLog" class="chat-log"></div>
-    <div class="emoji-picker" id="emojiPicker">
-      <span onclick="addEmoji('😀')">😀</span>
-      <span onclick="addEmoji('🎨')">🎨</span>
-      <span onclick="addEmoji('🔥')">🔥</span>
-      <span onclick="addEmoji('💖')">💖</span>
-      <span onclick="addEmoji('🚀')">🚀</span>
-    </div>
+  <div class="leaderboard-card">
+    <h2>Top 10 Creators (Free Mon Tokens!)</h2>
+    <table id="leaderboard">
+      <thead>
+        <tr><th>Rank</th><th>Username</th><th>Total Votes</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="chat-card">
+    <h2>Community Chat</h2>
+    <div class="chat-messages" id="chatMessages"></div>
     <div class="chat-input">
-      <input type="text" id="chatMessage" placeholder="Type a message">
-      <button onclick="sendMessage()">Send</button>
+      <input type="text" id="chatInput" placeholder="Type a message...">
+      <button id="sendMsg">Send</button>
+      <select id="emojiSelect">
+        <option value="😀">😀</option><option value="😍">😍</option><option value="🔥">🔥</option>
+        <option value="👍">👍</option><option value="🎨">🎨</option><option value="💖">💖</option>
+      </select>
     </div>
   </div>
 
-  <div class="footer">Powered by Monadicons &copy; 2025</div>
+  <div class="footer">
+    Powered by Monadicons.
+  </div>
 </div>
 
-<!-- Featured Artwork Modal -->
-<div id="featuredModal" class="modal">
-  <div class="modal-content">
-    <span class="close" onclick="closeModal()">&times;</span>
-    <h2>Featured Artwork of the Day</h2>
-    <img id="featuredImage" src="" alt="Featured Artwork">
-    <h3 id="featuredUser"></h3>
-    <p id="featuredDesc"></p>
-  </div>
+<div class="modal" id="modal">
+  <span class="close-modal" id="closeModal">&times;</span>
+  <div class="modal-content" id="modalContent"></div>
 </div>
 
 <script>
-let artworks = JSON.parse(localStorage.getItem("monadiconsGallery") || "[]");
-let chatMessages = JSON.parse(localStorage.getItem("monadiconsChat") || "[]");
-let dropArea = document.getElementById("dropArea");
-let fileInput = document.getElementById("file");
+// Particle Background
+const canvas=document.getElementById('bgCanvas'); const ctx=canvas.getContext('2d');
+canvas.width=window.innerWidth; canvas.height=window.innerHeight;
+const particles=[]; for(let i=0;i<80;i++){ particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+1,dx:(Math.random()-0.5)*0.5,dy:(Math.random()-0.5)*0.5}); }
+function animate(){ ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p=>{ p.x+=p.dx; p.y+=p.dy; if(p.x<0)p.x=canvas.width; if(p.x>canvas.width)p.x=0; if(p.y<0)p.y=canvas.height; if(p.y>canvas.height)p.y=0; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle='rgba(123,47,247,0.6)'; ctx.fill(); }); requestAnimationFrame(animate); } animate();
+window.onresize=()=>{ canvas.width=window.innerWidth; canvas.height=window.innerHeight; };
 
-// Drag & Drop
-dropArea.addEventListener("click", ()=>fileInput.click());
-dropArea.addEventListener("dragover", e=>{ e.preventDefault(); dropArea.classList.add("hover"); });
-dropArea.addEventListener("dragleave", e=>{ e.preventDefault(); dropArea.classList.remove("hover"); });
-dropArea.addEventListener("drop", e=>{ e.preventDefault(); dropArea.classList.remove("hover"); if(e.dataTransfer.files[0]) fileInput.files = e.dataTransfer.files; });
+// Main App Logic
+const gallery=document.getElementById('gallery'); const uploadBtn=document.getElementById('uploadBtn');
+const chatMessages=document.getElementById('chatMessages'); const chatInput=document.getElementById('chatInput'); const sendMsg=document.getElementById('sendMsg'); const emojiSelect=document.getElementById('emojiSelect');
+const modal=document.getElementById('modal'); const modalContent=document.getElementById('modalContent'); const closeModal=document.getElementById('closeModal'); const leaderboardBody=document.querySelector("#leaderboard tbody");
 
-function resetDailyVotes() { const now = new Date(); const lastReset = localStorage.getItem("lastDailyReset"); if(!lastReset || new Date(lastReset).getDate() !== now.getDate()){ artworks.forEach(a => a.dailyVotes = 0); localStorage.setItem("lastDailyReset", now); localStorage.setItem("monadiconsGallery", JSON.stringify(artworks)); } }
-function resetWeeklyVotes() { const now = new Date(); const lastReset = localStorage.getItem("lastWeeklyReset"); if(!lastReset || new Date(lastReset).getWeek() !== now.getWeek()){ artworks.forEach(a => a.weeklyVotes = 0); localStorage.setItem("lastWeeklyReset", now); localStorage.setItem("monadiconsGallery", JSON.stringify(artworks)); } }
-Date.prototype.getWeek = function(){ var d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate())); var dayNum = d.getUTCDay() || 7; d.setUTCDate(d.getUTCDate() + 4 - dayNum); var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1)); return Math.ceil((((d - yearStart) / 86400000) + 1)/7); }
+const carouselImg=document.getElementById('carouselImg'); const prevBtn=document.getElementById('prevBtn'); const nextBtn=document.getElementById('nextBtn'); const carouselVotes=document.getElementById('carouselVotes');
 
-function renderTopCreators(){
-  const topDiv = document.getElementById("topCreators"); topDiv.innerHTML="";
-  artworks.sort((a,b)=>b.votes-a.votes).slice(0,10).forEach((item,i)=>{
-    const card = document.createElement("div"); card.className="top-card";
-    card.innerHTML=`<img src="${item.image}" alt="Artwork"><h3>${item.username}</h3><p>Votes: ${item.votes}</p>`;
-    topDiv.appendChild(card);
-  });
-}
-function renderLeaderboard(type){
-  const div = document.getElementById(type+"Leaderboard"); div.innerHTML="";
-  artworks.sort((a,b)=>b[type+"Votes"]-a[type+"Votes"]).forEach(item=>{
-    const card = document.createElement("div"); card.className="leader-card";
-    card.innerHTML=`<img src="${item.image}" alt="Artwork"><h3>${item.username}</h3><p>${type.charAt(0).toUpperCase()+type.slice(1)} Votes: ${item[type+"Votes"]}</p>`;
-    div.appendChild(card);
-  });
-}
-function renderGallery(){
-  const galleryDiv = document.getElementById("gallery"); galleryDiv.innerHTML="";
-  artworks.forEach((item,i)=>{
-    const card = document.createElement("div"); card.className="card";
-    const progressPercent = ((item.votes||0)/Math.max(...artworks.map(a=>a.votes||0),1))*100;
-    card.innerHTML = `<img src="${item.image}" alt="Artwork"><h3>${item.username}</h3><p>${item.description}</p>
-    <button class="vote-btn" onclick="vote(${i})">Vote 👍</button>
-    <div class="progress-container"><div class="progress-bar" style="width:${progressPercent}%"></div></div>`;
-    galleryDiv.appendChild(card);
-  });
-}
+let artworks=JSON.parse(localStorage.getItem('artworks')||'[]'); let messages=JSON.parse(localStorage.getItem('messages')||'[]'); let featuredIndex=0; let featuredArtworks=[];
 
-function uploadArtwork(){
-  const username = document.getElementById("username").value.trim();
-  const description = document.getElementById("description").value.trim();
-  const file = document.getElementById("file").files[0];
-  if(!username||!description||!file){ alert("Fill all fields!"); return; }
-  const reader = new FileReader();
-  reader.onload = function(e){
-    const imgData = e.target.result;
-    artworks.push({username,description,image:imgData,votes:0,dailyVotes:0,weeklyVotes:0,points:0});
-    localStorage.setItem("monadiconsGallery", JSON.stringify(artworks));
-    animateUpload();
-    renderGallery(); renderTopCreators(); renderLeaderboard("daily"); renderLeaderboard("weekly");
-    document.getElementById("username").value=""; document.getElementById("description").value=""; document.getElementById("file").value="";
-  }
-  reader.readAsDataURL(file);
-}
+function updateFeatured(){ featuredArtworks=[...artworks].sort((a,b)=>Object.values(b.votes).reduce((s,v)=>s+v,0)-Object.values(a.votes).reduce((s,v)=>s+v,0)).slice(0,3); if(featuredArtworks.length>0){ featuredIndex=0; updateCarousel(); } }
+function updateCarousel(){ if(featuredArtworks.length===0) return; const art=featuredArtworks[featuredIndex]; carouselImg.src=art.data; const votes=art.votes; carouselVotes.textContent=`👍 ${votes['👍']||0} | 😍 ${votes['😍']||0} | 🎨 ${votes['🎨']||0}`; }
 
-function animateUpload(){
-  const galleryDiv = document.getElementById("gallery");
-  galleryDiv.lastChild.style.transform="scale(0.5)";
-  setTimeout(()=>{ galleryDiv.lastChild.style.transition="0.5s"; galleryDiv.lastChild.style.transform="scale(1)"; },50);
-}
+prevBtn.onclick=()=>{ if(featuredArtworks.length===0)return; featuredIndex=(featuredIndex-1+featuredArtworks.length)%featuredArtworks.length; updateCarousel(); };
+nextBtn.onclick=()=>{ if(featuredArtworks.length===0)return; featuredIndex=(featuredIndex+1)%featuredArtworks.length; updateCarousel(); };
 
-function vote(idx){
-  artworks[idx].votes = (artworks[idx].votes||0)+1;
-  artworks[idx].dailyVotes = (artworks[idx].dailyVotes||0)+1;
-  artworks[idx].weeklyVotes = (artworks[idx].weeklyVotes||0)+1;
-  localStorage.setItem("monadiconsGallery", JSON.stringify(artworks));
-  renderGallery(); renderTopCreators(); renderLeaderboard("daily"); renderLeaderboard("weekly");
-  animateVote(idx);
-}
+carouselImg.onclick=()=>{ if(featuredArtworks.length===0)return; modalContent.innerHTML=`<img src="${featuredArtworks[featuredIndex].data}">`; modal.style.display='flex'; };
+closeModal.onclick=()=>{ modal.style.display='none'; };
 
-function animateVote(idx){
-  const galleryDiv = document.getElementById("gallery");
-  const progressBar = galleryDiv.children[idx].querySelector(".progress-bar");
-  progressBar.style.width = ((artworks[idx].votes||0)/Math.max(...artworks.map(a=>a.votes||0),1))*100 + "%";
-}
+function renderGallery(){ gallery.innerHTML=''; artworks.forEach((a,i)=>{ const card=document.createElement('div'); card.className='card'; card.innerHTML=`<img src="${a.data}"><h3>${a.username}</h3><p>${a.description}</p>
+<button class="vote-btn" onclick="vote(${i},'👍')">👍</button>
+<button class="vote-btn" onclick="vote(${i},'😍')">😍</button>
+<button class="vote-btn" onclick="vote(${i},'🎨')">🎨</button>
+<button class="action-btn" onclick="downloadArt(${i})">Download</button>
+<button class="action-btn" onclick="shareX(${i})">Share X</button>`; card.onclick=()=>{ modalContent.innerHTML=`<img src="${a.data}">`; modal.style.display='flex'; }; gallery.appendChild(card); }); updateFeatured(); updateLeaderboard(); }
 
-function filterGallery(){
-  const term = document.getElementById("searchInput").value.toLowerCase();
-  const galleryDiv = document.getElementById("gallery");
-  galleryDiv.innerHTML="";
-  artworks.filter(a=>a.username.toLowerCase().includes(term)||a.description.toLowerCase().includes(term)).forEach((item,i)=>{
-    const card = document.createElement("div"); card.className="card";
-    const progressPercent = ((item.votes||0)/Math.max(...artworks.map(a=>a.votes||0),1))*100;
-    card.innerHTML = `<img src="${item.image}" alt="Artwork"><h3>${item.username}</h3><p>${item.description}</p>
-    <button class="vote-btn" onclick="vote(${artworks.indexOf(item)})">Vote 👍</button>
-    <div class="progress-container"><div class="progress-bar" style="width:${progressPercent}%"></div></div>`;
-    galleryDiv.appendChild(card);
-  });
-}
+function vote(index,emoji){ artworks[index].votes[emoji]=(artworks[index].votes[emoji]||0)+1; localStorage.setItem('artworks',JSON.stringify(artworks)); renderGallery(); }
 
-// Featured Artwork Modal
-let featuredIdx = 0;
-function showFeatured(){
-  if(artworks.length===0) return;
-  const featured = artworks[featuredIdx%artworks.length];
-  document.getElementById("featuredImage").src = featured.image;
-  document.getElementById("featuredUser").textContent = featured.username;
-  document.getElementById("featuredDesc").textContent = featured.description;
-  document.getElementById("featuredModal").style.display="block";
-  featuredIdx++;
-}
-function closeModal(){ document.getElementById("featuredModal").style.display="none"; }
+uploadBtn.onclick=()=>{ const username=document.getElementById('username').value.trim(); const description=document.getElementById('description').value.trim(); const file=document.getElementById('file').files[0]; if(!username||!description||!file){ alert('Fill all fields'); return; } const reader=new FileReader(); reader.onload=e=>{ artworks.push({username,description,data:e.target.result,votes:{}}); localStorage.setItem('artworks',JSON.stringify(artworks)); renderGallery(); document.getElementById('username').value=''; document.getElementById('description').value=''; document.getElementById('file').value=''; }; reader.readAsDataURL(file); };
 
-// Chat
-function renderChat(){
-  const log = document.getElementById("chatLog"); log.innerHTML="";
-  chatMessages.forEach(msg=>{
-    const p=document.createElement("p");
-    p.innerHTML=`<strong>${msg.user}</strong>: ${msg.text}`;
-    log.appendChild(p);
-  });
-  log.scrollTop = log.scrollHeight;
-}
-function sendMessage(){
-  const msgInput = document.getElementById("chatMessage");
-  const text = msgInput.value.trim(); if(!text) return;
-  chatMessages.push({user:"User", text});
-  localStorage.setItem("monadiconsChat", JSON.stringify(chatMessages));
-  msgInput.value=""; renderChat();
-}
-function addEmoji(e){ document.getElementById("chatMessage").value += e; }
+function renderMessages(){ chatMessages.innerHTML=''; messages.forEach(msg=>{ const div=document.createElement('div'); div.className='message'; div.textContent=msg.text; chatMessages.appendChild(div); }); chatMessages.scrollTop=chatMessages.scrollHeight; }
 
-// Initialize
-function loadAll(){ resetDailyVotes(); resetWeeklyVotes(); renderTopCreators(); renderLeaderboard("daily"); renderLeaderboard("weekly"); renderGallery(); renderChat(); showFeatured(); }
+function sendMessage(){ const text=chatInput.value.trim(); if(!text) return; messages.push({text}); localStorage.setItem('messages',JSON.stringify(messages)); chatInput.value=''; renderMessages(); }
+sendMsg.onclick=sendMessage; chatInput.addEventListener('keydown',e=>{ if(e.key==='Enter') sendMessage(); });
 
-// Realtime simulation
-setInterval(()=>{
-  const stored = JSON.parse(localStorage.getItem("monadiconsGallery")||"[]");
-  if(JSON.stringify(stored)!==JSON.stringify(artworks)){ artworks=stored; loadAll(); }
-  const storedChat = JSON.parse(localStorage.getItem("monadiconsChat")||"[]");
-  if(JSON.stringify(storedChat)!==JSON.stringify(chatMessages)){ chatMessages=storedChat; renderChat(); }
-},2000);
+emojiSelect.addEventListener('change',()=>{ const emoji=emojiSelect.value; chatInput.value+=emoji; chatInput.focus(); });
 
-loadAll();
+function updateLeaderboard(){ const scores={}; artworks.forEach(a=>{ const total=Object.values(a.votes).reduce((sum,v)=>sum+v,0); scores[a.username]=(scores[a.username]||0)+total; }); const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]).slice(0,10); leaderboardBody.innerHTML=''; sorted.forEach(([user,votes],i)=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td>${i+1}</td><td>${user}</td><td>${votes}</td>`; leaderboardBody.appendChild(tr); }); }
+
+function downloadArt(index){ const a=document.createElement('a'); a.href=artworks[index].data; a.download=artworks[index].username+'-art.png'; a.click(); }
+
+function shareX(index){ const text=encodeURIComponent(`${artworks[index].description} by ${artworks[index].username}`); const url=encodeURIComponent(artworks[index].data); window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`,'_blank'); }
+
+// Initial render
+renderGallery();
+renderMessages();
+updateFeatured();
 </script>
 </body>
 </html>
