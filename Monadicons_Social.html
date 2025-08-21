@@ -115,10 +115,10 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const SUPABASE_URL = window.env?.NEXT_PUBLIC_SUPABASE_URL || "https://chqyhungrvvioofigapw.supabase.co";
-    const SUPABASE_ANON_KEY = window.env?.NEXT_PUBLIC_SUPABASE_ANON_KEY || "<YOUR_ANON_KEY_HERE>";
+    const SUPABASE_URL = "https://chqyhungrvvioofigapw.supabase.co";
+    const SUPABASE_ANON_KEY = "<YOUR_ANON_KEY_HERE>"; // Replace with your real anon key
 
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     async function uploadArtwork() {
       const username = document.getElementById('username').value.trim();
@@ -133,17 +133,17 @@
       const fileName = `${Date.now()}_${file.name}`;
 
       // Upload to Supabase Storage (bucket: artwork)
-      let { error: uploadError } = await supabase.storage.from('artwork').upload(fileName, file);
+      let { error: uploadError } = await sb.storage.from('artwork').upload(fileName, file);
       if (uploadError) {
         alert("Upload failed: " + uploadError.message);
         return;
       }
 
       // Get public URL
-      const { data: publicData } = supabase.storage.from('artwork').getPublicUrl(fileName);
+      const { data: publicData } = sb.storage.from('artwork').getPublicUrl(fileName);
 
       // Insert metadata into database
-      const { error: insertError } = await supabase.from('artwork_posts').insert([
+      const { error: insertError } = await sb.from('artwork_posts').insert([
         { username, description, image_url: publicData.publicUrl }
       ]);
 
@@ -156,7 +156,7 @@
     }
 
     async function loadGallery() {
-      const { data, error } = await supabase.from('artwork_posts').select('*').order('id', { ascending: false });
+      const { data, error } = await sb.from('artwork_posts').select('*').order('id', { ascending: false });
       if (error) {
         console.error(error);
         return;
