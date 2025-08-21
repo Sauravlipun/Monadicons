@@ -54,26 +54,26 @@
   textarea{resize:vertical;min-height:56px;}
   .upload-actions{display:flex;gap:8px;align-items:center;margin-top:10px;justify-content:flex-start;}
 
-  /* Gallery layout - smaller thumbs so many images visible */
-  .gallery{margin-top:12px;display:grid;grid-template-columns:repeat(5,1fr);gap:10px;max-height:calc(100vh - 420px);overflow:auto;padding-right:6px;}
+  /* Gallery layout - compact and larger images for better visibility */
+  .gallery{margin-top:12px;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;max-height:calc(100vh - 400px);overflow:auto;padding-right:4px;}
   @media (max-width:1280px){ .gallery{grid-template-columns:repeat(4,1fr);} }
-  @media (max-width:900px){ .gallery{grid-template-columns:repeat(3,1fr);max-height:420px;} }
-  @media (max-width:600px){ .gallery{grid-template-columns:repeat(2,1fr);max-height:380px;} }
+  @media (max-width:900px){ .gallery{grid-template-columns:repeat(3,1fr);max-height:400px;} }
+  @media (max-width:600px){ .gallery{grid-template-columns:repeat(2,1fr);max-height:360px;} }
 
-  .thumb{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.06));border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center;cursor:pointer;transition:transform .12s ease, box-shadow .12s ease;}
-  .thumb:hover{transform:translateY(-6px);box-shadow:0 12px 30px rgba(5,1,25,0.6);}
-  .thumb img{width:100%;height:85px;object-fit:cover;border-radius:8px;display:block;transition:transform 0.2s ease;}
+  .thumb{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.06));border-radius:10px;padding:6px;display:flex;flex-direction:column;gap:6px;align-items:center;text-align:center;cursor:pointer;transition:transform .12s ease, box-shadow .12s ease;}
+  .thumb:hover{transform:translateY(-4px);box-shadow:0 10px 25px rgba(5,1,25,0.6);}
+  .thumb img{width:100%;height:120px;object-fit:cover;border-radius:8px;display:block;transition:transform 0.2s ease;}
   .thumb:hover img{transform:scale(1.03);}
-  .thumb h4{margin:0;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .thumb p{margin:0;font-size:11px;color:var(--muted);height:28px;overflow:hidden;text-overflow:ellipsis;}
-
-  .vote-row{display:flex;gap:6px;align-items:center;justify-content:center;margin-top:4px;flex-wrap:wrap;}
-  .vote-btn{background:linear-gradient(90deg,var(--accent1),var(--accent2));border:none;color:#fff;padding:6px 8px;border-radius:8px;cursor:pointer;font-weight:700;font-size:12px;display:inline-flex;gap:6px;align-items:center;transition:transform 0.2s ease, opacity 0.2s ease;}
+  .thumb h4{margin:0;font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
+  .thumb p{margin:0;font-size:10px;color:var(--muted);height:20px;overflow:hidden;text-overflow:ellipsis;line-height:10px;}
+  .vote-row{display:flex;gap:4px;align-items:center;justify-content:center;margin-top:2px;}
+  .vote-btn{background:linear-gradient(90deg,var(--accent1),var(--accent2));border:none;color:#fff;padding:4px 6px;border-radius:6px;cursor:pointer;font-weight:700;font-size:11px;display:inline-flex;gap:4px;align-items:center;transition:transform 0.2s ease, opacity 0.2s ease;}
   .vote-btn:hover{transform:translateY(-2px);}
   .vote-btn[disabled]{opacity:.6;cursor:not-allowed;}
-  .danger-btn{background:transparent;border:1px solid rgba(255,70,90,0.15);color:#ff7070;padding:6px 8px;border-radius:8px;cursor:pointer;font-size:12px;transition:background 0.2s ease, color 0.2s ease;}
+  .danger-btn{background:transparent;border:1px solid rgba(255,70,90,0.15);color:#ff7070;padding:4px 6px;border-radius:6px;cursor:pointer;font-size:11px;transition:background 0.2s ease, color 0.2s ease;}
   .danger-btn:hover{background:rgba(255,70,90,0.1);color:#ff9090;}
-
+  .thumb .small-btn{padding:4px 6px;font-size:11px;}
+  
   .sidebar{display:flex;flex-direction:column;gap:12px;}
   .leaderboard{padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.04));}
   .leaderboard table{width:100%;border-collapse:collapse;color:var(--muted);font-size:13px;}
@@ -466,7 +466,7 @@ function renderGallery(){
         <button class="vote-btn" id="v_${item.id}_heart">😍 ${(item.votes['😍']||0)}</button>
         <button class="vote-btn" id="v_${item.id}_art">🎨 ${(item.votes['🎨']||0)}</button>
       </div>
-      <div style="display:flex;gap:6px;margin-top:6px;justify-content:center;width:100%;">
+      <div style="display:flex;gap:4px;margin-top:4px;justify-content:center;width:100%;">
         <button class="small-btn" id="d_${index}">Download</button>
         <button class="small-btn" id="s_${index}">Share X</button>
         <button class="danger-btn" id="x_${index}">Delete</button>
