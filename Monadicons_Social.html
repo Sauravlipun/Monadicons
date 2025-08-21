@@ -10,129 +10,116 @@
     --bg2:#240046;
     --accent1:#7b2ff7;
     --accent2:#f107a3;
-    --card:#1c1330;
-    --muted:#bfb8d9;
+    --particle-color: rgba(139,61,255,0.09);
+    --muted: #bfb8d9;
   }
-  html,body { height:100%; margin:0; font-family:Inter,Arial,Helvetica,sans-serif; color:#fff; background:linear-gradient(135deg,var(--bg1),var(--bg2)); }
-  #bgCanvas{ position:fixed; inset:0; width:100%; height:100%; z-index:-2; }
 
-  .wrap{ max-width:1230px; margin:18px auto; padding:18px; box-sizing:border-box; }
+  html,body{height:100%;margin:0;font-family:Inter,Arial,Helvetica,sans-serif;color:#fff;background:linear-gradient(135deg,var(--bg1),var(--bg2));}
+  #bgCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:-2;}
 
-  .header{ display:flex; gap:12px; align-items:center; justify-content:space-between; margin-bottom:12px; }
-  .brand { display:flex; gap:12px; align-items:center; }
-  .logo{ width:52px;height:52px;border-radius:10px; display:grid;place-items:center;font-weight:700;
-         background:linear-gradient(135deg,var(--accent1),var(--accent2)); color:#fff; font-size:20px; }
-  .title{font-size:20px; font-weight:700; letter-spacing:0.6px;}
-  .nav { display:flex; gap:10px; align-items:center; }
-  .btn { background:linear-gradient(90deg,var(--accent1),var(--accent2)); border:none; color:#fff; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:600; text-decoration:none; }
+  .wrap{max-width:1230px;margin:18px auto;padding:18px;box-sizing:border-box;}
+  .header{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:12px;}
+  .brand{display:flex;gap:12px;align-items:center;}
+  .logo{width:52px;height:52px;border-radius:10px;display:grid;place-items:center;font-weight:700;background:linear-gradient(135deg,var(--accent1),var(--accent2));color:#fff;font-size:20px;}
+  .title{font-size:20px;font-weight:700;letter-spacing:0.6px;}
+  .nav{display:flex;gap:8px;align-items:center;}
+  .btn{background:linear-gradient(90deg,var(--accent1),var(--accent2));border:none;color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:600;text-decoration:none;}
+  .small-btn{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);padding:6px 8px;border-radius:8px;cursor:pointer;font-size:12px;}
+  .ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:#fff;padding:8px 10px;border-radius:8px;cursor:pointer;}
 
-  .section-title{ margin-top:12px; font-size:14px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
-  .carousel { margin:14px 0; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06)); border-radius:12px; padding:14px; display:flex; align-items:center; gap:12px; justify-content:center; position:relative; min-height:180px; box-shadow:0 6px 30px rgba(11,3,30,0.45); }
-  .carousel-inner { display:flex; flex-direction:column; align-items:center; gap:8px; }
-  .carousel-img { max-height:140px; max-width:100%; border-radius:10px; object-fit:cover; cursor:pointer; box-shadow:0 8px 30px rgba(16,6,40,0.6); transition:transform .18s ease; }
-  .carousel-img:active{ transform:scale(.995); }
-  .carousel-controls{ position:absolute; top:50%; transform:translateY(-50%); width:100%; display:flex; justify-content:space-between; pointer-events:none; }
-  .carousel-controls button{ pointer-events:all; background:rgba(0,0,0,0.45); border:none; color:#fff; padding:8px 12px; border-radius:8px; cursor:pointer; margin:0 10px; }
-  .carousel-votes{ color:var(--muted); font-size:13px; }
+  .muted{color:var(--muted);font-size:13px;}
 
-  .grid { display:grid; grid-template-columns: 1fr 350px; gap:18px; align-items:start; }
-  @media (max-width:1000px){ .grid{ grid-template-columns: 1fr; } }
+  .section-title{margin-top:12px;font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+  .carousel{margin:14px 0;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));border-radius:12px;padding:14px;display:flex;align-items:center;gap:12px;justify-content:center;position:relative;min-height:180px;box-shadow:0 6px 30px rgba(11,3,30,0.45);}
+  .carousel-inner{display:flex;flex-direction:column;align-items:center;gap:8px;}
+  .carousel-img{max-height:140px;max-width:100%;border-radius:10px;object-fit:cover;cursor:pointer;box-shadow:0 8px 30px rgba(16,6,40,0.6);transition:transform .18s ease;}
+  .carousel-controls{position:absolute;top:50%;transform:translateY(-50%);width:100%;display:flex;justify-content:space-between;pointer-events:none;}
+  .carousel-controls button{pointer-events:all;background:rgba(0,0,0,0.45);border:none;color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer;margin:0 10px;}
+  .carousel-votes{color:var(--muted);font-size:13px;}
 
-  .card { background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06)); border-radius:12px; padding:14px; box-shadow:0 6px 20px rgba(9,3,36,0.55); }
-  .upload-row { display:flex; gap:10px; align-items:center; }
-  label{ display:block; font-size:13px; color:var(--muted); margin-top:8px; margin-bottom:6px; }
-  input[type="text"], textarea, input[type="file"]{ width:100%; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.04); background:rgba(255,255,255,0.02); color:#fff; outline:none; box-sizing:border-box; font-size:14px; }
-  textarea{ resize:vertical; min-height:56px; }
-  .upload-actions { display:flex; gap:8px; align-items:center; margin-top:10px; }
+  .grid{display:grid;grid-template-columns:1fr 360px;gap:18px;align-items:start;}
+  @media (max-width:1000px){ .grid{grid-template-columns:1fr;} }
 
-  .gallery {
-    margin-top:12px;
-    display:grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap:10px;
-    max-height: calc(100vh - 420px);
-    overflow:auto;
-    padding-right:6px;
-  }
-  @media (max-width:1280px){ .gallery{ grid-template-columns: repeat(4,1fr); } }
-  @media (max-width:900px){ .gallery{ grid-template-columns: repeat(3,1fr); max-height: 420px; } }
-  @media (max-width:600px){ .gallery{ grid-template-columns: repeat(2,1fr); max-height: 380px; } }
+  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));border-radius:12px;padding:14px;box-shadow:0 6px 20px rgba(9,3,36,0.55);}
+  label{display:block;font-size:13px;color:var(--muted);margin-top:8px;margin-bottom:6px;}
+  input[type="text"],textarea,input[type="file"]{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);color:#fff;outline:none;box-sizing:border-box;font-size:14px;}
+  textarea{resize:vertical;min-height:56px;}
+  .upload-actions{display:flex;gap:8px;align-items:center;margin-top:10px;}
 
-  .thumb {
-    background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.06));
-    border-radius:10px;
-    padding:8px;
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-    align-items:center;
-    text-align:center;
-    cursor:default;
-    transition: transform .12s ease;
-  }
-  .thumb:hover{ transform:translateY(-6px); box-shadow:0 12px 30px rgba(5,1,25,0.6); }
-  .thumb img { width:100%; height:100px; object-fit:cover; border-radius:8px; display:block; }
-  .thumb .meta { width:100%; }
-  .thumb h4{ margin:0; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .thumb p{ margin:0; font-size:11px; color:var(--muted); height:28px; overflow:hidden; text-overflow:ellipsis; }
+  .gallery{margin-top:12px;display:grid;grid-template-columns:repeat(5,1fr);gap:10px;max-height:calc(100vh - 420px);overflow:auto;padding-right:6px;}
+  @media (max-width:1280px){ .gallery{grid-template-columns:repeat(4,1fr);} }
+  @media (max-width:900px){ .gallery{grid-template-columns:repeat(3,1fr);max-height:420px;} }
+  @media (max-width:600px){ .gallery{grid-template-columns:repeat(2,1fr);max-height:380px;} }
 
-  .vote-row{ display:flex; gap:6px; align-items:center; justify-content:center; margin-top:4px; flex-wrap:wrap; }
-  .vote-btn { background:linear-gradient(90deg,var(--accent1),var(--accent2)); border:none; color:#fff; padding:6px 8px; border-radius:8px; cursor:pointer; font-weight:700; font-size:12px; display:inline-flex; gap:6px; align-items:center; }
-  .small-btn{ background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--muted); padding:6px 8px; border-radius:8px; cursor:pointer; font-size:12px; }
-  .danger-btn{ background:transparent; border:1px solid rgba(255,70,90,0.15); color:#ff7070; padding:6px 8px; border-radius:8px; cursor:pointer; font-size:12px; }
+  .thumb{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.06));border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center;cursor:default;transition:transform .12s ease;}
+  .thumb:hover{transform:translateY(-6px);box-shadow:0 12px 30px rgba(5,1,25,0.6);}
+  .thumb img{width:100%;height:85px;object-fit:cover;border-radius:8px;display:block;}
+  .thumb h4{margin:0;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .thumb p{margin:0;font-size:11px;color:var(--muted);height:28px;overflow:hidden;text-overflow:ellipsis;}
 
-  .sidebar { display:flex; flex-direction:column; gap:12px; }
-  .leaderboard { padding:12px; border-radius:10px; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.04)); }
-  .leaderboard h3{ margin:0 0 8px 0; font-size:15px; }
-  .leaderboard table{ width:100%; border-collapse:collapse; color:var(--muted); font-size:13px; }
-  .leaderboard td, .leaderboard th{ padding:8px; border-bottom:1px solid rgba(255,255,255,0.03); text-align:left; }
-  .leaderboard th{ color:#fff; font-size:12px; font-weight:700; }
+  .vote-row{display:flex;gap:6px;align-items:center;justify-content:center;margin-top:4px;flex-wrap:wrap;}
+  .vote-btn{background:linear-gradient(90deg,var(--accent1),var(--accent2));border:none;color:#fff;padding:6px 8px;border-radius:8px;cursor:pointer;font-weight:700;font-size:12px;display:inline-flex;gap:6px;align-items:center;}
+  .vote-btn[disabled]{opacity:.6;cursor:not-allowed;}
+  .danger-btn{background:transparent;border:1px solid rgba(255,70,90,0.15);color:#ff7070;padding:6px 8px;border-radius:8px;cursor:pointer;font-size:12px;}
 
-  .chat { padding:12px; border-radius:10px; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.04)); }
-  .chat .messages { max-height:180px; overflow:auto; border-radius:8px; padding:8px; background:rgba(0,0,0,0.05); margin-bottom:8px; }
-  .chat .msg { padding:6px 8px; border-radius:8px; background:rgba(123,47,247,0.06); margin-bottom:8px; font-size:13px; }
-  .chat-row{ display:flex; gap:8px; }
+  .sidebar{display:flex;flex-direction:column;gap:12px;}
+  .leaderboard{padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.04));}
+  .leaderboard table{width:100%;border-collapse:collapse;color:var(--muted);font-size:13px;}
+  .leaderboard th{color:#fff;font-size:12px;font-weight:700;}
 
-  .footer{ margin-top:18px; color:var(--muted); font-size:13px; text-align:center; padding-bottom:30px; }
+  .chat{padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.04));}
+  .chat .messages{max-height:220px;overflow:auto;border-radius:8px;padding:8px;background:rgba(0,0,0,0.05);margin-bottom:8px;}
+  .chat .msg{padding:6px 8px;border-radius:8px;background:rgba(123,47,247,0.06);margin-bottom:8px;font-size:13px;}
 
-  .modal { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.85); z-index:999; }
-  .modal .content { max-width:880px; max-height:90vh; width:calc(100% - 48px); padding:18px; border-radius:12px; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06)); display:flex; flex-direction:column; gap:12px; align-items:center; }
-  .modal img{ max-width:100%; max-height:72vh; object-fit:contain; border-radius:10px; }
+  .footer{margin-top:18px;color:var(--muted);font-size:13px;text-align:center;padding-bottom:30px;}
 
-  .muted{ color:var(--muted); font-size:13px; }
-  a.small-link{ color:var(--accent1); text-decoration:none; font-weight:600; }
+  .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.85);z-index:999;}
+  .modal .content{max-width:880px;max-height:90vh;width:calc(100% - 48px);padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));display:flex;flex-direction:column;gap:12px;align-items:center;}
+  .modal img{max-width:100%;max-height:72vh;object-fit:contain;border-radius:10px;}
 
-  /* toast (undo) */
+  /* toast (undo) base */
+  .toast-base{position:fixed;left:18px;bottom:18px;z-index:1400;pointer-events:none;display:flex;flex-direction:column;gap:8px;}
+  /* animated toast */
   .toast {
-    position:fixed;
-    left:18px;
-    bottom:18px;
-    background:linear-gradient(90deg,var(--accent1),var(--accent2));
-    color:#fff;
-    padding:12px 14px;
-    border-radius:10px;
-    box-shadow:0 8px 30px rgba(0,0,0,0.5);
-    display:flex;
-    gap:12px;
-    align-items:center;
-    z-index:1200;
     min-width:220px;
+    pointer-events:all;
+    display:flex;align-items:center;gap:12px;
+    background:linear-gradient(90deg,var(--accent1),var(--accent2));
+    color:#fff;padding:12px 14px;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,0.5);
+    transform:translateY(18px); opacity:0; transition: transform 260ms cubic-bezier(.2,.9,.2,1), opacity 260ms ease;
+    position:relative; overflow:hidden;
   }
-  .toast .msg{ flex:1; font-weight:600; font-size:14px; }
-  .toast .undo{ background:rgba(255,255,255,0.15); border:none; color:#fff; padding:8px 10px; border-radius:8px; cursor:pointer; font-weight:700; }
-  .toast .bar{ position:absolute; left:0; bottom:0; height:4px; background:rgba(255,255,255,0.35); border-bottom-left-radius:10px; border-bottom-right-radius:10px; }
-  
+  .toast.show{ transform:translateY(0); opacity:1; }
+  .toast .msg{flex:1;font-weight:600;font-size:14px;}
+  .toast .undo{background:rgba(255,255,255,0.15);border:none;color:#fff;padding:8px 10px;border-radius:8px;cursor:pointer;font-weight:700;}
+  .toast .bar{position:absolute;left:0;bottom:0;height:4px;background:rgba(255,255,255,0.35);border-bottom-left-radius:10px;border-bottom-right-radius:10px; width:100%; transform-origin:left; transition: transform linear; }
+
+  /* rate limit toast (red) */
+  .rate-toast{
+    min-width:200px; pointer-events:all; background:linear-gradient(90deg,#ff4d6d,#ff7a7a); color:#fff; padding:10px 12px; border-radius:10px; box-shadow:0 8px 30px rgba(0,0,0,0.5);
+    transform:translateY(18px); opacity:0; transition:transform 220ms ease, opacity 220ms ease;
+  }
+  .rate-toast.show{ transform:translateY(0); opacity:1; }
+  .rate-toast .time{ font-weight:700; margin-left:6px; }
+
   /* confirm modal */
-  .confirm-modal { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.7); z-index:1300; }
-  .confirm-box { width:420px; max-width:90%; background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0.06)); padding:18px; border-radius:12px; box-shadow:0 10px 40px rgba(0,0,0,0.6); color:#fff; }
-  .confirm-box p{ margin:0 0 12px 0; color:var(--muted); }
-  .confirm-actions{ display:flex; gap:8px; justify-content:flex-end; }
-  .confirm-actions .btn{ padding:8px 12px; }
-  .confirm-actions .cancel{ background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--muted); border-radius:8px; padding:8px 12px; cursor:pointer; }
+  .confirm-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);z-index:1300;}
+  .confirm-box{width:420px;max-width:90%;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0.06));padding:18px;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.6);color:#fff;}
+  .confirm-box p{margin:0 0 12px 0;color:var(--muted);}
+  .confirm-actions{display:flex;gap:8px;justify-content:flex-end;}
+  .confirm-actions .cancel{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);border-radius:8px;padding:8px 12px;cursor:pointer;}
+
+  /* theme overlay for transition */
+  #themeOverlay{position:fixed;inset:0;pointer-events:none;z-index:2000;opacity:0;transition:opacity .35s ease;}
+  #themeOverlay.show{opacity:1;}
+  #themeOverlay .overlay-inner{position:absolute;inset:0;background:linear-gradient(135deg,var(--overlay-bg1,#000),var(--overlay-bg2,#111));opacity:1;}
+
+  .vote-disabled-note{font-size:12px;color:rgba(255,255,255,0.7);margin-top:6px;}
 </style>
 </head>
 <body>
 <canvas id="bgCanvas"></canvas>
+<div id="themeOverlay"><div class="overlay-inner"></div></div>
 
 <div class="wrap">
   <div class="header">
@@ -143,8 +130,11 @@
         <div class="muted" style="font-size:12px">Showcase • Vote • Share</div>
       </div>
     </div>
+
     <div class="nav">
-      <a class="btn" href="index.html">← Back to Home</a>
+      <a class="btn" href="index.html">← Home</a>
+      <button id="themeBtn" class="small-btn">Theme: Purple</button>
+      <button id="gmonBtn" class="small-btn" title="Quick Gmonadicons">Gmonadicons</button>
     </div>
   </div>
 
@@ -165,7 +155,6 @@
   </div>
 
   <div class="grid">
-    <!-- LEFT: gallery + upload -->
     <div class="left">
       <div class="card upload-card">
         <div style="display:flex;gap:12px;align-items:center;">
@@ -173,18 +162,30 @@
             <label for="username">Name / Handle</label>
             <input id="username" type="text" placeholder="e.g. @artist">
             <label for="description">Description</label>
-            <textarea id="description" placeholder="Short description..."></textarea>
+            <textarea id="description" placeholder="Short description... (Enter to upload)"></textarea>
             <label for="file">Image</label>
             <input id="file" type="file" accept="image/*">
             <div class="upload-actions">
               <button id="uploadBtn" class="btn">Upload & Showcase</button>
-              <button id="clearAllBtn" class="small-btn" title="Remove all artworks">Clear all artworks</button>
-              <div class="muted" style="font-size:12px; margin-left:8px;">Tip: upload clear PNG / JPG</div>
+              <button id="clearAllBtn" class="small-btn" title="Remove all artworks">Clear all</button>
+              <button id="exportBtn" class="small-btn" title="Export gallery to JSON">Export</button>
+              <div class="muted" style="font-size:12px;margin-left:8px;">Tip: clear PNG/JPG • Enter inside fields to upload</div>
+            </div>
+
+            <div style="margin-top:10px; display:flex; gap:8px; align-items:center;">
+              <label style="margin-bottom:0;">Add custom emoji</label>
+              <input id="customEmojiInput" placeholder="Paste emoji (e.g. 🤘)" style="width:120px;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);color:#fff;">
+              <button id="addEmojiBtn" class="small-btn">Add</button>
             </div>
           </div>
-          <div style="width:140px; text-align:center;">
+
+          <div style="width:160px;text-align:center;">
             <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Top creators</div>
-            <div id="miniTop" style="background:linear-gradient(180deg,rgba(255,255,255,0.01),rgba(0,0,0,0.03)); padding:8px; border-radius:8px; font-size:13px;"></div>
+            <div id="miniTop" style="background:linear-gradient(180deg,rgba(255,255,255,0.01),rgba(0,0,0,0.03));padding:8px;border-radius:8px;font-size:13px;"></div>
+            <div style="margin-top:10px;">
+              <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Quick actions</div>
+              <button id="clearChatBtn" class="small-btn" style="width:100%;">Clear Chat</button>
+            </div>
           </div>
         </div>
       </div>
@@ -193,11 +194,10 @@
       <div id="gallery" class="gallery" aria-live="polite"></div>
     </div>
 
-    <!-- RIGHT: sidebar (leaderboard + chat) -->
     <aside class="sidebar">
       <div class="card leaderboard">
         <h3>Top 10 Creators (Free Mon tokens!)</h3>
-        <table id="leaderboard" aria-hidden="false">
+        <table id="leaderboard">
           <thead><tr><th>#</th><th>User</th><th>Votes</th></tr></thead>
           <tbody></tbody>
         </table>
@@ -206,14 +206,14 @@
       <div class="card chat">
         <h3>Community Chat</h3>
         <div id="chatMessages" class="messages" aria-live="polite"></div>
-        <div style="display:flex;gap:8px; margin-top:8px;">
+        <div style="display:flex;gap:8px;margin-top:8px;">
           <input id="chatInput" placeholder="Type a message..." style="flex:1" />
           <select id="emojiSelect" style="width:70px;">
             <option>😀</option><option>😍</option><option>🔥</option><option>👍</option><option>🎨</option><option>💖</option>
           </select>
           <button id="sendMsg" class="btn">Send</button>
-          <button id="clearChatBtn" class="small-btn" title="Clear chat history">Clear Chat</button>
         </div>
+        <div id="voteNote" class="vote-disabled-note" aria-live="polite"></div>
       </div>
     </aside>
   </div>
@@ -221,25 +221,25 @@
   <div class="footer">Powered by Monadicons ©2025</div>
 </div>
 
-<!-- preview modal -->
+<!-- modal -->
 <div id="modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
   <div class="content" role="document">
-    <div style="width:100%; display:flex; justify-content:flex-end;">
+    <div style="width:100%;display:flex;justify-content:flex-end;">
       <button id="closeModal" class="small-btn">Close</button>
     </div>
-    <img id="modalImg" src="" alt="Artwork preview" />
-    <div style="display:flex;gap:10px; align-items:center; width:100%; justify-content:center;">
-      <button id="downloadBtn" class="vote-btn">Download</button>
+    <img id="modalImg" src="" alt="Artwork preview"/>
+    <div style="display:flex;gap:10px;align-items:center;width:100%;justify-content:center;">
+      <button id="downloadBtn" class="btn">Download</button>
       <button id="shareXBtn" class="small-btn">Share on X</button>
-      <button id="deleteModalBtn" class="danger-btn">Delete Artwork</button>
+      <button id="deleteModalBtn" class="danger-btn">Delete</button>
     </div>
   </div>
 </div>
 
-<!-- confirm modal -->
+<!-- confirm -->
 <div id="confirmModal" class="confirm-modal" role="dialog" aria-modal="true" aria-hidden="true">
-  <div class="confirm-box" role="document" aria-labelledby="confirmTitle" aria-describedby="confirmDesc">
-    <h3 id="confirmTitle" style="margin:0 0 8px 0;">Confirm action</h3>
+  <div class="confirm-box">
+    <h3 id="confirmTitle">Confirm action</h3>
     <p id="confirmDesc">Are you sure?</p>
     <div class="confirm-actions">
       <button id="confirmCancel" class="cancel">Cancel</button>
@@ -248,54 +248,80 @@
   </div>
 </div>
 
-<!-- toast for undo -->
-<div id="toastContainer" style="position:fixed;left:18px;bottom:18px;z-index:1400"></div>
+<!-- toast container -->
+<div class="toast-base" id="toastBase"></div>
 
 <script>
-/* ----------------------------
-   Particle background
-   ---------------------------- */
-const canvas = document.getElementById('bgCanvas');
-const ctx = canvas.getContext('2d');
-let W = canvas.width = innerWidth;
-let H = canvas.height = innerHeight;
-const particles = [];
-const PARTICLE_COUNT = Math.round((W*H)/70000) + 40;
-for(let i=0;i<PARTICLE_COUNT;i++){
-  particles.push({
-    x: Math.random()*W,
-    y: Math.random()*H,
-    r: Math.random()*1.6 + 0.6,
-    vx: (Math.random()-0.5)*0.25,
-    vy: (Math.random()-0.5)*0.25
-  });
-}
-function bgAnim(){
-  ctx.clearRect(0,0,W,H);
-  const g = ctx.createLinearGradient(0,0,W,H);
-  g.addColorStop(0,'rgba(36,0,70,0.10)');
-  g.addColorStop(1,'rgba(18,0,43,0.12)');
-  ctx.fillStyle = g;
-  ctx.fillRect(0,0,W,H);
-  particles.forEach(p=>{
-    p.x += p.vx; p.y += p.vy;
-    if(p.x < -10) p.x = W + 10;
-    if(p.x > W + 10) p.x = -10;
-    if(p.y < -10) p.y = H + 10;
-    if(p.y > H + 10) p.y = -10;
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-    ctx.fillStyle = 'rgba(139,61,255,0.09)';
-    ctx.fill();
-  });
-  requestAnimationFrame(bgAnim);
-}
-bgAnim();
-addEventListener('resize',()=>{ W = canvas.width = innerWidth; H = canvas.height = innerHeight; });
+/* ============================
+   Configuration: rate-limits
+   ============================ */
+const MAX_VOTES_PER_MIN = 15;        // max global votes in time window
+const VOTE_WINDOW_MS = 60_000;       // window for global rate limit
+const PER_ARTWORK_COOLDOWN_S = 30;   // seconds before same emoji on same artwork again
 
-/* ----------------------------
-   App core + confirmation + undo
-   ---------------------------- */
+/* ============================
+   Theme & particle background
+   (same as before; kept compact)
+   ============================ */
+const THEMES = [
+  { key:'purple', name:'Purple', vars:{ bg1:'#12002b', bg2:'#240046', accent1:'#7b2ff7', accent2:'#f107a3', particle:'rgba(139,61,255,0.09)', overlay1:'#3b0a66', overlay2:'#2a0a3b' } },
+  { key:'gmon', name:'Gmonadicons', vars:{ bg1:'#001219', bg2:'#005f73', accent1:'#00b4d8', accent2:'#90e0ef', particle:'rgba(0,180,216,0.08)', overlay1:'#00303b', overlay2:'#002b25' } },
+  { key:'sunset', name:'Sunset', vars:{ bg1:'#2b0f3a', bg2:'#ff6b6b', accent1:'#ff9a8b', accent2:'#ffd194', particle:'rgba(255,150,120,0.08)', overlay1:'#7f1d5b', overlay2:'#ff6b6b' } },
+  { key:'midnight', name:'Midnight', vars:{ bg1:'#020617', bg2:'#0b132b', accent1:'#6a5acd', accent2:'#b084ff', particle:'rgba(106,90,205,0.07)', overlay1:'#00112b', overlay2:'#0b132b' } }
+];
+const THEME_KEY='mon_theme_index';
+const themeBtn = document.getElementById('themeBtn');
+const themeOverlay = document.getElementById('themeOverlay');
+const overlayInner = themeOverlay.querySelector('.overlay-inner');
+
+function applyTheme(vars){
+  document.documentElement.style.setProperty('--bg1', vars.bg1);
+  document.documentElement.style.setProperty('--bg2', vars.bg2);
+  document.documentElement.style.setProperty('--accent1', vars.accent1);
+  document.documentElement.style.setProperty('--accent2', vars.accent2);
+  document.documentElement.style.setProperty('--particle-color', vars.particle);
+  document.documentElement.style.setProperty('--overlay-bg1', vars.overlay1 || vars.bg1);
+  document.documentElement.style.setProperty('--overlay-bg2', vars.overlay2 || vars.bg2);
+  if(vars === THEMES[1].vars) document.documentElement.classList.add('gmon-active'); else document.documentElement.classList.remove('gmon-active');
+}
+function animateTheme(index){
+  const t = THEMES[index];
+  overlayInner.style.background = `linear-gradient(135deg, ${t.vars.overlay1}, ${t.vars.overlay2})`;
+  themeOverlay.classList.add('show');
+  setTimeout(()=> applyTheme(t.vars), 180);
+  setTimeout(()=> themeOverlay.classList.remove('show'), 520);
+  themeBtn.textContent = `Theme: ${t.name}`;
+  localStorage.setItem(THEME_KEY, String(index));
+}
+let themeIndex = parseInt(localStorage.getItem(THEME_KEY) || '0',10);
+if(isNaN(themeIndex)||themeIndex<0||themeIndex>=THEMES.length) themeIndex=0;
+applyTheme(THEMES[themeIndex].vars);
+themeBtn.textContent = `Theme: ${THEMES[themeIndex].name}`;
+themeBtn.addEventListener('click', ()=>{ themeIndex = (themeIndex+1)%THEMES.length; animateTheme(themeIndex); });
+document.getElementById('gmonBtn').addEventListener('click', ()=>{ themeIndex = 1; animateTheme(themeIndex); });
+
+/* particle bg */
+const canvas = document.getElementById('bgCanvas'); const ctx = canvas.getContext('2d');
+let W = canvas.width = innerWidth, H = canvas.height = innerHeight;
+let particles = [];
+function setupParticles(){ particles=[]; const c = Math.round((W*H)/70000)+40; for(let i=0;i<c;i++){ particles.push({ x:Math.random()*W, y:Math.random()*H, r:Math.random()*1.6+0.6, vx:(Math.random()-0.5)*0.25, vy:(Math.random()-0.5)*0.25 }); } }
+setupParticles();
+function getCssVar(n, f){ const v = getComputedStyle(document.documentElement).getPropertyValue(n); return v? v.trim(): f; }
+function hexToRgba(input, alpha){
+  if(!input) return `rgba(18,0,43,${alpha})`;
+  input = input.trim();
+  if(input.startsWith('rgba')||input.startsWith('hsla')) return input;
+  if(input.startsWith('rgb(')) return input.replace('rgb(', 'rgba(').replace(')', `,${alpha})`);
+  if(input[0]==='#'){ let hex=input.slice(1); if(hex.length===3) hex=hex.split('').map(h=>h+h).join(''); const r=parseInt(hex.slice(0,2),16), g=parseInt(hex.slice(2,4),16), b=parseInt(hex.slice(4,6),16); return `rgba(${r},${g},${b},${alpha})`; }
+  return `rgba(18,0,43,${alpha})`;
+}
+function bgAnim(){ ctx.clearRect(0,0,W,H); const g1=getCssVar('--bg1','#12002b'), g2=getCssVar('--bg2','#240046'); const grad=ctx.createLinearGradient(0,0,W,H); grad.addColorStop(0, hexToRgba(g1,0.10)); grad.addColorStop(1, hexToRgba(g2,0.12)); ctx.fillStyle=grad; ctx.fillRect(0,0,W,H); const particleColor = getCssVar('--particle-color','rgba(139,61,255,0.09)'); particles.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; if(p.x<-10) p.x = W+10; if(p.x>W+10) p.x = -10; if(p.y<-10) p.y = H+10; if(p.y>H+10) p.y = -10; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle = particleColor; ctx.fill(); }); requestAnimationFrame(bgAnim); }
+bgAnim();
+addEventListener('resize', ()=>{ W=canvas.width=innerWidth; H=canvas.height=innerHeight; setupParticles(); });
+
+/* ============================
+   App core: gallery, chat, undo, confirm, carousel
+   ============================ */
 const galleryEl = document.getElementById('gallery');
 const uploadBtn = document.getElementById('uploadBtn');
 const fileInput = document.getElementById('file');
@@ -309,6 +335,9 @@ const chatMessages = document.getElementById('chatMessages');
 const chatInput = document.getElementById('chatInput');
 const sendMsg = document.getElementById('sendMsg');
 const emojiSelect = document.getElementById('emojiSelect');
+
+const customEmojiInput = document.getElementById('customEmojiInput');
+const addEmojiBtn = document.getElementById('addEmojiBtn');
 
 const carouselImg = document.getElementById('carouselImg');
 const carouselVotes = document.getElementById('carouselVotes');
@@ -326,29 +355,44 @@ const deleteModalBtn = document.getElementById('deleteModalBtn');
 
 const clearAllBtn = document.getElementById('clearAllBtn');
 const clearChatBtn = document.getElementById('clearChatBtn');
+const exportBtn = document.getElementById('exportBtn');
 
-const toastContainer = document.getElementById('toastContainer');
-
+const toastBase = document.getElementById('toastBase');
 const confirmModal = document.getElementById('confirmModal');
 const confirmDesc = document.getElementById('confirmDesc');
 const confirmOk = document.getElementById('confirmOk');
 const confirmCancel = document.getElementById('confirmCancel');
+const voteNote = document.getElementById('voteNote');
 
-let artworks = JSON.parse(localStorage.getItem('artworks') || '[]'); // array of {username,description,data,votes:{}}
+let artworks = JSON.parse(localStorage.getItem('artworks') || '[]');
 let messages = JSON.parse(localStorage.getItem('messages') || '[]');
+let customEmojis = JSON.parse(localStorage.getItem('custom_emojis') || '[]');
 
-let featuredIndex = 0;
-let featuredArtworks = [];
-let modalCurrentIndex = -1;
+let featuredIndex = 0; let featuredArtworks = []; let modalCurrentIndex = -1;
 
-/* Undo state */
-let lastAction = null; // { type:'delete'|'clearAll'|'clearChat', payload:..., timeoutId }
+/* vote history and cooldowns stored in localStorage */
+let voteHistory = JSON.parse(localStorage.getItem('vote_history') || '[]'); // array of timestamps (ms)
+let voteCooldowns = JSON.parse(localStorage.getItem('vote_cooldowns') || '{}'); // { "<artId>_<emoji>": ts }
+
+function persistVoteState(){ localStorage.setItem('vote_history', JSON.stringify(voteHistory)); localStorage.setItem('vote_cooldowns', JSON.stringify(voteCooldowns)); }
+
+/* Undo */
+let lastAction = null;
 const UNDO_MS = 8000;
 
-/* Save helper */
 function save(){ localStorage.setItem('artworks', JSON.stringify(artworks)); }
 
-/* Leaderboard computation */
+/* ensure artworks have stable ids (for cooldown tracking) */
+function ensureIds(){
+  let changed = false;
+  artworks = artworks.map(a=>{
+    if(!a.id){ a.id = `${Date.now().toString(36)}_${Math.random().toString(36).slice(2,8)}`; changed = true; }
+    return a;
+  });
+  if(changed) save();
+}
+
+/* leaderboard computation */
 function computeLeaderboard(){
   const map = {};
   artworks.forEach(a=>{
@@ -359,7 +403,7 @@ function computeLeaderboard(){
   return { sorted, map };
 }
 
-/* Update leaderboard UI */
+let lastTop10 = [];
 function updateLeaderboard(){
   const { sorted } = computeLeaderboard();
   const top10 = sorted.slice(0,10);
@@ -370,10 +414,15 @@ function updateLeaderboard(){
     leaderboardBody.appendChild(tr);
   });
   miniTop.innerHTML = top10.slice(0,3).map(([u,s])=>`${escapeHtml(u)}: ${s}`).join('<br>') || '<span class="muted">No activity yet</span>';
-  return top10.map(t=>t[0]); // usernames
+  const topUsernames = top10.map(t=>t[0]);
+  if(JSON.stringify(topUsernames) !== JSON.stringify(lastTop10)){
+    lastTop10 = topUsernames;
+    if(topUsernames.length>0) showRateToast(`Top creators updated — #1: ${escapeHtml(topUsernames[0])}`, 3500);
+  }
+  return topUsernames;
 }
 
-/* Update featured - only from top10 creators, pick top artworks among them */
+/* featured */
 function updateFeatured(){
   const topUsernames = computeLeaderboard().sorted.slice(0,10).map(x=>x[0]);
   const candidate = artworks.filter(a => topUsernames.includes(a.username));
@@ -396,12 +445,12 @@ function updateFeatured(){
   carouselVotes.textContent = `👍 ${(votes['👍']||0)}  •  😍 ${(votes['😍']||0)}  •  🎨 ${(votes['🎨']||0)}`;
 }
 
-/* Render gallery */
+/* render gallery */
 function renderGallery(){
   galleryEl.innerHTML = '';
   const items = [...artworks].slice().reverse();
   items.forEach((item, revIdx) => {
-    const index = artworks.length - 1 - revIdx; // real index in artworks array
+    const index = artworks.length - 1 - revIdx;
     const card = document.createElement('div');
     card.className = 'thumb';
     card.innerHTML = `
@@ -411,9 +460,9 @@ function renderGallery(){
         <p title="${escapeHtml(item.description)}">${escapeHtml(item.description)}</p>
       </div>
       <div class="vote-row" aria-hidden="false">
-        <button class="vote-btn" onclick="handleVote(event, ${index}, '👍')">👍 ${(item.votes['👍']||0)}</button>
-        <button class="vote-btn" onclick="handleVote(event, ${index}, '😍')">😍 ${(item.votes['😍']||0)}</button>
-        <button class="vote-btn" onclick="handleVote(event, ${index}, '🎨')">🎨 ${(item.votes['🎨']||0)}</button>
+        <button class="vote-btn" id="v_${item.id}_thumb_${index}_like">👍 ${(item.votes['👍']||0)}</button>
+        <button class="vote-btn" id="v_${item.id}_thumb_${index}_heart">😍 ${(item.votes['😍']||0)}</button>
+        <button class="vote-btn" id="v_${item.id}_thumb_${index}_art">🎨 ${(item.votes['🎨']||0)}</button>
       </div>
       <div style="display:flex;gap:6px;margin-top:6px;">
         <button class="small-btn" onclick="handleDownload(event, ${index})">Download</button>
@@ -421,9 +470,14 @@ function renderGallery(){
         <button class="danger-btn" onclick="handleDelete(event, ${index})">Delete</button>
       </div>
     `;
+    // attach vote button listeners with rate-limit check
+    card.querySelector(`#v_${item.id}_thumb_${index}_like`).addEventListener('click', (e)=>{ e.stopPropagation(); tryVote(index,'👍'); });
+    card.querySelector(`#v_${item.id}_thumb_${index}_heart`).addEventListener('click', (e)=>{ e.stopPropagation(); tryVote(index,'😍'); });
+    card.querySelector(`#v_${item.id}_thumb_${index}_art`).addEventListener('click', (e)=>{ e.stopPropagation(); tryVote(index,'🎨'); });
+
     card.addEventListener('click', (e)=>{
       const target = e.target;
-      if (target.closest('.vote-btn') || target.closest('.small-btn') || target.closest('.danger-btn')) return;
+      if (target.closest('.small-btn') || target.closest('.danger-btn')) return;
       openModal(index);
     });
     galleryEl.appendChild(card);
@@ -432,182 +486,157 @@ function renderGallery(){
   updateFeatured();
 }
 
-/* Handlers to stop propagation */
-function handleVote(e, index, emoji){ e.stopPropagation(); vote(index, emoji); }
+/* handlers for inline-like buttons used elsewhere */
 function handleDownload(e, index){ e.stopPropagation(); downloadArt(index); }
 function handleShareX(e, index){ e.stopPropagation(); shareX(index); }
 function handleDelete(e, index){ e.stopPropagation(); showConfirmFor('delete', `Delete this artwork by "${escapeHtml(artworks[index].username)}"?`, { index }); }
 
-/* Voting */
+/* vote infrastructure & rate-limiting helpers */
+function now(){ return Date.now(); }
+function pruneVoteHistory(){ const cutoff = now() - VOTE_WINDOW_MS; voteHistory = voteHistory.filter(ts => ts > cutoff); persistVoteState(); }
+function votesInWindow(){ pruneVoteHistory(); return voteHistory.length; }
+function addVoteTimestamp(){ voteHistory.push(now()); persistVoteState(); }
+
+function getCooldownKey(artId, emoji){ return `${artId}_${emoji}`; }
+function cooldownRemainingSec(artId, emoji){
+  const key = getCooldownKey(artId, emoji);
+  const last = voteCooldowns[key] || 0;
+  const remain = Math.max(0, Math.ceil((last + PER_ARTWORK_COOLDOWN_S*1000 - now())/1000));
+  return remain;
+}
+function setCooldown(artId, emoji){
+  const key = getCooldownKey(artId, emoji);
+  voteCooldowns[key] = now();
+  persistVoteState();
+}
+
+/* TryVote wrapper that enforces limits then calls vote() */
+function tryVote(index, emoji){
+  const art = artworks[index];
+  if(!art) return;
+  ensureIds();
+  pruneVoteHistory();
+  // global limit
+  if(votesInWindow() >= MAX_VOTES_PER_MIN){
+    const earliest = voteHistory[0] || now();
+    const waitMs = Math.max(1000, VOTE_WINDOW_MS - (now() - earliest));
+    const waitSec = Math.ceil(waitMs/1000);
+    showRateToast(`Too many votes — try again in ${waitSec}s`, 4200);
+    voteNote.textContent = `Rate limited: wait ${waitSec}s`;
+    setTimeout(()=> voteNote.textContent = '', 4000);
+    return;
+  }
+  // per-artwork cooldown
+  const remain = cooldownRemainingSec(art.id, emoji);
+  if(remain > 0){
+    showRateToast(`Cooldown: wait ${remain}s to vote this emoji on this artwork`, 3000);
+    voteNote.textContent = `Cooldown: ${remain}s`;
+    setTimeout(()=> voteNote.textContent = '', 3500);
+    return;
+  }
+  // allowed: disable button briefly to avoid rapid double clicks
+  const btns = document.querySelectorAll(`#v_${art.id}_thumb_${index}_like, #v_${art.id}_thumb_${index}_heart, #v_${art.id}_thumb_${index}_art`);
+  btns.forEach(b=> b.disabled = true);
+  setTimeout(()=> btns.forEach(b=> b.disabled = false), 600);
+
+  // register vote and cooldown
+  addVoteTimestamp();
+  setCooldown(art.id, emoji);
+  vote(index, emoji);
+}
+
+/* vote: increments counts and updates UI */
 function vote(index, emoji){
   if(!artworks[index].votes) artworks[index].votes = {};
   artworks[index].votes[emoji] = (artworks[index].votes[emoji]||0) + 1;
-  save();
-  renderGallery();
-  updateFeatured();
+  save(); renderGallery(); updateFeatured();
 }
 
-/* Upload */
-uploadBtn.addEventListener('click', ()=>{
+/* Upload: add id for each artwork */
+uploadBtn.addEventListener('click', doUpload);
+function doUpload(){
   const username = (usernameEl.value || 'Anonymous').trim();
   const description = (descEl.value || '').trim();
   const file = fileInput.files[0];
-  if(!file){
-    alert('Please select an image to upload.');
-    return;
-  }
+  if(!file){ alert('Please select an image to upload.'); return; }
   const reader = new FileReader();
   reader.onload = (e)=>{
-    artworks.push({ username, description, data: e.target.result, votes: {} });
-    save();
-    renderGallery();
+    const id = `${Date.now().toString(36)}_${Math.random().toString(36).slice(2,8)}`;
+    artworks.push({ id, username, description, data: e.target.result, votes: {} });
+    save(); renderGallery();
     usernameEl.value=''; descEl.value=''; fileInput.value='';
   };
   reader.readAsDataURL(file);
+}
+/* Enter-to-upload */
+usernameEl.addEventListener('keydown',(e)=>{ if(e.key==='Enter'){ e.preventDefault(); doUpload(); }});
+descEl.addEventListener('keydown',(e)=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); doUpload(); }});
+
+/* Delete with undo */
+function performDeleteAt(index){
+  if(index<0 || index>=artworks.length) return;
+  const item = artworks[index];
+  setLastActionAndToast({ type:'delete', payload:{ item, index }});
+  artworks.splice(index,1); save(); renderGallery();
+}
+
+/* Clear all */
+function performClearAll(){
+  if(artworks.length===0){ showRateToast('No artworks to clear', 2000); return; }
+  setLastActionAndToast({ type:'clearAll', payload:{ items: artworks.slice() }});
+  artworks = []; save(); renderGallery();
+}
+
+/* Chat */
+function renderMessages(){ chatMessages.innerHTML=''; messages.forEach(m=>{ const d=document.createElement('div'); d.className='msg'; d.textContent=m.text; chatMessages.appendChild(d); }); chatMessages.scrollTop = chatMessages.scrollHeight; }
+sendMsg.addEventListener('click', ()=>{ const val = chatInput.value.trim(); if(!val) return; messages.push({ text: val }); localStorage.setItem('messages', JSON.stringify(messages)); chatInput.value=''; renderMessages(); });
+chatInput.addEventListener('keydown',(e)=>{ if(e.key==='Enter') sendMsg.click(); });
+emojiSelect.addEventListener('change', ()=>{ chatInput.value += emojiSelect.value; chatInput.focus(); });
+
+/* export gallery JSON */
+exportBtn.addEventListener('click', ()=>{
+  const data = JSON.stringify(artworks, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'monadicons_gallery.json'; document.body.appendChild(a); a.click(); a.remove();
 });
 
-/* Delete (permanent) with undo snapshot - called after confirmation */
-function performDeleteAt(index){
-  if(index < 0 || index >= artworks.length) return;
-  const item = artworks[index];
-  // set undo state and remove item
-  setLastActionAndToast({ type:'delete', payload:{ item, index }});
-  artworks.splice(index,1);
-  save();
-  renderGallery();
-}
-
-/* Clear all artworks - confirmation then perform */
-function performClearAll(){
-  if(artworks.length === 0) return;
-  setLastActionAndToast({ type:'clearAll', payload:{ items: artworks.slice() }});
-  artworks = [];
-  save();
-  renderGallery();
-}
-
-/* Clear chat */
-function performClearChat(){
-  if(messages.length === 0) return;
-  setLastActionAndToast({ type:'clearChat', payload:{ messages: messages.slice() }});
-  messages = [];
-  localStorage.setItem('messages', JSON.stringify(messages));
-  renderMessages();
-}
-
-/* download & share */
-function downloadArt(index){
-  const a = document.createElement('a');
-  a.href = artworks[index].data;
-  a.download = `${(artworks[index].username||'art')}-monadicons.png`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-}
-function shareX(index){
-  const text = encodeURIComponent(`${artworks[index].description || ''} — by ${artworks[index].username || 'Anonymous'}`);
-  const url = encodeURIComponent(artworks[index].data);
-  const shareUrl = `https://twitter.com/intent/tweet?text=${text}&url=${url}`;
-  window.open(shareUrl, '_blank', 'noopener');
-}
+/* Download/share */
+function downloadArt(index){ const a=document.createElement('a'); a.href = artworks[index].data; a.download = `${(artworks[index].username||'art')}-monadicons.png`; document.body.appendChild(a); a.click(); a.remove(); }
+function shareX(index){ const text=encodeURIComponent(`${artworks[index].description||''} — by ${artworks[index].username||'Anonymous'}`); const url=encodeURIComponent(artworks[index].data); window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`,'_blank','noopener'); }
 
 /* modal preview */
 function openModal(index){
-  modal.style.display = 'flex';
-  modal.setAttribute('aria-hidden','false');
-  modalImg.src = artworks[index].data;
-  modalCurrentIndex = index;
+  modal.style.display='flex'; modal.setAttribute('aria-hidden','false'); modalImg.src = artworks[index].data; modalCurrentIndex = index;
   downloadBtn.onclick = ()=> downloadArt(index);
   shareXBtn.onclick = ()=> shareX(index);
-  // delete action should use confirm modal
   deleteModalBtn.onclick = ()=> showConfirmFor('delete', `Delete this artwork by "${escapeHtml(artworks[index].username)}"?`, { index });
 }
 closeModalBtn.addEventListener('click', ()=>{ modal.style.display='none'; modal.setAttribute('aria-hidden','true'); });
-window.addEventListener('click', (e)=>{ if(e.target === modal){ modal.style.display='none'; modal.setAttribute('aria-hidden','true'); } });
+window.addEventListener('keydown',(e)=>{ if(e.key==='Escape'){ if(confirmModal.style.display==='flex'){ confirmModal.style.display='none'; confirmModal.setAttribute('aria-hidden','true'); if(typeof(confirmResolve)=='function') confirmResolve(false); } else if(modal.style.display==='flex'){ modal.style.display='none'; modal.setAttribute('aria-hidden','true'); } }});
+window.addEventListener('click', (e)=>{ if(e.target===modal){ modal.style.display='none'; modal.setAttribute('aria-hidden','true'); } });
 
-/* Chat */
-function renderMessages(){
-  chatMessages.innerHTML = '';
-  messages.forEach(m=>{
-    const div = document.createElement('div');
-    div.className = 'msg';
-    div.textContent = m.text;
-    chatMessages.appendChild(div);
-  });
-  chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-sendMsg.addEventListener('click', ()=>{
-  const val = chatInput.value.trim();
-  if(!val) return;
-  messages.push({ text: val });
-  localStorage.setItem('messages', JSON.stringify(messages));
-  chatInput.value = '';
-  renderMessages();
-});
-chatInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') sendMsg.click(); });
-emojiSelect.addEventListener('change', ()=>{ chatInput.value += emojiSelect.value; chatInput.focus(); });
+/* carousel controls */
+prevBtn.addEventListener('click', ()=>{ if(featuredArtworks.length===0) return; featuredIndex=(featuredIndex-1+featuredArtworks.length)%featuredArtworks.length; updateFeatured(); });
+nextBtn.addEventListener('click', ()=>{ if(featuredArtworks.length===0) return; featuredIndex=(featuredIndex+1)%featuredArtworks.length; updateFeatured(); });
+let carouselInterval = setInterval(()=>{ if(featuredArtworks.length>0){ featuredIndex=(featuredIndex+1)%featuredArtworks.length; updateFeatured(); } }, 5000);
+carouselVoteThumb.addEventListener('click', ()=>{ if(!featuredArtworks.length) return; const current=featuredArtworks[featuredIndex]; const idx=artworks.indexOf(current); if(idx>=0) tryVote(idx,'👍'); });
+carouselOpen.addEventListener('click', ()=>{ if(!featuredArtworks.length) return; const current=featuredArtworks[featuredIndex]; const idx=artworks.indexOf(current); if(idx>=0) openModal(idx); });
 
-/* clear chat confirm */
-document.getElementById('clearChatBtn').addEventListener('click', ()=> {
-  showConfirmFor('clearChat', 'Clear chat history? This cannot be undone (but you will have an Undo option).', {});
-});
-
-/* clear all confirm */
-clearAllBtn.addEventListener('click', ()=> {
-  showConfirmFor('clearAll', 'Clear ALL artworks? This will remove every uploaded artwork (Undo available).', {});
-});
-
-/* carousel controls & auto rotate */
-prevBtn.addEventListener('click', ()=>{
-  if(featuredArtworks.length === 0) return;
-  featuredIndex = (featuredIndex - 1 + featuredArtworks.length) % featuredArtworks.length;
-  updateFeatured();
-});
-nextBtn.addEventListener('click', ()=>{
-  if(featuredArtworks.length === 0) return;
-  featuredIndex = (featuredIndex + 1) % featuredArtworks.length;
-  updateFeatured();
-});
-let carouselInterval = setInterval(()=>{ if(featuredArtworks.length>0){ featuredIndex = (featuredIndex + 1) % featuredArtworks.length; updateFeatured(); } }, 5000);
-
-/* carousel vote & open */
-carouselVoteThumb.addEventListener('click', ()=>{
-  if(!featuredArtworks.length) return;
-  const current = featuredArtworks[featuredIndex];
-  const idx = artworks.indexOf(current);
-  if(idx >= 0) vote(idx, '👍');
-});
-carouselOpen.addEventListener('click', ()=>{
-  if(!featuredArtworks.length) return;
-  const current = featuredArtworks[featuredIndex];
-  const idx = artworks.indexOf(current);
-  if(idx >= 0) openModal(idx);
-});
-
-/* ============================
-   Confirmation modal helpers
-   ============================ */
+/* confirm modal helpers */
 let confirmResolve = null;
 function showConfirmFor(type, message, payload){
   confirmDesc.innerHTML = message;
   confirmModal.style.display = 'flex';
   confirmModal.setAttribute('aria-hidden','false');
-
-  // return a promise resolved when user confirms/cancels
   return new Promise((resolve) => {
     confirmResolve = (ok) => {
       confirmModal.style.display = 'none';
       confirmModal.setAttribute('aria-hidden','true');
       confirmResolve = null;
       if(ok){
-        // perform the requested action
-        if(type === 'delete'){
-          performDeleteAt(payload.index);
-        } else if(type === 'clearAll'){
-          performClearAll();
-        } else if(type === 'clearChat'){
-          performClearChat();
-        }
+        if(type === 'delete'){ performDeleteAt(payload.index); }
+        else if(type === 'clearAll'){ performClearAll(); }
+        else if(type === 'clearChat'){ performClearChat(); }
       }
       resolve(ok);
     };
@@ -617,123 +646,113 @@ confirmOk.addEventListener('click', ()=>{ if(confirmResolve) confirmResolve(true
 confirmCancel.addEventListener('click', ()=>{ if(confirmResolve) confirmResolve(false); });
 confirmModal.addEventListener('click', (e)=>{ if(e.target === confirmModal){ if(confirmResolve) confirmResolve(false); } });
 
-/* ============================
-   Undo toast / state helpers
-   ============================ */
-function setLastActionAndToast(actionObj){
-  // finalize any previous pending toast (we remove the timeout so it cannot be undone anymore)
-  if(lastAction && lastAction.timeoutId){
-    clearTimeout(lastAction.timeoutId);
-    lastAction = null;
-    // remove existing toast UI immediately
-    toastContainer.innerHTML = '';
-  }
+/* perform clear chat */
+function performClearChat(){ if(messages.length===0){ showRateToast('No chat to clear',2000); return; } setLastActionAndToast({ type:'clearChat', payload:{ messages: messages.slice() }}); messages=[]; localStorage.setItem('messages', JSON.stringify(messages)); renderMessages(); }
 
-  lastAction = {
-    ...actionObj,
-    createdAt: Date.now(),
-    timeoutId: null
-  };
-  showUndoToastFor(lastAction);
-}
-
-function showUndoToastFor(action){
-  toastContainer.innerHTML = '';
+/* Undo toast / rate toast helpers (animated snackbar) */
+function createUndoToast(action){
+  // remove any existing undo toast
+  const existing = toastBase.querySelector('.toast.undo-snack');
+  if(existing){ existing.remove(); }
   const toast = document.createElement('div');
-  toast.className = 'toast';
-  const msg = document.createElement('div');
-  msg.className = 'msg';
-  if(action.type === 'delete') msg.textContent = 'Artwork deleted';
-  else if(action.type === 'clearAll') msg.textContent = 'All artworks cleared';
-  else if(action.type === 'clearChat') msg.textContent = 'Chat cleared';
-  else msg.textContent = 'Action performed';
+  toast.className = 'toast undo-snack';
+  toast.innerHTML = `<div class="msg">${actionMessage(action)}</div><button class="undo">Undo</button><div class="bar"></div>`;
+  toastBase.appendChild(toast);
+  // force reflow then show
+  requestAnimationFrame(()=> toast.classList.add('show'));
+  const bar = toast.querySelector('.bar');
+  // animate bar with transform to simulate progress
+  bar.style.transform = 'scaleX(1)';
+  // using transform for linear animation
+  setTimeout(()=> { bar.style.transition = `transform ${UNDO_MS}ms linear`; bar.style.transform = 'scaleX(0)'; }, 20);
 
-  const undoBtn = document.createElement('button');
-  undoBtn.className = 'undo';
-  undoBtn.textContent = 'Undo';
-
-  const bar = document.createElement('div');
-  bar.className = 'bar';
-  bar.style.width = '100%';
-  bar.style.transition = `width ${UNDO_MS}ms linear`;
-
-  toast.appendChild(msg);
-  toast.appendChild(undoBtn);
-  toastContainer.appendChild(toast);
-  toastContainer.appendChild(bar);
-  // start progress bar animation
-  setTimeout(()=>{ bar.style.width = '0%'; }, 20);
-
-  // schedule finalization
-  const timeoutId = setTimeout(()=>{
-    lastAction = null;
-    toastContainer.innerHTML = '';
-  }, UNDO_MS);
-  lastAction.timeoutId = timeoutId;
-
-  undoBtn.onclick = ()=> {
-    if(!lastAction) return;
-    clearTimeout(lastAction.timeoutId);
-    // reverse
-    if(lastAction.type === 'delete'){
-      const { item, index } = lastAction.payload;
-      const insertAt = Math.min(Math.max(index,0), artworks.length);
-      artworks.splice(insertAt,0,item);
-      save();
-      renderGallery();
-      updateFeatured();
-    } else if(lastAction.type === 'clearAll'){
-      artworks = lastAction.payload.items.slice();
-      save();
-      renderGallery();
-      updateFeatured();
-    } else if(lastAction.type === 'clearChat'){
-      messages = lastAction.payload.messages.slice();
-      localStorage.setItem('messages', JSON.stringify(messages));
-      renderMessages();
+  const timeoutId = setTimeout(()=>{ toast.classList.remove('show'); setTimeout(()=> toast.remove(), 300); }, UNDO_MS);
+  // attach undo handler
+  toast.querySelector('.undo').addEventListener('click', ()=>{
+    clearTimeout(timeoutId);
+    if(lastAction){
+      if(lastAction.type === 'delete'){
+        const { item, index } = lastAction.payload;
+        const insertAt = Math.min(Math.max(index,0), artworks.length);
+        artworks.splice(insertAt,0,item);
+        save(); renderGallery(); updateFeatured();
+      } else if(lastAction.type === 'clearAll'){
+        artworks = lastAction.payload.items.slice(); save(); renderGallery(); updateFeatured();
+      } else if(lastAction.type === 'clearChat'){
+        messages = lastAction.payload.messages.slice(); localStorage.setItem('messages', JSON.stringify(messages)); renderMessages();
+      }
+      lastAction = null;
+      toast.classList.remove('show');
+      setTimeout(()=> toast.remove(), 260);
     }
-    lastAction = null;
-    toastContainer.innerHTML = '';
-  };
+  });
+  return timeoutId;
+}
+function actionMessage(action){
+  if(action.type==='delete') return 'Artwork deleted';
+  if(action.type==='clearAll') return 'All artworks cleared';
+  if(action.type==='clearChat') return 'Chat cleared';
+  return 'Action performed';
 }
 
-/* Keyboard undo: Ctrl/Cmd + Z */
-document.addEventListener('keydown', (e)=>{
-  if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z'){
-    if(lastAction){
-      // simulate clicking undo button
-      const undoBtn = toastContainer.querySelector('.undo');
-      if(undoBtn){
-        undoBtn.click();
-      }
-    }
-  }
+function setLastActionAndToast(actionObj){
+  if(lastAction && lastAction.timeoutId){ clearTimeout(lastAction.timeoutId); lastAction = null; }
+  lastAction = { ...actionObj, createdAt: Date.now(), timeoutId: null };
+  const tid = createUndoToast(lastAction);
+  lastAction.timeoutId = tid;
+}
+
+/* Rate-limit toast (red) */
+function showRateToast(text, duration=3000){
+  const elm = document.createElement('div');
+  elm.className = 'rate-toast';
+  elm.innerHTML = `<div style="font-weight:700;">${text}</div>`;
+  toastBase.appendChild(elm);
+  requestAnimationFrame(()=> elm.classList.add('show'));
+  setTimeout(()=>{ elm.classList.remove('show'); setTimeout(()=> elm.remove(), 260); }, duration);
+}
+
+/* keyboard undo Ctrl/Cmd + Z (works with toast) */
+document.addEventListener('keydown', (e)=>{ if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='z'){ const undoBtn = toastBase.querySelector('.undo'); if(undoBtn) undoBtn.click(); } });
+
+/* emoji creation */
+function populateEmojiSelect(){
+  const built = ['😀','😍','🔥','👍','🎨','💖'];
+  emojiSelect.innerHTML = '';
+  built.concat(customEmojis || []).forEach(e => {
+    const opt = document.createElement('option'); opt.value = e; opt.textContent = e; emojiSelect.appendChild(opt);
+  });
+}
+addEmojiBtn.addEventListener('click', ()=>{
+  const val = (customEmojiInput.value || '').trim();
+  if(!val){ showRateToast('Paste an emoji to add',2000); return; }
+  customEmojis = customEmojis || [];
+  if(!customEmojis.includes(val)) customEmojis.push(val);
+  localStorage.setItem('custom_emojis', JSON.stringify(customEmojis));
+  customEmojiInput.value = '';
+  populateEmojiSelect();
 });
 
-/* Utility: escape HTML */
-function escapeHtml(s=''){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'); }
+/* export handled above */
 
-/* Initialization */
+/* init */
 function init(){
-  artworks = artworks.map(a => ({ username: a.username||'Anonymous', description: a.description||'', data: a.data, votes: a.votes||{} }));
+  ensureIds();
+  artworks = artworks.map(a => ({ id: a.id, username: a.username||'Anonymous', description: a.description||'', data: a.data, votes: a.votes||{} }));
   messages = messages || [];
-  save();
-  renderGallery();
-  renderMessages();
-  updateFeatured();
+  customEmojis = customEmojis || [];
+  voteHistory = JSON.parse(localStorage.getItem('vote_history') || '[]');
+  voteCooldowns = JSON.parse(localStorage.getItem('vote_cooldowns') || '{}');
+  save(); renderGallery(); renderMessages(); updateFeatured(); populateEmojiSelect();
 }
 init();
 
-/* Expose functions used by inline onclick handlers */
-window.handleVote = handleVote;
+/* expose for inline usage */
+window.tryVote = tryVote;
 window.handleDownload = handleDownload;
 window.handleShareX = handleShareX;
 window.handleDelete = handleDelete;
 window.openModal = openModal;
-window.deleteArt = performDeleteAt;
-window.vote = vote;
-window.downloadArt = downloadArt;
-window.shareX = shareX;
 </script>
 </body>
 </html>
