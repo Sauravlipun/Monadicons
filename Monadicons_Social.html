@@ -5,21 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Monadicons Social</title>
 <style>
-  body { margin:0; font-family: Arial, sans-serif; background:#0e0e0e; color:#fff; }
-  .container { max-width: 1200px; margin:auto; padding:16px; }
-  .header { display:flex; justify-content:space-between; align-items:center; padding:16px 0; }
-  .header a { text-decoration:none; color:#fff; font-weight:bold; padding:8px 14px; border-radius:6px; background:linear-gradient(90deg,#7b2ff7,#f107a3); }
-  .upload-card, .gallery-card { background:#1c1c1c; padding:20px; border-radius:10px; margin-top:20px; }
-  label { display:block; margin-top:10px; font-weight:bold; }
-  input, textarea { width:100%; margin-top:5px; padding:8px; border-radius:6px; border:none; outline:none; background:#2c2c2c; color:#fff; }
-  button { margin-top:12px; padding:10px 14px; background:linear-gradient(90deg,#7b2ff7,#f107a3); color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer; }
-  .gallery { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin-top:30px; }
-  .card { background:#1c1c1c; border-radius:8px; padding:10px; text-align:center; position:relative; }
-  .card img { max-width:100%; border-radius:8px; }
-  .vote-btn { margin-top:8px; padding:6px 10px; background:#7b2ff7; border:none; border-radius:4px; color:#fff; cursor:pointer; }
-  .pagination { display:flex; justify-content:center; gap:10px; margin-top:20px; }
-  .pagination button { background:#f107a3; padding:8px 12px; border-radius:6px; border:none; color:#fff; cursor:pointer; }
-  .footer { text-align:center; margin-top:30px; font-size:14px; color:#bbb; }
+body { margin:0; font-family: 'Segoe UI', sans-serif; background:#0b0b0b; color:#fff; }
+.container { max-width:1200px; margin:auto; padding:16px; }
+.header { display:flex; justify-content:space-between; align-items:center; padding:16px 0; }
+.header a { text-decoration:none; color:#fff; font-weight:bold; padding:8px 14px; border-radius:6px; background:linear-gradient(90deg,#ff5c7a,#ff8c42); transition:0.3s; }
+.header a:hover { opacity:0.8; }
+.upload-card { background:linear-gradient(145deg,#1f1f1f,#121212); padding:20px; border-radius:12px; margin-top:20px; box-shadow:0 0 20px rgba(255,92,122,0.3); }
+.upload-card input, .upload-card textarea { width:100%; margin-top:5px; padding:10px; border-radius:8px; border:none; outline:none; background:#222; color:#fff; transition:0.3s; }
+.upload-card input:hover, .upload-card textarea:hover { background:#333; }
+.upload-card button { margin-top:12px; padding:10px 16px; background:linear-gradient(90deg,#ff5c7a,#ff8c42); color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer; transition:0.3s; }
+.upload-card button:hover { opacity:0.9; }
+#previewImg { margin-top:10px; max-width:150px; border-radius:8px; display:none; border:2px solid #ff5c7a; }
+h2 { margin-top:30px; }
+.gallery { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; margin-top:20px; }
+.card { background:#1c1c1c; border-radius:12px; padding:12px; text-align:center; position:relative; transition:0.3s; cursor:pointer; }
+.card:hover { transform:translateY(-5px); box-shadow:0 0 20px rgba(255,92,122,0.4); }
+.card img { max-width:100%; border-radius:12px; }
+.vote-btn { margin-top:8px; padding:6px 12px; background:#ff5c7a; border:none; border-radius:6px; color:#fff; cursor:pointer; transition:0.3s; }
+.vote-btn:hover { background:#ff8c42; }
+.pagination { display:flex; justify-content:center; gap:10px; margin-top:20px; }
+.pagination button { background:#ff8c42; padding:8px 14px; border-radius:8px; border:none; color:#fff; cursor:pointer; transition:0.3s; }
+.pagination button:hover { background:#ff5c7a; }
+.footer { text-align:center; margin-top:30px; font-size:14px; color:#bbb; }
 </style>
 </head>
 <body>
@@ -36,12 +43,13 @@
     <label for="description">Description</label>
     <textarea id="description" rows="3" placeholder="Describe your work"></textarea>
     <label for="file">Upload Image</label>
-    <input id="file" type="file" accept="image/*">
+    <input id="file" type="file" accept="image/*" onchange="previewFile()">
+    <img id="previewImg" alt="Preview">
     <button onclick="uploadArtwork()">Upload & Showcase</button>
     <button onclick="claimRewards()">Claim Rewards</button>
   </div>
 
-  <h2 style="margin-top:30px;">Community Gallery</h2>
+  <h2>Community Gallery</h2>
   <div id="gallery" class="gallery"></div>
   <div class="pagination">
     <button id="prevPage">Prev</button>
@@ -54,88 +62,88 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  const SUPABASE_URL = window.env?.NEXT_PUBLIC_SUPABASE_URL || "YOUR_SUPABASE_URL";
-  const SUPABASE_ANON_KEY = window.env?.NEXT_PUBLIC_SUPABASE_ANON_KEY || "YOUR_SUPABASE_ANON_KEY";
+const SUPABASE_URL = window.env?.NEXT_PUBLIC_SUPABASE_URL || "YOUR_SUPABASE_URL";
+const SUPABASE_ANON_KEY = window.env?.NEXT_PUBLIC_SUPABASE_ANON_KEY || "YOUR_SUPABASE_ANON_KEY";
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const ITEMS_PER_PAGE = 5;
+let currentPage = 1;
+let totalItems = 0;
 
-  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  const ITEMS_PER_PAGE = 5;
-  let currentPage = 1;
-  let totalItems = 0;
-
-  async function uploadArtwork() {
-    const username = document.getElementById('username').value.trim();
-    const description = document.getElementById('description').value.trim();
-    const fileInput = document.getElementById('file');
-    if (!username || !description || fileInput.files.length === 0) {
-      alert("Please fill out all fields and select an image.");
-      return;
-    }
-    const file = fileInput.files[0];
-    const fileName = `${Date.now()}_${file.name}`;
-
-    const { error: uploadError } = await supabase.storage.from('artwork').upload(fileName, file);
-    if (uploadError) { alert("Upload failed: " + uploadError.message); return; }
-
-    const { data: publicData } = supabase.storage.from('artwork').getPublicUrl(fileName);
-    const { error: insertError } = await supabase.from('artwork_posts').insert([{ username, description, image_url: publicData.publicUrl }]);
-    if (insertError) { alert("Database insert failed: " + insertError.message); return; }
-
-    alert("Upload successful!");
-    loadGallery();
+function previewFile() {
+  const preview = document.getElementById('previewImg');
+  const file = document.getElementById('file').files[0];
+  if(file) {
+    const reader = new FileReader();
+    reader.onload = () => { preview.src = reader.result; preview.style.display = 'block'; };
+    reader.readAsDataURL(file);
   }
+}
 
-  async function loadGallery() {
-    const { data, error, count } = await supabase.from('artwork_posts')
-      .select('*', { count: 'exact' })
-      .order('id', { ascending: false })
-      .range((currentPage-1)*ITEMS_PER_PAGE, currentPage*ITEMS_PER_PAGE-1);
+async function uploadArtwork() {
+  const username = document.getElementById('username').value.trim();
+  const description = document.getElementById('description').value.trim();
+  const fileInput = document.getElementById('file');
+  if(!username || !description || fileInput.files.length===0){ alert("Fill all fields & select image."); return; }
 
-    if (error) { console.error(error); return; }
-    totalItems = count;
+  const file = fileInput.files[0];
+  const fileName = `${Date.now()}_${file.name}`;
 
-    const galleryDiv = document.getElementById('gallery');
-    galleryDiv.innerHTML = "";
-    data.forEach(item => {
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.innerHTML = `
-        <img src="${item.image_url}" alt="Artwork">
-        <h3>${item.username}</h3>
-        <p>${item.description}</p>
-        <button class="vote-btn" onclick="vote(${item.id})">Vote ❤️</button>
-        <span id="votes-${item.id}" style="display:block; margin-top:5px;">Votes: ${item.votes || 0}</span>
-      `;
-      galleryDiv.appendChild(card);
-    });
-    document.getElementById('pageInfo').innerText = `Page ${currentPage}`;
-  }
+  // Upload to Supabase storage
+  const { error: uploadError } = await supabase.storage.from('artwork').upload(fileName, file);
+  if(uploadError){ alert("Upload failed: " + uploadError.message); return; }
 
-  async function vote(id) {
-    const { data, error } = await supabase.from('artwork_posts').select('votes').eq('id', id).single();
-    if (error) { console.error(error); return; }
-    const votes = (data.votes || 0) + 1;
-    await supabase.from('artwork_posts').update({ votes }).eq('id', id);
-    document.getElementById(`votes-${id}`).innerText = `Votes: ${votes}`;
-  }
+  const { data: publicData } = supabase.storage.from('artwork').getPublicUrl(fileName);
+  const { error: insertError } = await supabase.from('artwork_posts').insert([{ username, description, image_url: publicData.publicUrl, votes:0 }]);
+  if(insertError){ alert("Database insert failed: " + insertError.message); return; }
 
-  async function claimRewards() {
-    alert("Rewards claiming feature coming soon!");
-  }
-
-  document.getElementById('prevPage').addEventListener('click', () => {
-    if(currentPage > 1){ currentPage--; loadGallery(); }
-  });
-  document.getElementById('nextPage').addEventListener('click', () => {
-    if(currentPage*ITEMS_PER_PAGE < totalItems){ currentPage++; loadGallery(); }
-  });
-
+  alert("Upload successful!");
+  document.getElementById('file').value = '';
+  document.getElementById('previewImg').style.display='none';
   loadGallery();
+}
 
-  // Realtime updates
-  supabase.channel('public:artwork_posts')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'artwork_posts' }, payload => {
-      loadGallery();
-    }).subscribe();
+async function loadGallery() {
+  const { data, error, count } = await supabase.from('artwork_posts')
+    .select('*', { count: 'exact' })
+    .order('id',{ascending:false})
+    .range((currentPage-1)*ITEMS_PER_PAGE, currentPage*ITEMS_PER_PAGE-1);
+  if(error){ console.error(error); return; }
+  totalItems = count;
+  const gallery = document.getElementById('gallery');
+  gallery.innerHTML='';
+  data.forEach(item=>{
+    const card = document.createElement('div');
+    card.className='card';
+    card.innerHTML=`
+      <img src="${item.image_url}" alt="Artwork">
+      <h3>${item.username}</h3>
+      <p>${item.description}</p>
+      <button class="vote-btn" onclick="vote(${item.id})">Vote ❤️</button>
+      <span id="votes-${item.id}" style="display:block;margin-top:5px;">Votes: ${item.votes || 0}</span>
+    `;
+    gallery.appendChild(card);
+  });
+  document.getElementById('pageInfo').innerText = `Page ${currentPage}`;
+}
+
+async function vote(id) {
+  const { data, error } = await supabase.from('artwork_posts').select('votes').eq('id',id).single();
+  if(error){ console.error(error); return; }
+  const votes = (data.votes||0)+1;
+  await supabase.from('artwork_posts').update({votes}).eq('id',id);
+  document.getElementById(`votes-${id}`).innerText = `Votes: ${votes}`;
+}
+
+async function claimRewards(){ alert("Rewards feature coming soon!"); }
+
+document.getElementById('prevPage').addEventListener('click',()=>{ if(currentPage>1){currentPage--; loadGallery();} });
+document.getElementById('nextPage').addEventListener('click',()=>{ if(currentPage*ITEMS_PER_PAGE<totalItems){currentPage++; loadGallery();} });
+
+loadGallery();
+
+// Realtime updates
+supabase.channel('public:artwork_posts')
+  .on('postgres_changes',{ event:'*', schema:'public', table:'artwork_posts' }, payload=>{ loadGallery(); }).subscribe();
 </script>
 </body>
 </html>
