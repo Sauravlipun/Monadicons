@@ -6,10 +6,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="description" content="Monadicons — generate avatars, names and metadata" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%237C3AED'/><text x='50' y='58' font-size='50' text-anchor='middle' fill='white' font-family='Arial'>M</text></svg>">
-  <script src="https://cdn.jsdelivr.net/npm/jdenticon@3.2.0/dist/jdenticon.min.js"></script>
-  <!-- Supabase JS (UMD) -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/jdenticon@3.2.0/dist/jdenticon.min.js"></script> 
   <style>
     :root{
       --accent:#7C3AED; --accent-2:#5B21B6; --muted:#9fb0c9;
@@ -26,66 +23,50 @@
     .logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:800;color:white;font-size:20px}
     h1{margin:0;font-size:20px}
     .header-actions{display:flex;gap:8px;align-items:center}
-    .btn,.ghost,.small{cursor:pointer;border-radius:10px;padding:8px 12px;font-weight:600;border:none;outline:none;transition:all .18s ease}
+     .btn,.ghost,.small{cursor:pointer;border-radius:10px;padding:8px 12px;font-weight:600;border:none;outline:none;transition:all .18s ease}
     .btn{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:white;box-shadow:0 8px 24px rgba(124,58,237,.12)}
     .ghost{background:transparent;border:1px solid rgba(255,255,255,.06);color:var(--muted)}
     .small{padding:6px 8px;background:var(--glass);color:var(--muted);font-weight:600}
     .grid{display:grid;grid-template-columns:1fr 440px;gap:var(--gap);align-items:start}
-    .card{background:var(--card-bg);padding:16px;border-radius:var(--radius);border:1px solid rgba(255,255,255,.03)}
+     .card{background:var(--card-bg);padding:16px;border-radius:var(--radius);border:1px solid rgba(255,255,255,.03)}
     .controls label{display:block;font-size:13px;color:var(--muted);margin:10px 0 6px}
     .row{display:flex;gap:8px;align-items:center}
     .input,select,textarea,input[type="color"],input[type="number"],input[type="text"]{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;font-size:14px;resize:vertical}
+     /* Small helper grid for tidy alignment in multi-seed area */
     .small-grid{display:grid;grid-template-columns:1fr 120px 150px;gap:8px;align-items:end}
     @media (max-width:720px){ .small-grid{grid-template-columns:1fr} }
-    .preview-box{width:100%;height:440px;border-radius:var(--radius);border:1px solid rgba(255,255,255,.04);background:linear-gradient(180deg, rgba(255,255,255,.01), transparent);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+     .preview-box{width:100%;height:440px;border-radius:var(--radius);border:1px solid rgba(255,255,255,.04);background:linear-gradient(180deg, rgba(255,255,255,.01), transparent);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
     .preview-box>img,.preview-box>svg{width:100%;height:100%;object-fit:cover;display:block}
     .preview-meta{color:var(--muted);font-size:13px;margin-top:8px;text-align:center}
-    .history{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+     .history{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
     .thumb{width:64px;height:64px;border-radius:8px;border:1px solid rgba(255,255,255,.04);overflow:hidden;cursor:pointer;background:white;display:flex;align-items:center;justify-content:center}
-    .switch{display:inline-flex;align-items:center;gap:8px;background:var(--glass);padding:6px;border-radius:999px}
+     .switch{display:inline-flex;align-items:center;gap:8px;background:var(--glass);padding:6px;border-radius:999px}
     .switch input{display:none}
     .footer-note{color:var(--muted);font-size:13px;text-align:center;margin-top:18px}
-    .desc-card{margin-top:12px;background:linear-gradient(180deg,rgba(255,255,255,.015),transparent);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,.03)}
+     .desc-card{margin-top:12px;background:linear-gradient(180deg,rgba(255,255,255,.015),transparent);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,.03)}
     .desc-title{font-weight:700;margin-bottom:6px}
     .desc-text{background:transparent;border-radius:8px;padding:10px;border:1px dashed rgba(255,255,255,.04);color:var(--muted);font-size:14px;white-space:pre-wrap}
-    #toast{position:fixed;right:18px;bottom:18px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+     #toast{position:fixed;right:18px;bottom:18px;z-index:9999;display:flex;flex-direction:column;gap:8px}
     .toast{background:rgba(0,0,0,.75);color:#fff;padding:10px 14px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.4);font-weight:600;min-width:180px;animation:fadeIn .3s}
     @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-    body.light{color:#1f2937;background:linear-gradient(180deg,#f0f4f8,#e6eef5)}
+     body.light{color:#1f2937;background:linear-gradient(180deg,#f0f4f8,#e6eef5)}
     body.light .card{background:white;border-color:rgba(0,0,0,.06);color:#1f2937}
     body.light .input,body.light select{background:#fff;color:#111;border-color:rgba(0,0,0,.12)}
     @media (max-width:1000px){ .grid{grid-template-columns:1fr} .preview-box{height:360px} }
     @media (max-width:768px){ .header{flex-direction:column;align-items:flex-start} .header-actions{width:100%;margin-top:12px;justify-content:space-between} .btn,.ghost,.small{padding:8px;font-size:13px} }
-    .ai-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:20px;text-align:center;color:var(--muted)}
+     .ai-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:20px;text-align:center;color:var(--muted)}
     .spinner{width:40px;height:40px;border-radius:50%;border:3px solid rgba(124,58,237,.2);border-top-color:var(--accent);animation:spin 1s linear infinite}
     @keyframes spin{to{transform:rotate(360deg)}}
+     /* Name generator UI */
     .name-generator{margin-top:14px;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,.03);background:rgba(255,255,255,.01)}
     .name-generator .swatches{display:flex;gap:8px;margin-top:8px}
     .swatch{width:28px;height:28px;border-radius:6px;border:1px solid rgba(255,255,255,.06);cursor:pointer}
-    #badgeOverlay{position:absolute;top:12px;right:12px;background:linear-gradient(90deg,#ffcc66,#ff8a66);color:#111;padding:8px 10px;border-radius:999px;font-weight:700;font-size:13px;box-shadow:0 8px 20px rgba(0,0,0,.4);display:none;z-index:40;transform-origin:center center}
+     #badgeOverlay{position:absolute;top:12px;right:12px;background:linear-gradient(90deg,#ffcc66,#ff8a66);color:#111;padding:8px 10px;border-radius:999px;font-weight:700;font-size:13px;box-shadow:0 8px 20px rgba(0,0,0,.4);display:none;z-index:40;transform-origin:center center}
     .badge-animate{animation:badgePop .72s cubic-bezier(.2,.9,.28,1)}
     @keyframes badgePop{0%{transform:scale(.4) rotate(-12deg);opacity:0}55%{transform:scale(1.14) rotate(6deg);opacity:1}100%{transform:scale(1) rotate(0deg);opacity:1}}
     .badge-epic{box-shadow:0 8px 34px rgba(130,90,255,.18),0 0 32px rgba(255,220,120,.06) inset}
     .badge-legendary{box-shadow:0 12px 48px rgba(255,80,80,.18),0 0 56px rgba(255,180,80,.08) inset}
     .muted{color:var(--muted)}
-
-    /* --- Socials panel styles --- */
-    .socials-panel {
-      position:fixed; right:0; top:0; height:100vh; width:420px; max-width:96vw; background:linear-gradient(180deg, rgba(12,10,22,0.96), rgba(8,8,16,0.99));
-      border-left:1px solid rgba(255,255,255,0.04); box-shadow: -20px 0 40px rgba(0,0,0,0.6); z-index:1200;
-      transform: translateX(100%); transition: transform .32s cubic-bezier(.2,.9,.28,1); padding:18px; overflow:auto;
-    }
-    .socials-panel.open { transform: translateX(0); }
-    .socials-header { display:flex; align-items:center; gap:12px; justify-content:space-between; margin-bottom:10px; }
-    .socials-post { background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.03); padding:10px; border-radius:10px; margin-bottom:10px; }
-    .socials-post .meta { font-size:12px; color:var(--muted); margin-bottom:8px; }
-    .socials-actions { display:flex; gap:8px; align-items:center; margin-top:8px; }
-    .socials-empty { text-align:center; color:var(--muted); padding:28px 10px; }
-    .socials-avatar { width:38px; height:38px; border-radius:8px; background:linear-gradient(90deg,var(--accent),var(--accent-2)); display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:700; margin-right:8px; }
-    .socials-form textarea { width:100%; min-height:80px; resize:vertical; padding:8px; border-radius:8px; border:1px solid rgba(255,255,255,0.04); background:transparent; color:inherit; }
-    .socials-preview { border-radius:8px; margin-top:8px; border:1px solid rgba(255,255,255,0.04); overflow:hidden; height:140px; display:flex; align-items:center; justify-content:center; background: rgba(0,0,0,0.12);}
-    .socials-footer-note{font-size:12px;color:var(--muted);margin-top:8px;text-align:center}
-    @media (max-width:900px) { .socials-panel { width:100vw; } }
   </style>
 </head>
 <body>
@@ -102,14 +83,15 @@
           <label for="liveToggle" style="color:var(--muted);font-weight:600">Live</label>
         </div>
         <button id="randomBtn" class="ghost">Random</button>
-        <button id="openSocials" class="small">Socials</button>
         <button id="exportJSON" class="small">Export Settings</button>
         <button id="toggleTheme" class="small">Light</button>
+        
+        <a href="social.html" class="small" style="padding:6px 12px; background:linear-gradient(90deg,#7b2ff7,#f107a3); border-radius:6px; color:white; font-weight:600; text-decoration:none;">Social App</a>
       </div>
     </div>
 
     <div class="grid">
-      <!-- LEFT (controls) -->
+      <!-- LEFT -->
       <div class="card controls">
         <label for="seed">Seed / Name</label>
         <input id="seed" class="input" type="text" placeholder="e.g., aurora" value="anon" />
@@ -125,9 +107,153 @@
           <label style="font-size:13px;color:var(--muted)"><input id="promptUseAsSeed" type="checkbox" style="margin-right:6px">Use prompt as seed automatically</label>
         </div>
 
-        <!-- (rest of your control UI unchanged) -->
-        <!-- For brevity I keep the UI identical to your provided file; all the same IDs are preserved -->
-        <!-- ... (size, style, bg options, generate buttons, name-generator, history, export) ... -->
+        <div style="margin-top:10px;border-radius:8px;padding:10px;background:rgba(255,255,255,0.01);border:1px solid rgba(255,255,255,0.02)">
+          <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+            <div style="font-weight:700">Multi-seed</div>
+            <label style="font-size:13px;color:var(--muted)"><input id="multiSeed" type="checkbox" style="margin-right:6px">Enable</label>
+          </div>
+
+          <!-- aligned controls: small-grid -->
+          <div class="small-grid" style="margin-top:8px">
+            <div>
+              <label for="delimiter">Delimiter</label>
+              <select id="delimiter" class="input">
+                <option value="space">Space</option>
+                <option value="comma">Comma</option>
+                <option value="newline">Newline</option>
+                <option value="char">Each char</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="partsCount">Parts</label>
+              <input id="partsCount" class="input" type="number" min="2" max="12" value="3" />
+            </div>
+
+            <div>
+              <label for="composeMode">Compose</label>
+              <select id="composeMode" class="input">
+                <option value="grid">Grid</option>
+                <option value="layer">Layered</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+            <label style="font-size:13px;color:var(--muted);display:flex;align-items:center">
+              <input id="randomizeParts" type="checkbox" style="margin-right:6px">
+              Randomize parts <span style="margin-left:8px;color:var(--muted)">• deterministic</span>
+            </label>
+            <div style="flex:1"></div>
+            <small style="color:var(--muted)">Creates multiple seeds from the prompt and combines them.</small>
+          </div>
+        </div>
+
+        <label for="style" style="margin-top:10px">Style</label>
+        <select id="style" class="input">
+          <optgroup label="Avatar styles">
+            <option value="adventurer">adventurer</option>
+            <option value="avataaars">avataaars</option>
+            <option value="big-ears">big-ears</option>
+            <option value="bottts">bottts</option>
+            <option value="micah">micah</option>
+            <option value="pixel-art-neutral">pixel-art-neutral</option>
+            <option value="identicon">identicon</option>
+          </optgroup>
+          <optgroup label="Local">
+            <option value="jdenticon">jdenticon (local)</option>
+          </optgroup>
+        </select>
+
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <div style="flex:1">
+            <label for="size">Size (px)</label>
+            <input id="size" class="input" type="number" min="64" max="4096" value="512" />
+          </div>
+          <div style="width:150px">
+            <label for="scale">Scale (%)</label>
+            <input id="scale" class="input" type="number" min="50" max="200" value="100" />
+          </div>
+          <div style="width:150px">
+            <label for="rotation">Rotation (°)</label>
+            <input id="rotation" class="input" type="number" min="-180" max="180" value="0" />
+          </div>
+        </div>
+
+        <label for="bgType">Background type</label>
+        <select id="bgType" class="input">
+          <option value="transparent">transparent</option>
+          <option value="solid">solid</option>
+          <option value="gradient">gradient</option>
+          <option value="radial">radial</option>
+          <option value="dots">dots</option>
+          <option value="stripes">stripes</option>
+          <option value="checker">checker</option>
+          <option value="noise">noise</option>
+        </select>
+
+        <label for="bgColor">Background color</label>
+        <input id="bgColor" type="color" value="#7C3AED" class="input" />
+
+        <div style="display:flex;gap:8px;margin-top:12px;align-items:center">
+          <button id="generateBtn" class="btn">Generate (Add to history)</button>
+          <button id="applyPreviewBtn" class="ghost">Apply Preview</button>
+          <div style="flex:1"></div>
+          <button id="clearHistory" class="small">Clear History</button>
+        </div>
+
+        <div class="toolbar" style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+          <button id="downloadSvg" class="ghost">Download SVG</button>
+          <button id="downloadPng" class="ghost">Download PNG</button>
+          <button id="copyEmbed" class="ghost">Copy Embed</button>
+          <button id="shareX" class="ghost">Share X</button>
+          <button id="shareDiscord" class="ghost">Share Discord</button>
+        </div>
+
+        <div style="margin-top:12px">
+          <label>Presets</label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+            <button class="small preset" data-seed="aurora" data-style="adventurer">Aurora</button>
+            <button class="small preset" data-seed="nebula" data-style="pixel-art-neutral">Nebula</button>
+            <button class="small preset" data-seed="octopus" data-style="micah">Octopus</button>
+            <button class="small preset" data-seed="miso" data-style="jdenticon">Miso</button>
+            <button class="small" id="randomPreset">Surprise me</button>
+          </div>
+        </div>
+
+        <!-- Name generator area -->
+        <div class="name-generator">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="font-weight:700">Name Generator</div>
+            <div style="font-size:13px;color:var(--muted)">Make your icon collectible</div>
+          </div>
+
+          <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+            <input id="generatedName" class="input" placeholder="Click Generate Name" />
+            <button id="genNameBtn" class="btn small">Generate</button>
+          </div>
+
+          <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+            <button id="copyNameBtn" class="ghost small">Copy</button>
+            <button id="applyNameAsSeed" class="ghost small">Apply as Seed</button>
+            <label style="margin-left:auto;color:var(--muted);font-size:13px;display:flex;align-items:center">
+              <input id="deterministicName" type="checkbox" style="margin-right:6px">Deterministic (from seed)
+            </label>
+          </div>
+
+          <div class="swatches" id="palette" title="Click to copy color"></div>
+
+          <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+            <label style="display:flex;align-items:center;gap:8px;">
+              <input id="badgeToggle" type="checkbox"> <span class="muted">Show rarity badge on preview</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;margin-left:12px;">
+              <input id="autoNameOnGenerate" type="checkbox" checked> <span class="muted">Auto-name on generate</span>
+            </label>
+            <div style="flex:1"></div>
+            <small class="muted">Badge reflects rarity based on name hash</small>
+          </div>
+        </div>
 
         <div style="margin-top:12px">
           <label>History</label>
@@ -143,7 +269,7 @@
         </div>
       </div>
 
-      <!-- RIGHT (preview + metadata) -->
+      <!-- RIGHT -->
       <div>
         <div class="card">
           <div class="preview-box" id="previewBox">
@@ -185,336 +311,90 @@
             </div>
           </div>
         </div>
-      </div><!-- end right -->
-    </div><!-- end grid -->
+      </div>
+    </div>
 
     <div class="footer-note">Powered by Monadicons • ©2025</div>
-  </div><!-- end container -->
-
-  <!-- Socials slide-in panel -->
-  <div id="socialsPanel" class="socials-panel" aria-hidden="true">
-    <div class="socials-header">
-      <div style="display:flex;align-items:center">
-        <div class="socials-avatar">M</div>
-        <div>
-          <div style="font-weight:700">Monadicons Social</div>
-          <div style="font-size:12px;color:var(--muted)">Showcase, freelance, earn rewards</div>
-        </div>
-      </div>
-      <div style="display:flex;gap:8px;align-items:center">
-        <button id="closeSocials" class="small">Close</button>
-      </div>
-    </div>
-
-    <div id="socialAuthArea" style="margin-bottom:10px">
-      <div style="display:flex;gap:8px;align-items:center">
-        <input id="socialEmail" class="input" placeholder="Your email (magic link)" />
-        <button id="sendMagicLink" class="ghost">Sign in</button>
-        <button id="anonSignIn" class="small">Guest</button>
-      </div>
-      <div class="socials-footer-note">Signed in users can post and upload. Guest posts are allowed but not editable.</div>
-    </div>
-
-    <div class="socials-form">
-      <textarea id="postContent" placeholder="Share your artwork or offer services..."></textarea>
-      <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
-        <input id="fileInput" type="file" accept="image/*,image/svg+xml" />
-        <button id="attachPreviewBtn" class="ghost">Attach Preview</button>
-        <div style="flex:1"></div>
-        <button id="createPostBtn" class="btn">Post</button>
-      </div>
-      <div id="attachedPreview" class="socials-preview" aria-hidden="true">No attachment</div>
-    </div>
-
-    <hr style="border:none;border-top:1px solid rgba(255,255,255,.03);margin:12px 0" />
-
-    <div id="postsList"></div>
-    <div id="socialsEmpty" class="socials-empty" style="display:none">No posts yet — be the first!</div>
   </div>
 
   <div id="toast" aria-live="polite" aria-atomic="true"></div>
 
   <script>
-  /***************************************************************************
-   * Helper to show short toasts
-   ***************************************************************************/
-  function showToast(msg, ms = 2000) {
+  /***********************
+   * DOM references
+   ***********************/
+  const liveToggle = document.getElementById('liveToggle');
+  const seedEl = document.getElementById('seed');
+  const promptEl = document.getElementById('prompt');
+  const promptUseAsSeedEl = document.getElementById('promptUseAsSeed');
+  const applyPromptBtn = document.getElementById('applyPrompt');
+  const generateFromPromptBtn = document.getElementById('generateFromPrompt');
+  const generateNameBtn = document.getElementById('generateName');
+  const styleEl = document.getElementById('style');
+  const sizeEl = document.getElementById('size');
+  const scaleEl = document.getElementById('scale');
+  const rotationEl = document.getElementById('rotation');
+  const bgTypeEl = document.getElementById('bgType');
+  const bgColorEl = document.getElementById('bgColor');
+  const generateBtn = document.getElementById('generateBtn');
+  const applyPreviewBtn = document.getElementById('applyPreviewBtn');
+  const randomBtn = document.getElementById('randomBtn');
+  const previewBox = document.getElementById('previewBox');
+  const previewMeta = document.getElementById('previewMeta');
+  const placeholder = document.getElementById('placeholder');
+  const downloadSvgBtn = document.getElementById('downloadSvg');
+  const downloadPngBtn = document.getElementById('downloadPng');
+  const copyEmbedBtn = document.getElementById('copyEmbed');
+  const historyEl = document.getElementById('history');
+  const copyJSON = document.getElementById('copyJSON');
+  const downloadJSON = document.getElementById('downloadJSON');
+  const exportJSON = document.getElementById('exportJSON');
+  const settingsOut = document.getElementById('settingsOut');
+  const toggleThemeBtn = document.getElementById('toggleTheme');
+  const autoDescEl = document.getElementById('autoDesc');
+  const descThumb = document.getElementById('descThumb');
+  const regenDescBtn = document.getElementById('regenDesc');
+  const copyDescBtn = document.getElementById('copyDesc');
+  const downloadMetaBtn = document.getElementById('downloadMeta');
+  const randomPreset = document.getElementById('randomPreset');
+  const clearHistory = document.getElementById('clearHistory');
+
+  // Name UI refs
+  const generatedNameEl = document.getElementById('generatedName');
+  const genNameBtn = document.getElementById('genNameBtn');
+  const copyNameBtn = document.getElementById('copyNameBtn');
+  const applyNameAsSeedBtn = document.getElementById('applyNameAsSeed');
+  const deterministicNameCheckbox = document.getElementById('deterministicName');
+  const paletteEl = document.getElementById('palette');
+  const badgeToggle = document.getElementById('badgeToggle');
+  const badgeOverlay = document.getElementById('badgeOverlay');
+  const autoNameOnGenerateCheckbox = document.getElementById('autoNameOnGenerate');
+
+  const shareXBtn = document.getElementById('shareX');
+  const shareDiscordBtn = document.getElementById('shareDiscord');
+
+  /***********************
+   * small data + helpers
+   ***********************/
+  const sampleSeeds = ['aurora','lumen','nova','zephyr','sol','aero','pixel','nebula','miso','sora','echo','boreal','octopus','waffle','tiger','meteor'];
+  let history = [];
+
+  function showToast(msg, ms = 2400) {
     const container = document.getElementById('toast');
     const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg;
     container.appendChild(t);
     setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity .25s'; setTimeout(()=>t.remove(),250); }, ms);
   }
 
-  /***************************************************************************
-   * SUPABASE INITIALIZATION
-   * Uses these environment variable names:
-   *  - NEXT_PUBLIC_SUPABASE_URL
-   *  - NEXT_PUBLIC_SUPABASE_ANON_KEY
-   *
-   * On Vercel / your environment, keep these names available to the frontend.
-   * The code below will read them from window.__env (if you inject globals)
-   * or fallback to string placeholders (so you can replace them when deploying).
-   ***************************************************************************/
-  // Try common places for env injection (you can inject window.__env at build time)
-  const SUPABASE_URL = (window.__env && window.__env.NEXT_PUBLIC_SUPABASE_URL) || (window.NEXT_PUBLIC_SUPABASE_URL) || '%NEXT_PUBLIC_SUPABASE_URL%';
-  const SUPABASE_ANON_KEY = (window.__env && window.__env.NEXT_PUBLIC_SUPABASE_ANON_KEY) || (window.NEXT_PUBLIC_SUPABASE_ANON_KEY) || '%NEXT_PUBLIC_SUPABASE_ANON_KEY%';
-
-  // Create supabase client using the UMD global from the CDN script loaded above
-  const supabaseClient = typeof supabase !== 'undefined' ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
-
-  if (!supabaseClient) {
-    console.warn('Supabase client not available. Check CDN script or environment variables.');
-  }
-
-  /***************************************************************************
-   * Simple socials functions: sign in, fetch posts, create posts, upload images
-   * Table expected: posts (id PK, user_id, content text, image_url text, created_at)
-   * Storage bucket (optional): 'public' (or create 'avatars' bucket)
-   ***************************************************************************/
-
-  async function signInWithMagicLink(email) {
-    if (!supabaseClient) return showToast('Supabase not configured');
-    try {
-      const { error } = await supabaseClient.auth.signInWithOtp({ email });
-      if (error) throw error;
-      showToast('Magic link sent — check your email');
-    } catch (err) {
-      console.error(err); showToast('Sign-in failed');
-    }
-  }
-
-  async function signInAnon() {
-    if (!supabaseClient) return showToast('Supabase not configured');
-    try {
-      const { data, error } = await supabaseClient.auth.signInWithPassword({ email: `anon_${Date.now()}@monadicons.local`, password: Math.random().toString(36).slice(2) }).catch(()=>({ error: 'anonymous not supported' }));
-      // fallback: use anon session if RLS allows (many sites just rely on anon key)
-      showToast('Guest mode enabled');
-    } catch (err) {
-      console.warn('Anon sign-in fallback — proceeding as guest');
-      showToast('Guest mode enabled');
-    }
-  }
-
-  async function fetchPosts() {
-    if (!supabaseClient) {
-      document.getElementById('postsList').innerHTML = '<div class="socials-empty">Supabase not configured</div>';
-      return;
-    }
-    const postsList = document.getElementById('postsList');
-    postsList.innerHTML = '<div style="padding:14px;color:var(--muted)">Loading posts…</div>';
-    try {
-      const { data, error } = await supabaseClient
-        .from('posts')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(50);
-      if (error) throw error;
-      if (!data || data.length === 0) {
-        document.getElementById('postsList').innerHTML = '';
-        document.getElementById('socialsEmpty').style.display = 'block';
-        return;
-      }
-      document.getElementById('socialsEmpty').style.display = 'none';
-      postsList.innerHTML = '';
-      data.forEach(p => {
-        const div = document.createElement('div');
-        div.className = 'socials-post';
-        const meta = document.createElement('div');
-        meta.className = 'meta';
-        const when = new Date(p.created_at).toLocaleString();
-        meta.innerHTML = `<strong>${(p.user_name || 'Anon')}</strong> • <span style="color:var(--muted)">${when}</span>`;
-        const content = document.createElement('div');
-        content.innerHTML = `<div style="margin-bottom:8px">${escapeHtml(p.content || '')}</div>`;
-        div.appendChild(meta);
-        div.appendChild(content);
-        if (p.image_url) {
-          const imgWrap = document.createElement('div');
-          imgWrap.style.marginTop = '8px';
-          const img = document.createElement('img');
-          img.style.maxWidth = '100%';
-          img.style.borderRadius = '8px';
-          img.src = p.image_url;
-          img.alt = 'post image';
-          imgWrap.appendChild(img);
-          div.appendChild(imgWrap);
-        }
-        postsList.appendChild(div);
-      });
-    } catch (err) {
-      console.error(err);
-      postsList.innerHTML = `<div class="socials-empty">Error loading posts</div>`;
-    }
-  }
-
-  async function uploadBlobToStorage(blob, filename) {
-    if (!supabaseClient) return null;
-    try {
-      // ensure bucket named 'public' exists (or change to your bucket)
-      const path = `uploads/${Date.now()}_${filename}`;
-      const { data, error } = await supabaseClient.storage.from('public').upload(path, blob, { cacheControl: '3600', upsert: false });
-      if (error) throw error;
-      const { data: urlData, error: urlErr } = supabaseClient.storage.from('public').getPublicUrl(path);
-      if (urlErr) throw urlErr;
-      return urlData.publicUrl;
-    } catch (err) {
-      console.error('upload failed', err);
-      showToast('Upload failed');
-      return null;
-    }
-  }
-
-  async function createPost({ content, imageBlob, imageName }) {
-    if (!supabaseClient) return showToast('Supabase not configured');
-    try {
-      let imageUrl = null;
-      if (imageBlob) {
-        const url = await uploadBlobToStorage(imageBlob, imageName || 'attachment.png');
-        imageUrl = url;
-      }
-      // Insert into posts table
-      const payload = { content, image_url: imageUrl, user_name: (await getCurrentUserDisplay()) || 'Anon' };
-      const { data, error } = await supabaseClient.from('posts').insert([payload]).select();
-      if (error) throw error;
-      showToast('Posted to Socials');
-      // refresh list
-      fetchPosts();
-      // clear form
-      document.getElementById('postContent').value = '';
-      document.getElementById('attachedPreview').innerHTML = 'No attachment';
-    } catch (err) {
-      console.error(err);
-      showToast('Post failed');
-    }
-  }
-
-  async function getCurrentUserDisplay() {
-    if (!supabaseClient) return null;
-    try {
-      const { data: { user } } = await supabaseClient.auth.getUser().catch(()=>({ data:{ user:null } }));
-      if (user && user.email) return user.email.split('@')[0];
-      return null;
-    } catch (err) {
-      return null;
-    }
-  }
-
-  // Utility: convert current preview SVG to blob (so users can attach preview)
-  function getCurrentPreviewSvgBlob(filename='preview.svg') {
-    const svgNode = document.getElementById('previewBox').querySelector('svg');
-    if (!svgNode) return null;
-    const svgText = new XMLSerializer().serializeToString(svgNode);
-    const blob = new Blob([svgText], { type: 'image/svg+xml' });
-    return { blob, name: filename };
-  }
-
-  // Escape HTML to avoid insertion issues
-  function escapeHtml(str) {
-    if (!str) return '';
-    return str.replace(/[&<>"'`]/g, function (m) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;', '`':'&#96;'}[m]; });
-  }
-
-  /***************************************************************************
-   * Wire up Socials UI interactions
-   ***************************************************************************/
-  const openSocialsBtn = document.getElementById('openSocials');
-  const socialsPanel = document.getElementById('socialsPanel');
-  const closeSocialsBtn = document.getElementById('closeSocials');
-  const sendMagicLinkBtn = document.getElementById('sendMagicLink');
-  const anonSignInBtn = document.getElementById('anonSignIn');
-  const socialsEmailIn = document.getElementById('socialEmail');
-  const createPostBtn = document.getElementById('createPostBtn');
-  const fileInput = document.getElementById('fileInput');
-  const attachPreviewBtn = document.getElementById('attachPreviewBtn');
-  const attachedPreview = document.getElementById('attachedPreview');
-
-  openSocialsBtn.addEventListener('click', () => {
-    socialsPanel.classList.add('open'); socialsPanel.setAttribute('aria-hidden', 'false');
-    fetchPosts();
-  });
-  closeSocialsBtn.addEventListener('click', () => {
-    socialsPanel.classList.remove('open'); socialsPanel.setAttribute('aria-hidden', 'true');
-  });
-
-  sendMagicLinkBtn.addEventListener('click', () => {
-    const email = socialsEmailIn.value && socialsEmailIn.value.trim();
-    if (!email) return showToast('Enter your email');
-    signInWithMagicLink(email);
-  });
-
-  anonSignInBtn.addEventListener('click', () => {
-    signInAnon();
-  });
-
-  attachPreviewBtn.addEventListener('click', () => {
-    const data = getCurrentPreviewSvgBlob('preview.svg');
-    if (!data) return showToast('No preview available to attach');
-    const url = URL.createObjectURL(data.blob);
-    attachedPreview.innerHTML = `<img src="${url}" alt="preview" style="max-width:100%;max-height:100%;object-fit:contain" />`;
-    attachedPreview._blob = data.blob;
-    attachedPreview._name = data.name;
-    showToast('Preview attached');
-  });
-
-  fileInput.addEventListener('change', (e) => {
-    const f = e.target.files && e.target.files[0];
-    if (!f) return;
-    const url = URL.createObjectURL(f);
-    attachedPreview.innerHTML = `<img src="${url}" alt="file" style="max-width:100%;max-height:100%;object-fit:contain" />`;
-    attachedPreview._blob = f;
-    attachedPreview._name = f.name;
-    showToast('File attached');
-  });
-
-  createPostBtn.addEventListener('click', async () => {
-    const content = document.getElementById('postContent').value || '';
-    let blob = attachedPreview._blob || null;
-    let name = attachedPreview._name || null;
-    await createPost({ content, imageBlob: blob, imageName: name });
-  });
-
-  // Also add a toolbar button so user can quickly "Share to Socials" current preview:
-  (function addShareSocialsToolbar(){
-    const toolbar = document.querySelector('.toolbar');
-    if (!toolbar) return;
-    const btn = document.createElement('button');
-    btn.className = 'ghost';
-    btn.id = 'shareSocialsBtn';
-    btn.textContent = 'Share Socials';
-    toolbar.appendChild(btn);
-    btn.addEventListener('click', () => {
-      // open panel and prefill content with auto description
-      const autoDesc = document.getElementById('autoDesc').textContent || '';
-      document.getElementById('postContent').value = autoDesc.split('\n')[0] || 'My Monadicon';
-      // attach preview automatically
-      const data = getCurrentPreviewSvgBlob('monadicon.svg');
-      if (data) {
-        const url = URL.createObjectURL(data.blob);
-        attachedPreview.innerHTML = `<img src="${url}" alt="preview" style="max-width:100%;max-height:100%;object-fit:contain" />`;
-        attachedPreview._blob = data.blob;
-        attachedPreview._name = data.name;
-      }
-      socialsPanel.classList.add('open'); socialsPanel.setAttribute('aria-hidden','false');
-    });
-  })();
-
-  /***************************************************************************
-   * Remaining app JS (your original code) integrated below.
-   * For brevity I included the necessary functions to keep your app working:
-   * - rendering logic, dicebear/jdenticon fetches
-   * - export/download/copy behavior
-   * NOTE: I left your code largely unchanged and kept original IDs.
-   ***************************************************************************/
-
-  // --- Begin essential parts of your original script (abbreviated & preserved) ---
-  // We'll include the most important functions used by UI: hashString, seededRandom, buildFinalSvg, renderPreview, etc.
-  // For full fidelity, the rest of your original code can be kept as-is in the project file.
-  // (To keep this snippet tidy I will reuse the buildFinalSvg & renderPreview logic taken from your provided index.)
-  // If you need the entire original block unchanged, paste your previous full script content here instead.
-
-  // --- small helpers (copied from your code) ---
   function hashString(s) { let h = 2166136261; for (let i=0;i<s.length;i++){ h = Math.imul(h ^ s.charCodeAt(i), 16777619);} return h; }
+  function slugifyPrompt(s){ const trimmed=(s||'').trim(); const slug=trimmed.toLowerCase().replace(/[^\w\s-]/g,'').replace(/\s+/g,'-').slice(0,70)||'anon'; const h=Math.abs(hashString(trimmed||slug)).toString(16).slice(0,5); return `${slug}-${h}`; }
   function seededRandomFromSeed(seed){ let h=hashString(seed); return function(){ h ^= h<<13; h ^= h>>>17; h ^= h<<5; return (h>>>0)/4294967296; }; }
+  function pickDeterministic(arr, seed, idx=0){ if(!arr||!arr.length) return null; const rnd = seededRandomFromSeed(seed + '|' + idx); return arr[Math.floor(rnd()*arr.length)]; }
   function clamp(v,min,max){return Math.max(min,Math.min(max,v));}
+  function pickRandom(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+  function shortHex(seed){ return (hashString(seed)>>>0).toString(16).slice(0,4).toUpperCase(); }
+
+  /* color helpers */
   function hexToRgb(hex){ hex=(hex||'#ffffff').replace('#',''); if(hex.length===3) hex=hex.split('').map(c=>c+c).join(''); return { r:parseInt(hex.slice(0,2),16), g:parseInt(hex.slice(2,4),16), b:parseInt(hex.slice(4,6),16) }; }
   function mixWithWhite(hex,pct=0.6){ const c=hexToRgb(hex); const r=Math.round(c.r + (255-c.r)*pct); const g=Math.round(c.g + (255-c.g)*pct); const b=Math.round(c.b + (255-c.b)*pct); return `rgb(${r}, ${g}, ${b})`; }
   function hslToHex(h,s,l){ s/=100; l/=100; const k = n => (n + h/30) % 12; const a = s * Math.min(l,1-l); const f = n => Math.round(255 * (l - a * Math.max(Math.min(k(n)-3,9-k(n),1), -1))); return `#${((1<<24) + (f(0)<<16) + (f(8)<<8) + f(4)).toString(16).slice(1)}`; }
@@ -528,24 +408,109 @@
     }
     return colors;
   }
+  function renderPalette(colors){
+    paletteEl.innerHTML = '';
+    colors.forEach(c => {
+      const sw = document.createElement('div'); sw.className='swatch'; sw.style.background = c; sw.title = c;
+      sw.onclick = async () => {
+        try { await navigator.clipboard.writeText(c); showToast(`Copied ${c}`); }
+        catch { showToast('Copy failed'); }
+      };
+      paletteEl.appendChild(sw);
+    });
+  }
 
-  // Grab many elements the original app relies on (some may be present)
-  const liveToggle = document.getElementById('liveToggle');
-  const seedEl = document.getElementById('seed');
-  const styleEl = document.getElementById('style');
-  const sizeEl = document.getElementById('size') || { value: 512 };
-  const scaleEl = document.getElementById('scale') || { value: 100 };
-  const rotationEl = document.getElementById('rotation') || { value: 0 };
-  const bgTypeEl = document.getElementById('bgType') || { value: 'transparent' };
-  const bgColorEl = document.getElementById('bgColor') || { value: '#7C3AED' };
-  const previewBox = document.getElementById('previewBox');
-  const placeholder = document.getElementById('placeholder');
-  const settingsOut = document.getElementById('settingsOut');
-  const generatedNameEl = document.getElementById('generatedName') || { value: '' };
-  const badgeToggle = document.getElementById('badgeToggle') || { checked: false };
-  const badgeOverlay = document.getElementById('badgeOverlay');
+  /***********************
+   * name generator
+   ***********************/
+  function generateRandomName(deterministic=false){
+    const adjectives = ['Glowing','Playful','Enigmatic','Vibrant','Serene','Bold','Whimsical','Sleek','Crisp','Dreamy','Electric','Retro','Nova','Lunar','Solar','Aether','Frost','Ember','Velvet','Obsidian'];
+    const nouns = ['Fox','Monolith','Echo','Warden','Sprite','Aurora','Comet','Cipher','Bard','Golem','Lattice','Oracle','Nimbus','Voyager','Pulse','Glyph','Prism','Nebula','Beacon','Harbor'];
+    let seedSource = (seedEl.value || '').toString().trim();
+    if(!seedSource) seedSource = (promptEl.value || '').toString().trim() || ('rand'+Math.floor(Math.random()*9999));
+    let adj, noun;
+    if (deterministic) {
+      adj = pickDeterministic(adjectives, seedSource, 0) || pickRandom(adjectives);
+      noun = pickDeterministic(nouns, seedSource, 1) || pickRandom(nouns);
+    } else {
+      adj = pickRandom(adjectives); noun = pickRandom(nouns);
+    }
+    return `${adj} ${noun} #${shortHex(seedSource)}`;
+  }
 
-  // Minimal extractInnerSvgInfo used by buildFinalSvg
+  function computeRarity(seedString) {
+    const h = hashString(seedString).toString(); const v = parseInt(h.slice(-2),10) || 0;
+    if (v > 240) return 'Legendary';
+    if (v > 200) return 'Epic';
+    if (v > 140) return 'Rare';
+    if (v > 80) return 'Uncommon';
+    return 'Common';
+  }
+
+  function pickDeterministicAdjective(seed) {
+    const adjectives = ['glowing','playful','enigmatic','vibrant','serene','bold','whimsical','sleek','crisp','dreamy','electric','retro'];
+    return pickDeterministic(adjectives, seed);
+  }
+
+  function generateAttributes(settings, seeds) {
+    return [
+      { trait_type: 'Style', value: settings.style },
+      { trait_type: 'Background', value: settings.bgType },
+      { trait_type: 'BgColor', value: settings.bgColor },
+      { trait_type: 'Scale', value: `${settings.scale}%` },
+      { trait_type: 'Rotation', value: `${settings.rotation}°` },
+      { trait_type: 'Seeds', value: seeds.join(', ') },
+      { trait_type: 'Rarity', value: computeRarity(seeds.join('|')) }
+    ];
+  }
+
+  function generateAutoDescription(settings, promptText, seeds) {
+    const mainSeed = seeds && seeds.length ? seeds[0] : (settings.seed || 'anon');
+    const name = `${mainSeed.toString().slice(0,20)}`;
+    const rarity = computeRarity(seeds.join('|') || mainSeed);
+    const mood = pickDeterministicAdjective(seeds.join('|') + '|' + settings.style) || 'stylish';
+    const promptNote = promptText ? ` Inspired by "${promptText.trim().slice(0,120)}".` : '';
+    const blurb = `${name} is a ${mood} avatar rendered in the ${settings.style} style with a ${settings.bgType} background.${promptNote}`;
+    const attributes = generateAttributes(settings, seeds);
+    const traitsText = attributes.map(a => `${a.trait_type}: ${a.value}`).join(' • ');
+    const hashtags = ['#Monadicons','#Avatar','#SVG', `#${rarity}`].join(' ');
+    const description = `${blurb}\n\nAttributes\n${traitsText}\n\nRarity: ${rarity}\n\n${hashtags}`;
+    return { name, description, attributes, rarity };
+  }
+
+  function updateAutoDescriptionFromRendered(svgText, settings) {
+    try {
+      const seed = settings.seed ? settings.seed.toString() : 'anon';
+      const promptText = (promptEl.value || '').trim();
+      const meta = generateAutoDescription(settings, promptText, [seed]);
+      autoDescEl.textContent = meta.description;
+      const thumbData = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgText)));
+      descThumb.innerHTML = `<img src="${thumbData}" alt="thumb" style="width:100%;height:100%;object-fit:cover" />`;
+      regenDescBtn._meta = { meta, svg: svgText, settings };
+      copyDescBtn._meta = regenDescBtn._meta;
+      downloadMetaBtn._meta = regenDescBtn._meta;
+    } catch (e) {
+      console.error('updateAutoDescriptionFromRendered error', e);
+    }
+  }
+
+  /***********************
+   * SVG building (Dicebear/Jdenticon)
+   ***********************/
+  function buildDefsAndRect(bgType, color, outSize){
+    const idPrefix = 'mb_'+Math.random().toString(36).slice(2,8);
+    let defs='', rectFill = color || 'transparent', noiseFilterId = null;
+    if (bgType === 'transparent') rectFill = 'none';
+    else if (bgType === 'solid') rectFill = color;
+    else if (bgType === 'gradient') { const gradId = idPrefix + '_g'; const lighter = mixWithWhite(color,0.55); defs = `<linearGradient id="${gradId}" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${color}" /><stop offset="100%" stop-color="${lighter}" stop-opacity="0.9" /></linearGradient>`; rectFill = `url(#${gradId})`; }
+    else if (bgType === 'radial') { const rid = idPrefix + '_r'; const lighter = mixWithWhite(color,0.6); defs = `<radialGradient id="${rid}" cx="30%" cy="30%" r="80%"><stop offset="0%" stop-color="${lighter}" /><stop offset="100%" stop-color="${color}" /></radialGradient>`; rectFill = `url(#${rid})`; }
+    else if (bgType === 'dots') { const patId = idPrefix + '_p'; defs = `<pattern id="${patId}" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="${mixWithWhite(color,0.85)}"/><circle cx="6" cy="6" r="2" fill="${color}"/></pattern>`; rectFill = `url(#${patId})`; }
+    else if (bgType === 'stripes') { const patId = idPrefix + '_s'; defs = `<pattern id="${patId}" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="5" height="10" fill="${color}" /><rect x="5" width="5" height="10" fill="transparent" /></pattern>`; rectFill = `url(#${patId})`; }
+    else if (bgType === 'checker') { const patId = idPrefix + '_c'; const lighter = mixWithWhite(color,0.7); defs = `<pattern id="${patId}" width="20" height="20" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="${color}"/><rect x="10" y="10" width="10" height="10" fill="${color}"/><rect width="10" height="10" fill="${lighter}"/><rect x="10" y="10" width="10" height="10" fill="${lighter}"/></pattern>`; rectFill = `url(#${patId})`; }
+    else if (bgType === 'noise') { const filterId = idPrefix + '_f'; defs = `<filter id="${filterId}"><feTurbulence baseFrequency="0.8" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0.2"/><feBlend mode="overlay" in2="SourceGraphic"/></filter>`; rectFill = color; noiseFilterId = filterId; }
+    return { defs, rectFill, noiseFilterId };
+  }
+
   function extractInnerSvgInfo(svgText, defaultSize){
     if(!svgText) return { innerSvg:'', w:defaultSize, h:defaultSize };
     svgText = svgText.replace(/^<\?xml[\s\S]*?\?>\s*/i,'');
@@ -567,56 +532,42 @@
     const style = settings.style;
     const seed = (settings.seed || 'anon').toString();
 
-    const { defs, rectFill, noiseFilterId } = (function buildDefsAndRect(bgType, color, outSize){
-      const idPrefix = 'mb_'+Math.random().toString(36).slice(2,8);
-      let defs='', rectFill = color || 'transparent', noiseFilterId = null;
-      if (bgType === 'transparent') rectFill = 'none';
-      else if (bgType === 'solid') rectFill = color;
-      else if (bgType === 'gradient') { const gradId = idPrefix + '_g'; const lighter = mixWithWhite(color,0.55); defs = `<linearGradient id="${gradId}" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${color}" /><stop offset="100%" stop-color="${lighter}" stop-opacity="0.9" /></linearGradient>`; rectFill = `url(#${gradId})`; }
-      else if (bgType === 'radial') { const rid = idPrefix + '_r'; const lighter = mixWithWhite(color,0.6); defs = `<radialGradient id="${rid}" cx="30%" cy="30%" r="80%"><stop offset="0%" stop-color="${lighter}" /><stop offset="100%" stop-color="${color}" /></radialGradient>`; rectFill = `url(#${rid})`; }
-      else if (bgType === 'dots') { const patId = idPrefix + '_p'; defs = `<pattern id="${patId}" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="${mixWithWhite(color,0.85)}"/><circle cx="6" cy="6" r="2" fill="${color}"/></pattern>`; rectFill = `url(#${patId})`; }
-      else if (bgType === 'stripes') { const patId = idPrefix + '_s'; defs = `<pattern id="${patId}" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="5" height="10" fill="${color}" /><rect x="5" width="5" height="10" fill="transparent" /></pattern>`; rectFill = `url(#${patId})`; }
-      else if (bgType === 'checker') { const patId = idPrefix + '_c'; const lighter = mixWithWhite(color,0.7); defs = `<pattern id="${patId}" width="20" height="20" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="${color}"/><rect x="10" y="10" width="10" height="10" fill="${color}"/><rect width="10" height="10" fill="${lighter}"/><rect x="10" y="10" width="10" height="10" fill="${lighter}"/></pattern>`; rectFill = `url(#${patId})`; }
-      else if (bgType === 'noise') { const filterId = idPrefix + '_f'; defs = `<filter id="${filterId}"><feTurbulence baseFrequency="0.8" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0.2"/><feBlend mode="overlay" in2="SourceGraphic"/></filter>`; rectFill = color; noiseFilterId = filterId; }
-      return { defs, rectFill, noiseFilterId };
-    })(bgType, bgColor, outSize);
-
-    // Fetch icon SVG from jdenticon or dicebear
+    const { defs, rectFill, noiseFilterId } = buildDefsAndRect(bgType, bgColor, outSize);
     let innerSvg = '', innerW = outSize, innerH = outSize;
-    try {
-      if (style === 'jdenticon') {
-        const svgText = jdenticon.toSvg(seed, outSize);
-        const info = extractInnerSvgInfo(svgText, outSize);
-        innerSvg = info.innerSvg; innerW = info.w; innerH = info.h;
-      } else {
-        const tryUrls = [
-          `https://api.dicebear.com/9.x/${style}/svg?seed=${encodeURIComponent(seed)}&size=${outSize}`,
-          `https://avatars.dicebear.com/api/${style}/${encodeURIComponent(seed)}.svg?size=${outSize}`
-        ];
-        let fetchedText = null;
-        for (const url of tryUrls) {
-          try { const r = await fetch(url, { cache:'no-store' }); if (r.ok) { fetchedText = await r.text(); break; } }
-          catch (e){ console.warn('fetch dicebear failed', e); }
-        }
-        if (!fetchedText) throw new Error('Failed to fetch SVG');
-        const info = extractInnerSvgInfo(fetchedText, outSize);
-        innerSvg = info.innerSvg; innerW = info.w; innerH = info.h;
+
+    if (style === 'jdenticon') {
+      const svgText = jdenticon.toSvg(seed, outSize);
+      const info = extractInnerSvgInfo(svgText, outSize);
+      innerSvg = info.innerSvg; innerW = info.w; innerH = info.h;
+    } else {
+      const tryUrls = [
+        `https://api.dicebear.com/9.x/${style}/svg?seed=${encodeURIComponent(seed)}&size=${outSize}`,
+        `https://avatars.dicebear.com/api/${style}/${encodeURIComponent(seed)}.svg?size=${outSize}`
+      ];
+      let fetchedText = null;
+      for (const url of tryUrls) {
+        try { const r = await fetch(url, { cache:'no-store' }); if (r.ok) { fetchedText = await r.text(); break; } }
+        catch (e){ console.warn('fetch dicebear failed', e); }
       }
-    } catch (err) {
-      console.error('icon fetch error', err);
-      innerSvg = `<rect width="${outSize*0.6}" height="${outSize*0.6}" x="${outSize*0.2}" y="${outSize*0.2}" rx="${Math.round(outSize*0.06)}" fill="${bgColor}" />`;
-      innerW = innerH = outSize * 0.8;
+      if (!fetchedText) throw new Error('Failed to fetch SVG');
+      const info = extractInnerSvgInfo(fetchedText, outSize);
+      innerSvg = info.innerSvg; innerW = info.w; innerH = info.h;
     }
 
-    // Keep a slight inset when background is visible so patterns/gradients are seen
     const maxInner = Math.max(innerW, innerH) || outSize;
     const fillScale = outSize / maxInner;
+
+    // --------- CHANGE: leave padding so background shows ----------
+    // When background is not transparent, apply a small inset multiplier
+    // so the icon doesn't completely cover the canvas and background patterns/gradients remain visible.
+    // Keep behavior unchanged for transparent backgrounds.
     const insetMultiplier = (bgType === 'transparent') ? 1 : 0.82;
     const totalScale = fillScale * userScale * insetMultiplier;
+    // ------------------------------------------------------------
 
     const cx = outSize/2, cy = outSize/2;
     const transform = `translate(${cx}, ${cy}) rotate(${rotation}) scale(${totalScale}) translate(${-innerW/2}, ${-innerH/2})`;
-    const rectFilterAttr = (function(n){ return n ? ` filter="url(#${n})"` : ''; })( (typeof noiseFilterId !== 'undefined') ? noiseFilterId : null );
+    const rectFilterAttr = noiseFilterId ? ` filter="url(#${noiseFilterId})"` : '';
 
     const svg = ` <svg xmlns="http://www.w3.org/2000/svg" width="${outSize}" height="${outSize}" viewBox="0 0 ${outSize} ${outSize}" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Monadicon">
   <defs>${defs}</defs>
@@ -626,87 +577,436 @@
     return svg;
   }
 
-  // Minimal renderPreview wiring to show how it connects to your UI
+  /***********************
+   * render + history
+   ***********************/
   async function renderPreview(settings, addToHistory = false) {
     previewBox.innerHTML = `<div style="color:var(--muted);text-align:center">Rendering...</div>`;
     try {
       const finalSvg = await buildFinalSvg(settings);
       previewBox.innerHTML = finalSvg;
       if (placeholder) placeholder.style.display = 'none';
-      document.getElementById('previewMeta').textContent = `${settings.style || 'style'} • ${settings.seed || 'seed'} • ${settings.size || 512}px`;
+      previewMeta.textContent = `${settings.style} • ${settings.seed} • ${settings.size}px`;
       settingsOut.textContent = JSON.stringify(settings, null, 2);
-      // update description thumb (reuse your auto description logic)
-      try {
-        const seed = settings.seed ? settings.seed.toString() : 'anon';
-        // quick metadata update:
-        document.getElementById('autoDesc').textContent = `${seed} — ${settings.style} • ${settings.bgType}`;
-        const thumbData = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(finalSvg)));
-        document.getElementById('descThumb').innerHTML = `<img src="${thumbData}" alt="thumb" style="width:100%;height:100%;object-fit:cover" />`;
-      } catch(e){}
-      // add to history array (simple)
+      updateAutoDescriptionFromRendered(finalSvg, settings);
+      updateBadgeVisibility();
       if (addToHistory) {
-        if (!window._monadHistory) window._monadHistory = [];
-        window._monadHistory.unshift({ settings, svg: finalSvg });
-        if (window._monadHistory.length > 28) window._monadHistory.pop();
-        // render history thumbnails
-        const historyEl = document.getElementById('history');
-        historyEl.innerHTML = '';
-        window._monadHistory.forEach(item => {
-          const t = document.createElement('div'); t.className='thumb';
-          const im = document.createElement('img'); im.style.width='100%'; im.style.height='100%'; im.style.objectFit='cover';
-          im.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(item.svg)));
-          t.appendChild(im);
-          t.onclick = () => { previewBox.innerHTML = item.svg; document.getElementById('autoDesc').textContent = item.settings.seed; };
-          historyEl.appendChild(t);
-        });
+        history.unshift({ settings, svg: finalSvg });
+        if (history.length > 28) history.pop();
+        renderHistory();
+        confetti();
         showToast('Generated and added to history');
       } else {
         showToast('Preview applied');
       }
-    } catch (err) {
-      console.error('Preview error:', err);
+    } catch (e) {
       previewBox.innerHTML = `<div style="color:#ff6b6b;font-weight:700">Error rendering preview</div><div style="color:var(--muted);margin-top:8px">Check console for details.</div>`;
+      console.error('Preview error:', e);
       showToast('Preview error — check console');
     }
   }
 
-  // Read settings from (existing) UI inputs
-  function readSettingsFromUI(){
-    return {
-      seed: (document.getElementById('seed') && document.getElementById('seed').value) || 'anon',
-      style: (document.getElementById('style') && document.getElementById('style').value) || 'adventurer',
-      size: (document.getElementById('size') && parseInt(document.getElementById('size').value)) || 512,
-      scale: (document.getElementById('scale') && parseFloat(document.getElementById('scale').value)) || 100,
-      rotation: (document.getElementById('rotation') && parseFloat(document.getElementById('rotation').value)) || 0,
-      bgType: (document.getElementById('bgType') && document.getElementById('bgType').value) || 'transparent',
-      bgColor: (document.getElementById('bgColor') && document.getElementById('bgColor').value) || '#7C3AED'
-    };
+  function renderHistory() {
+    historyEl.innerHTML = '';
+    for (const item of history) {
+      const thumb = document.createElement('div'); thumb.className = 'thumb'; thumb.title = `${item.settings.seed || 'composite'} • ${item.settings.style}`;
+      const img = document.createElement('img'); img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover';
+      img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(item.svg)));
+      thumb.appendChild(img);
+      thumb.onclick = () => {
+        loadSettings(item.settings);
+        previewBox.innerHTML = item.svg;
+        updateAutoDescriptionFromRendered(item.svg, item.settings);
+        updateBadgeVisibility();
+        showToast('Loaded from history');
+      };
+      historyEl.appendChild(thumb);
+    }
   }
 
-  // Wire generate/apply preview buttons (IDs kept from original)
-  (function wirePreviewButtons(){
-    const genBtn = document.getElementById('generateBtn');
-    const applyBtn = document.getElementById('applyPreviewBtn');
-    if (genBtn) genBtn.addEventListener('click', async ()=> {
-      const s = readSettingsFromUI();
-      const name = (document.getElementById('generatedName') && document.getElementById('generatedName').value) || '';
-      if (name) s.seed = name;
-      await renderPreview(s, true);
-    });
-    if (applyBtn) applyBtn.addEventListener('click', async ()=> {
-      const s = readSettingsFromUI();
-      const name = (document.getElementById('generatedName') && document.getElementById('generatedName').value) || '';
-      if (name) s.seed = name;
-      await renderPreview(s, false);
-    });
-  })();
+  function readSettingsFromUI(){ return { seed: seedEl.value || 'anon', style: styleEl.value, size: parseInt(sizeEl.value) || 512, scale: parseFloat(scaleEl.value) || 100, rotation: parseFloat(rotationEl.value) || 0, bgType: bgTypeEl.value, bgColor: bgColorEl.value || '#7C3AED' }; }
+  function loadSettings(s){ seedEl.value = s.seed || 'anon'; styleEl.value = s.style || 'adventurer'; sizeEl.value = s.size || 512; scaleEl.value = s.scale || 100; rotationEl.value = s.rotation || 0; bgTypeEl.value = s.bgType || 'transparent'; bgColorEl.value = s.bgColor || '#7C3AED'; settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2); }
 
-  // Initialize page with a basic preview
-  document.addEventListener('DOMContentLoaded', () => {
-    const initial = readSettingsFromUI();
-    renderPreview(initial, false);
+  /***********************
+   * confetti
+   ***********************/
+  function confetti(){
+    const canvas = document.createElement('canvas'); canvas.style.position='fixed'; canvas.style.left='0'; canvas.style.top='0'; canvas.style.pointerEvents='none'; canvas.width = innerWidth; canvas.height = innerHeight; document.body.appendChild(canvas);
+    const ctx = canvas.getContext('2d'); const pieces = Array.from({length:80}, () => ({ x: innerWidth/2 + (Math.random()-0.5)*200, y: innerHeight/2 + (Math.random()-0.5)*60, vx: (Math.random()-0.5)*8, vy: Math.random()*-10-2, r: Math.random()*6+3, c: `hsl(${Math.random()*360},80%,60%)`, rot: Math.random()*Math.PI }));
+    (function anim(){ ctx.clearRect(0,0,canvas.width,canvas.height); pieces.forEach((p,i)=>{ p.x+=p.vx; p.y+=p.vy; p.vy+=0.4; p.rot+=0.2; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.c; ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r); ctx.restore(); if(p.y>canvas.height+50) pieces.splice(i,1); }); if(pieces.length) requestAnimationFrame(anim); else canvas.remove(); })();
+  }
+
+  /***********************
+   * badge behavior & animation
+   ***********************/
+  function updateBadgeVisibility(){
+    if (!badgeOverlay) return;
+    if (badgeToggle.checked){
+      const nameVal = (generatedNameEl.value && generatedNameEl.value.trim()) ? generatedNameEl.value.trim() : (seedEl.value || 'anon');
+      const rarity = computeRarity(nameVal);
+      const emoji = rarity === 'Legendary' ? '🔥' : rarity === 'Epic' ? '✨' : rarity === 'Rare' ? '⭐' : rarity === 'Uncommon' ? '🔷' : '◻️';
+      badgeOverlay.style.display = 'block';
+      badgeOverlay.textContent = `${emoji} ${rarity}`;
+      badgeOverlay.classList.remove('badge-epic','badge-legendary');
+      if (rarity === 'Epic') badgeOverlay.classList.add('badge-epic');
+      if (rarity === 'Legendary') badgeOverlay.classList.add('badge-legendary');
+    } else {
+      badgeOverlay.style.display = 'none';
+    }
+  }
+
+  function playBadgeAnimation(){
+    if (!badgeOverlay) return;
+    badgeOverlay.classList.remove('badge-animate');
+    void badgeOverlay.offsetWidth;
+    badgeOverlay.classList.add('badge-animate');
+    setTimeout(()=>{ badgeOverlay.classList.remove('badge-animate'); }, 900);
+  }
+
+  /***********************
+   * Name-generation UI interactions
+   ***********************/
+  const genBtnHandler = () => {
+    const det = deterministicNameCheckbox.checked;
+    const name = generateRandomName(det);
+    generatedNameEl.value = name;
+    showToast('Name generated');
+    const colors = generatePaletteFromSeed(name);
+    renderPalette(colors);
+    updateBadgeVisibility();
+    playBadgeAnimation();
+  };
+
+  genNameBtn.addEventListener('click', genBtnHandler);
+  generateNameBtn.addEventListener('click', genBtnHandler);
+
+  copyNameBtn.addEventListener('click', async () => {
+    const val = generatedNameEl.value && generatedNameEl.value.trim();
+    if (!val) { showToast('No name to copy'); return; }
+    try { await navigator.clipboard.writeText(val); showToast('Name copied'); } catch { showToast('Copy failed'); }
   });
-  // --- End inline app integration ---
+
+  applyNameAsSeedBtn.addEventListener('click', () => {
+    const v = generatedNameEl.value && generatedNameEl.value.trim();
+    if (!v) { showToast('No name to apply'); return; }
+    seedEl.value = v;
+    settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
+    if (liveToggle.checked) applyPreviewBtn.click();
+    showToast('Applied name as seed');
+  });
+
+  badgeToggle.addEventListener('change', updateBadgeVisibility);
+
+  /***********************
+   * Generate / preview behavior
+   ***********************/
+  generateBtn.addEventListener('click', async () => {
+    try {
+      if (autoNameOnGenerateCheckbox && autoNameOnGenerateCheckbox.checked) {
+        const det = deterministicNameCheckbox.checked;
+        const name = generateRandomName(det);
+        generatedNameEl.value = name;
+        const colors = generatePaletteFromSeed(name);
+        renderPalette(colors);
+        updateBadgeVisibility();
+        playBadgeAnimation();
+      }
+    } catch (e) { console.warn('Auto-name-on-generate failed', e); }
+
+    const s = readSettingsFromUI();
+    if (generatedNameEl.value && generatedNameEl.value.trim()) s.seed = generatedNameEl.value.trim();
+    await renderPreview(s, true);
+  });
+
+  applyPreviewBtn.addEventListener('click', async () => {
+    const s = readSettingsFromUI();
+    if (generatedNameEl.value && generatedNameEl.value.trim()) s.seed = generatedNameEl.value.trim();
+    await renderPreview(s, false);
+  });
+
+  applyPromptBtn.addEventListener('click', ()=> {
+    const p = (promptEl.value || '').trim(); if(!p){ showToast('Please enter a prompt'); return; }
+    seedEl.value = p; settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
+    if (promptUseAsSeedEl.checked && liveToggle.checked) applyPreviewBtn.click();
+  });
+
+  generateFromPromptBtn.addEventListener('click', async ()=> {
+    const p = (promptEl.value||'').trim(); if(!p){ showToast('Please enter a prompt'); return; }
+    const seedFromPrompt = promptUseAsSeedEl.checked ? p : slugifyPrompt(p);
+    seedEl.value = seedFromPrompt; settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null,2);
+    const s = readSettingsFromUI(); await renderPreview(s, true);
+  });
+
+  promptUseAsSeedEl.addEventListener('change', ()=> {
+    if (promptUseAsSeedEl.checked) {
+      const p = (promptEl.value || '').trim(); if (p) seedEl.value = p; settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2); if (liveToggle.checked) applyPreviewBtn.click();
+    }
+  });
+
+  promptEl.addEventListener('input', ()=> {
+    if (promptUseAsSeedEl.checked) {
+      const p = (promptEl.value || '').trim(); if (p) seedEl.value = p; settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
+      if (liveToggle.checked) {
+        if (window._liveTimeout) clearTimeout(window._liveTimeout);
+        window._liveTimeout = setTimeout(()=>{ applyPreviewBtn.click(); }, 300);
+      }
+    }
+  });
+
+  downloadSvgBtn.addEventListener('click', async () => {
+    try {
+      const curSvg = previewBox.querySelector('svg');
+      const base = (generatedNameEl.value && generatedNameEl.value.trim()) ? generatedNameEl.value.trim().replace(/\s+/g,'_') : (seedEl.value || 'monadicon');
+      if (curSvg) { const svgText = new XMLSerializer().serializeToString(curSvg); downloadSVGfromString(svgText, `${base}.svg`); showToast('SVG downloaded'); return; }
+      const s = readSettingsFromUI(); const svg = await buildFinalSvg(s); downloadSVGfromString(svg, `${base}.svg`); showToast('SVG downloaded');
+    } catch (e) { showToast('SVG download failed'); console.error(e); }
+  });
+
+  downloadPngBtn.addEventListener('click', async () => {
+    try {
+      const curSvg = previewBox.querySelector('svg');
+      const base = (generatedNameEl.value && generatedNameEl.value.trim()) ? generatedNameEl.value.trim().replace(/\s+/g,'_') : (seedEl.value || 'monadicon');
+      if (curSvg) { const svgText = new XMLSerializer().serializeToString(curSvg); downloadPNGfromSvgString(svgText, `${base}.png`); showToast('PNG download started'); return; }
+      const s = readSettingsFromUI(); const svg = await buildFinalSvg(s); downloadPNGfromSvgString(svg, `${base}.png`); showToast('PNG download started');
+    } catch (e) { showToast('PNG creation failed'); console.error(e); }
+  });
+
+  copyEmbedBtn.addEventListener('click', async () => {
+    try {
+      const curSvg = previewBox.querySelector('svg');
+      const svgText = curSvg ? new XMLSerializer().serializeToString(curSvg) : await buildFinalSvg(readSettingsFromUI());
+      await navigator.clipboard.writeText(svgText);
+      showToast('SVG embed copied to clipboard');
+    } catch (e) {
+      console.error('copy embed failed', e);
+      showToast('Copy failed — see console');
+    }
+  });
+
+  // share helpers: copy SVG + try to copy PNG image to clipboard, then open compose
+  async function svgStringToPngBlob(svgString, size = 512) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width || size;
+          canvas.height = img.height || size;
+          const ctx = canvas.getContext('2d');
+          ctx.clearRect(0,0,canvas.width,canvas.height);
+          ctx.drawImage(img,0,0);
+          canvas.toBlob((blob) => {
+            if (blob) resolve(blob);
+            else reject(new Error('toBlob produced null'));
+          }, 'image/png');
+        } catch (err) { reject(err); }
+      };
+      img.onerror = (e) => reject(e);
+      img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
+    });
+  }
+
+  async function copySvgAndPngToClipboard(svgString) {
+    // Try to write both text and image to clipboard; fallback to text only.
+    try {
+      const pngBlob = await svgStringToPngBlob(svgString);
+      const clipboardItems = [
+        new ClipboardItem({
+          'image/png': pngBlob,
+          'image/svg+xml': new Blob([svgString], { type: 'image/svg+xml' })
+        })
+      ];
+      await navigator.clipboard.write(clipboardItems);
+      return { ok: true, method: 'image+svg' };
+    } catch (err) {
+      // fallback: copy svg text
+      try {
+        await navigator.clipboard.writeText(svgString);
+        return { ok: true, method: 'text' };
+      } catch (e2) {
+        console.error('clipboard fallback failed', e2);
+        return { ok: false };
+      }
+    }
+  }
+
+  // Share to X (Twitter)
+  shareXBtn.addEventListener('click', async () => {
+    try {
+      const curSvgNode = previewBox.querySelector('svg');
+      const svgText = curSvgNode ? new XMLSerializer().serializeToString(curSvgNode) : await buildFinalSvg(readSettingsFromUI());
+      const meta = regenDescBtn._meta && regenDescBtn._meta.meta ? regenDescBtn._meta.meta : null;
+      const name = (generatedNameEl.value && generatedNameEl.value.trim()) ? generatedNameEl.value.trim() : (seedEl.value || 'Monadicon');
+      const description = meta ? (meta.description || '') : `${name} — generated with Monadicons`;
+      // copy image to clipboard (if possible) to allow user to paste in X
+      const copied = await copySvgAndPngToClipboard(svgText);
+      if (copied.ok) {
+        const tweetText = `${name}\n\n${(description||'').split('\n')[0]} \n\n#Monadicons`;
+        const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
+        window.open(url, '_blank', 'noopener');
+        showToast(copied.method === 'image+svg' ? 'Image copied — paste into your tweet' : 'SVG copied — paste into your tweet');
+      } else {
+        showToast('Copy failed — try Download then upload to X');
+      }
+    } catch (err) {
+      console.error('shareX error', err);
+      showToast('Share to X failed');
+    }
+  });
+
+  // Share to Discord: copy image and open Discord
+  shareDiscordBtn.addEventListener('click', async () => {
+    try {
+      const curSvgNode = previewBox.querySelector('svg');
+      const svgText = curSvgNode ? new XMLSerializer().serializeToString(curSvgNode) : await buildFinalSvg(readSettingsFromUI());
+      const copied = await copySvgAndPngToClipboard(svgText);
+      if (copied.ok) {
+        // open direct messages (user must select a channel and paste)
+        window.open('https://discord.com/channels/@me', '_blank', 'noopener');
+        showToast(copied.method === 'image+svg' ? 'Image copied — paste into Discord' : 'SVG copied — paste into Discord');
+      } else {
+        showToast('Copy failed — try Download then upload to Discord');
+      }
+    } catch (err) {
+      console.error('shareDiscord error', err);
+      showToast('Share to Discord failed');
+    }
+  });
+
+  /***********************
+   * Regenerate auto description (fixed)
+   ***********************/
+  regenDescBtn.addEventListener('click', async () => {
+    try {
+      const curSvgNode = previewBox.querySelector('svg');
+      if (curSvgNode) {
+        const svgText = new XMLSerializer().serializeToString(curSvgNode);
+        const settings = readSettingsFromUI();
+        updateAutoDescriptionFromRendered(svgText, settings);
+        showToast('Description regenerated from preview');
+        return;
+      }
+      // if no preview, rebuild and update
+      const s = readSettingsFromUI();
+      // use generated name as seed if exists for consistent metadata
+      if (generatedNameEl.value && generatedNameEl.value.trim()) s.seed = generatedNameEl.value.trim();
+      const svg = await buildFinalSvg(s);
+      updateAutoDescriptionFromRendered(svg, s);
+      showToast('Description regenerated (rebuilt)');
+    } catch (e) {
+      console.error('Regenerate failed', e);
+      showToast('Regenerate failed — see console');
+    }
+  });
+
+  copyDescBtn.addEventListener('click', () => {
+    const meta = copyDescBtn._meta;
+    if (meta && meta.meta && meta.meta.description) {
+      navigator.clipboard.writeText(meta.meta.description).then(()=>showToast('Description copied')).catch(()=>showToast('Copy failed'));
+      return;
+    }
+    const txt = autoDescEl.textContent || '';
+    if (txt) { navigator.clipboard.writeText(txt).then(()=>showToast('Description copied')).catch(()=>showToast('Copy failed')); } else showToast('No description available');
+  });
+
+  downloadMetaBtn.addEventListener('click', () => {
+    const meta = downloadMetaBtn._meta;
+    if (!meta || !meta.meta) { showToast('Generate an icon first'); return; }
+    const metadata = { name: meta.meta.name, description: meta.meta.description, attributes: meta.meta.attributes, image: 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(meta.svg))) };
+    const txt = JSON.stringify(metadata, null, 2);
+    const blob = new Blob([txt], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href=url; a.download=`${meta.meta.name.replace(/\s+/g,'_')}-metadata.json`; a.click(); URL.revokeObjectURL(url);
+    showToast('Metadata JSON downloaded');
+  });
+
+  /***********************
+   * Share / clipboard utilities used elsewhere
+   ***********************/
+  function downloadSVGfromString(svgString, filename='monadicon.svg'){ const blob = new Blob([svgString], { type:'image/svg+xml' }); const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url); }
+  function downloadPNGfromSvgString(svgString, filename='monadicon.png'){
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas'); canvas.width = img.width; canvas.height = img.height;
+      const ctx = canvas.getContext('2d'); ctx.drawImage(img,0,0);
+      canvas.toBlob((blob) => { const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url); }, 'image/png');
+    };
+    img.onerror = e => { showToast('PNG conversion failed'); console.error(e); };
+    img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
+  }
+
+  /***********************
+   * Export / other UI
+   ***********************/
+  document.querySelectorAll('.preset').forEach(btn => {
+    btn.addEventListener('click', ()=> {
+      const seed = btn.dataset.seed; const style = btn.dataset.style;
+      if (seed) seedEl.value = seed; if (style) styleEl.value = style; if (liveToggle.checked) applyPreviewBtn.click();
+    });
+  });
+
+  randomPreset.addEventListener('click', () => randomBtn.click());
+
+  exportJSON.addEventListener('click', () => {
+    try {
+      const settings = readSettingsFromUI();
+      const jsonText = JSON.stringify(settings, null, 2);
+      const filename = `monadicon-settings-${Date.now()}.json`;
+      const blob = new Blob([jsonText], { type:'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = filename; a.click(); URL.revokeObjectURL(url);
+      navigator.clipboard?.writeText(jsonText).catch(()=>{});
+      showToast('Settings exported and copied');
+    } catch (e) { console.error(e); showToast('Export failed'); }
+  });
+
+  copyJSON.addEventListener('click', ()=> { navigator.clipboard.writeText(JSON.stringify(readSettingsFromUI(), null, 2)); showToast('Settings JSON copied'); });
+
+  downloadJSON.addEventListener('click', ()=> {
+    const txt = JSON.stringify(readSettingsFromUI(), null, 2); const blob = new Blob([txt], { type:'application/json' }); const a=document.createElement('a'); a.href = URL.createObjectURL(blob); a.download='monadicon-settings.json'; a.click(); showToast('Settings JSON downloaded');
+  });
+
+  clearHistory.addEventListener('click', ()=> { history = []; renderHistory(); showToast('History cleared'); });
+
+  toggleThemeBtn.addEventListener('click', ()=> setTheme(!isLight));
+
+  randomBtn.addEventListener('click', () => {
+    seedEl.value = sampleSeeds[Math.floor(Math.random()*sampleSeeds.length)] + '-' + Math.floor(Math.random()*9999);
+    const styles = Array.from(document.querySelectorAll('#style option')).map(o=>o.value);
+    styleEl.value = styles[Math.floor(Math.random()*styles.length)];
+    bgTypeEl.value = ['transparent','solid','gradient','radial','dots','stripes','checker','noise'][Math.floor(Math.random()*8)];
+    bgColorEl.value = '#' + Math.floor(Math.random()*0xFFFFFF).toString(16).padStart(6,'0');
+    sizeEl.value = [128,256,512,768,1024][Math.floor(Math.random()*5)];
+    scaleEl.value = 80 + Math.floor(Math.random()*60);
+    rotationEl.value = Math.floor(Math.random()*360) - 180;
+    if (liveToggle.checked) applyPreviewBtn.click();
+  });
+
+  regenDescBtn._meta = null; // ensure meta object exists
+
+  // Live preview wiring
+  function setupLivePreview(){
+    const inputs = [seedEl, styleEl, sizeEl, scaleEl, rotationEl, bgTypeEl, bgColorEl];
+    inputs.forEach(inp => {
+      inp.addEventListener('input', () => {
+        settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
+        if (liveToggle.checked) {
+          if (window._liveTimeout) clearTimeout(window._liveTimeout);
+          window._liveTimeout = setTimeout(()=>{ applyPreviewBtn.click(); }, 300);
+        }
+      });
+    });
+  }
+
+  // theme
+  let isLight = false;
+  function setTheme(light){ isLight = !!light; if (isLight) { document.body.classList.add('light'); document.body.classList.remove('dark'); toggleThemeBtn.textContent='Dark'; } else { document.body.classList.remove('light'); document.body.classList.add('dark'); toggleThemeBtn.textContent='Light'; } try { localStorage.setItem('monadicons:theme', isLight ? 'light' : 'dark'); } catch(e){} }
+
+  // init
+  setupLivePreview();
+  try { const p = localStorage.getItem('monadicons:theme'); setTheme(p === 'light'); } catch (e) { setTheme(false); }
+  settingsOut.textContent = JSON.stringify(readSettingsFromUI(), null, 2);
+  applyPreviewBtn.click();
 
   </script>
 </body>
