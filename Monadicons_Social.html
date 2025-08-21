@@ -17,35 +17,42 @@
   /* Basic layout */
   html,body{height:100%;margin:0;font-family:Inter,Arial,Helvetica,sans-serif;color:#fff;background:linear-gradient(135deg,var(--bg1),var(--bg2));}
   #bgCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:-2;}
-  .wrap{max-width:1230px;margin:18px auto;padding:18px;box-sizing:border-box;}
+  .wrap{max-width:1230px;margin:18px auto;padding:0 18px;box-sizing:border-box;}
 
   /* Header */
-  .header{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:12px;}
+  .header{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:18px;}
   .brand{display:flex;gap:12px;align-items:center;}
   .logo{width:52px;height:52px;border-radius:10px;display:grid;place-items:center;font-weight:700;background:linear-gradient(135deg,var(--accent1),var(--accent2));color:#fff;font-size:20px;}
   .title{font-size:20px;font-weight:700;letter-spacing:0.6px;}
   .nav{display:flex;gap:8px;align-items:center;}
-  .btn{background:linear-gradient(90deg,var(--accent1),var(--accent2));border:none;color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:600;text-decoration:none;}
-  .small-btn{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);padding:6px 8px;border-radius:8px;cursor:pointer;font-size:12px;}
+  .btn{background:linear-gradient(90deg,var(--accent1),var(--accent2));border:none;color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:600;text-decoration:none;transition:transform 0.2s ease, box-shadow 0.2s ease;}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(123,47,247,0.3);}
+  .small-btn{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);padding:6px 8px;border-radius:8px;cursor:pointer;font-size:12px;transition:background 0.2s ease, color 0.2s ease;}
+  .small-btn:hover{background:rgba(255,255,255,0.05);color:#fff;}
 
   .muted{color:var(--muted);font-size:13px;}
 
   /* Sections */
-  .section-title{margin-top:12px;font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
-  .carousel{margin:14px 0;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));border-radius:12px;padding:14px;display:flex;align-items:center;gap:12px;justify-content:center;position:relative;min-height:180px;box-shadow:0 6px 30px rgba(11,3,30,0.45);}
+  .section-title{margin-top:18px;font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;text-align:left;}
+  .carousel{margin:12px 0;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));border-radius:12px;padding:14px;display:flex;align-items:center;gap:12px;justify-content:center;position:relative;min-height:180px;box-shadow:0 6px 30px rgba(11,3,30,0.45);transition:box-shadow 0.3s ease;}
+  .carousel:hover{box-shadow:0 8px 40px rgba(11,3,30,0.55);}
   .carousel-img{max-height:140px;max-width:100%;border-radius:10px;object-fit:cover;cursor:pointer;box-shadow:0 8px 30px rgba(16,6,40,0.6);transition:transform .18s ease;}
+  .carousel-img:hover{transform:scale(1.05);}
   .carousel-controls{position:absolute;top:50%;transform:translateY(-50%);width:100%;display:flex;justify-content:space-between;pointer-events:none;}
-  .carousel-controls button{pointer-events:all;background:rgba(0,0,0,0.45);border:none;color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer;margin:0 10px;}
-  .carousel-votes{color:var(--muted);font-size:13px;}
+  .carousel-controls button{pointer-events:all;background:rgba(0,0,0,0.45);border:none;color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer;margin:0 10px;transition:background 0.2s ease;}
+  .carousel-controls button:hover{background:rgba(0,0,0,0.65);}
+  .carousel-votes{color:var(--muted);font-size:13px;text-align:center;}
 
   .grid{display:grid;grid-template-columns:1fr 360px;gap:18px;align-items:start;}
   @media (max-width:1000px){ .grid{grid-template-columns:1fr;} }
 
-  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));border-radius:12px;padding:14px;box-shadow:0 6px 20px rgba(9,3,36,0.55);}
+  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));border-radius:12px;padding:14px;box-shadow:0 6px 20px rgba(9,3,36,0.55);transition:box-shadow 0.3s ease;}
+  .card:hover{box-shadow:0 8px 30px rgba(9,3,36,0.65);}
   label{display:block;font-size:13px;color:var(--muted);margin-top:8px;margin-bottom:6px;}
-  input[type="text"],textarea,input[type="file"]{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);color:#fff;outline:none;box-sizing:border-box;font-size:14px;}
+  input[type="text"],textarea,input[type="file"]{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);color:#fff;outline:none;box-sizing:border-box;font-size:14px;transition:border-color 0.2s ease;}
+  input[type="text"]:focus,textarea:focus,input[type="file"]:focus{border-color:rgba(255,255,255,0.1);}
   textarea{resize:vertical;min-height:56px;}
-  .upload-actions{display:flex;gap:8px;align-items:center;margin-top:10px;}
+  .upload-actions{display:flex;gap:8px;align-items:center;margin-top:10px;justify-content:flex-start;}
 
   /* Gallery layout - smaller thumbs so many images visible */
   .gallery{margin-top:12px;display:grid;grid-template-columns:repeat(5,1fr);gap:10px;max-height:calc(100vh - 420px);overflow:auto;padding-right:6px;}
@@ -53,21 +60,25 @@
   @media (max-width:900px){ .gallery{grid-template-columns:repeat(3,1fr);max-height:420px;} }
   @media (max-width:600px){ .gallery{grid-template-columns:repeat(2,1fr);max-height:380px;} }
 
-  .thumb{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.06));border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center;cursor:default;transition:transform .12s ease;}
+  .thumb{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.06));border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center;cursor:pointer;transition:transform .12s ease, box-shadow .12s ease;}
   .thumb:hover{transform:translateY(-6px);box-shadow:0 12px 30px rgba(5,1,25,0.6);}
-  .thumb img{width:100%;height:85px;object-fit:cover;border-radius:8px;display:block;}
+  .thumb img{width:100%;height:85px;object-fit:cover;border-radius:8px;display:block;transition:transform 0.2s ease;}
+  .thumb:hover img{transform:scale(1.03);}
   .thumb h4{margin:0;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .thumb p{margin:0;font-size:11px;color:var(--muted);height:28px;overflow:hidden;text-overflow:ellipsis;}
 
   .vote-row{display:flex;gap:6px;align-items:center;justify-content:center;margin-top:4px;flex-wrap:wrap;}
-  .vote-btn{background:linear-gradient(90deg,var(--accent1),var(--accent2));border:none;color:#fff;padding:6px 8px;border-radius:8px;cursor:pointer;font-weight:700;font-size:12px;display:inline-flex;gap:6px;align-items:center;}
+  .vote-btn{background:linear-gradient(90deg,var(--accent1),var(--accent2));border:none;color:#fff;padding:6px 8px;border-radius:8px;cursor:pointer;font-weight:700;font-size:12px;display:inline-flex;gap:6px;align-items:center;transition:transform 0.2s ease, opacity 0.2s ease;}
+  .vote-btn:hover{transform:translateY(-2px);}
   .vote-btn[disabled]{opacity:.6;cursor:not-allowed;}
-  .danger-btn{background:transparent;border:1px solid rgba(255,70,90,0.15);color:#ff7070;padding:6px 8px;border-radius:8px;cursor:pointer;font-size:12px;}
+  .danger-btn{background:transparent;border:1px solid rgba(255,70,90,0.15);color:#ff7070;padding:6px 8px;border-radius:8px;cursor:pointer;font-size:12px;transition:background 0.2s ease, color 0.2s ease;}
+  .danger-btn:hover{background:rgba(255,70,90,0.1);color:#ff9090;}
 
   .sidebar{display:flex;flex-direction:column;gap:12px;}
   .leaderboard{padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.04));}
   .leaderboard table{width:100%;border-collapse:collapse;color:var(--muted);font-size:13px;}
-  .leaderboard th{color:#fff;font-size:12px;font-weight:700;}
+  .leaderboard th{color:#fff;font-size:12px;font-weight:700;text-align:left;padding-bottom:6px;}
+  .leaderboard td{padding:4px 0;}
 
   .chat{padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.04));}
   .chat .messages{max-height:220px;overflow:auto;border-radius:8px;padding:8px;background:rgba(0,0,0,0.05);margin-bottom:8px;}
@@ -84,7 +95,8 @@
   .toast{min-width:220px;pointer-events:all;display:flex;align-items:center;gap:12px;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;padding:12px 14px;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,0.5);transform:translateY(18px);opacity:0;transition:transform 260ms cubic-bezier(.2,.9,.2,1),opacity 260ms ease;position:relative;overflow:hidden;}
   .toast.show{transform:translateY(0);opacity:1;}
   .toast .msg{flex:1;font-weight:600;font-size:14px;}
-  .toast .undo{background:rgba(255,255,255,0.15);border:none;color:#fff;padding:8px 10px;border-radius:8px;cursor:pointer;font-weight:700;}
+  .toast .undo{background:rgba(255,255,255,0.15);border:none;color:#fff;padding:8px 10px;border-radius:8px;cursor:pointer;font-weight:700;transition:background 0.2s ease;}
+  .toast .undo:hover{background:rgba(255,255,255,0.25);}
   .toast .bar{position:absolute;left:0;bottom:0;height:4px;background:rgba(255,255,255,0.35);border-bottom-left-radius:10px;border-bottom-right-radius:10px;width:100%;transform-origin:left;transition:transform linear;}
   .rate-toast{min-width:200px;pointer-events:all;background:linear-gradient(90deg,#ff4d6d,#ff7a7a);color:#fff;padding:10px 12px;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,0.5);transform:translateY(18px);opacity:0;transition:transform 220ms ease,opacity 220ms ease;}
   .rate-toast.show{transform:translateY(0);opacity:1;}
@@ -93,8 +105,9 @@
   .confirm-box{width:420px;max-width:90%;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0.06));padding:18px;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.6);color:#fff;}
   .confirm-box p{margin:0 0 12px 0;color:var(--muted);}
   .confirm-actions{display:flex;gap:8px;justify-content:flex-end;}
-  .confirm-actions .cancel{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);border-radius:8px;padding:8px 12px;cursor:pointer;}
-  .vote-disabled-note{font-size:12px;color:rgba(255,255,255,0.7);margin-top:6px;}
+  .confirm-actions .cancel{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);border-radius:8px;padding:8px 12px;cursor:pointer;transition:background 0.2s ease;}
+  .confirm-actions .cancel:hover{background:rgba(255,255,255,0.05);}
+  .vote-disabled-note{font-size:12px;color:rgba(255,255,255,0.7);margin-top:6px;text-align:center;}
 
   /* overlay for theme crossfade */
   #themeOverlay{position:fixed;inset:0;pointer-events:none;z-index:2000;opacity:0;transition:opacity .35s ease;}
@@ -131,10 +144,10 @@
       <button id="prevBtn" aria-label="previous">❮</button>
       <button id="nextBtn" aria-label="next">❯</button>
     </div>
-    <div class="carousel-inner">
+    <div class="carousel-inner" style="display:flex;flex-direction:column;align-items:center;gap:8px;">
       <img id="carouselImg" class="carousel-img" src="" alt="Featured">
       <div id="carouselVotes" class="carousel-votes muted">—</div>
-      <div style="display:flex;gap:8px;margin-top:6px;">
+      <div style="display:flex;gap:8px;margin-top:6px;justify-content:center;">
         <button class="vote-btn" id="carouselVoteThumb">👍 Vote</button>
         <button class="small-btn" id="carouselOpen">Open</button>
       </div>
@@ -144,7 +157,7 @@
   <div class="grid">
     <div class="left">
       <div class="card upload-card">
-        <div style="display:flex;gap:12px;align-items:center;">
+        <div style="display:flex;gap:12px;align-items:flex-start;">
           <div style="flex:1">
             <label for="username">Name / Handle</label>
             <input id="username" type="text" placeholder="e.g. @artist">
@@ -183,7 +196,7 @@
 
     <aside class="sidebar">
       <div class="card leaderboard">
-        <h3>Top 10 Creators (Free Mon tokens!)</h3>
+        <h3 style="margin:0 0 8px 0;font-size:16px;text-align:center;">Top 10 Creators (Free Mon tokens!)</h3>
         <table id="leaderboard">
           <thead><tr><th>#</th><th>User</th><th>Votes</th></tr></thead>
           <tbody></tbody>
@@ -191,11 +204,11 @@
       </div>
 
       <div class="card chat">
-        <h3>Community Chat</h3>
+        <h3 style="margin:0 0 8px 0;font-size:16px;text-align:center;">Community Chat</h3>
         <div id="chatMessages" class="messages" aria-live="polite"></div>
-        <div style="display:flex;gap:8px;margin-top:8px;">
+        <div style="display:flex;gap:8px;margin-top:8px;align-items:center;">
           <input id="chatInput" placeholder="Type a message..." style="flex:1" />
-          <select id="emojiSelect" style="width:70px;">
+          <select id="emojiSelect" style="width:70px;padding:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);color:#fff;">
             <option>😀</option><option>😍</option><option>🔥</option><option>👍</option><option>🎨</option><option>💖</option>
           </select>
           <button id="sendMsg" class="btn">Send</button>
@@ -400,7 +413,7 @@ function updateLeaderboard(){
   leaderboardBody.innerHTML = '';
   top10.forEach(([user,score], i) => {
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td style="width:30px">${i+1}</td><td>${escapeHtml(user)}</td><td style="width:70px">${score}</td>`;
+    tr.innerHTML = `<td style="width:30px">${i+1}</td><td>${escapeHtml(user)}</td><td style="width:70px;text-align:right;">${score}</td>`;
     leaderboardBody.appendChild(tr);
   });
   miniTop.innerHTML = top10.slice(0,3).map(([u,s])=>`${escapeHtml(u)}: ${s}`).join('<br>') || '<span class="muted">No activity yet</span>';
@@ -453,7 +466,7 @@ function renderGallery(){
         <button class="vote-btn" id="v_${item.id}_heart">😍 ${(item.votes['😍']||0)}</button>
         <button class="vote-btn" id="v_${item.id}_art">🎨 ${(item.votes['🎨']||0)}</button>
       </div>
-      <div style="display:flex;gap:6px;margin-top:6px;">
+      <div style="display:flex;gap:6px;margin-top:6px;justify-content:center;width:100%;">
         <button class="small-btn" id="d_${index}">Download</button>
         <button class="small-btn" id="s_${index}">Share X</button>
         <button class="danger-btn" id="x_${index}">Delete</button>
